@@ -1,0 +1,1 @@
+# joi-ts-types
