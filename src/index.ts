@@ -5,6 +5,91 @@ import fs from 'fs';
 import { getLabel, getDescription, getRequired, getProperties, getPropertyName, getPropertyType } from 'joiHelpers';
 import { PropertiesAndInterfaces, Settings, InterfaceRecord, Property } from 'types';
 
+/**
+ * Get Interface jsDoc
+ */
+export const getInterfaceJsDoc = (joi: ObjectSchema): string => {
+  const name = getLabel(joi);
+  const description = getDescription(joi);
+
+  if (description) {
+    return `/**
+ * ${name}
+ * ${description}
+ */`;
+  } else {
+    return `/**
+ * ${name}
+ */`;
+  }
+};
+
+export const getPropertiesAndInterfaces = (joi: ObjectSchema, defaults: Settings): PropertiesAndInterfaces => {
+  const result: PropertiesAndInterfaces = { properties: [], interfaces: [] };
+
+  const joiProperties = getProperties(joi);
+  for (const joiProperty of joiProperties) {
+    const name = getPropertyName(joiProperty);
+    if (!name) {
+      if (defaults.debug) {
+        console.log('Property Name not found');
+      }
+      continue;
+    }
+    const type = getPropertyType(joiProperty);
+    if (!type) {
+      if (defaults.debug) {
+        console.log('Property Type not found');
+      }
+      continue;
+    }
+
+    const required = getRequired(joiProperty) ?? defaults.defaultToRequired;
+
+    const content = `  /**
+   * ${name}
+   */
+  ${name}${required ? '' : '?'}: ${type};`;
+    const property: Property = {
+      name,
+      type,
+      content
+    };
+    result.properties.push(property);
+  }
+
+  return result;
+};
+export const convertObject = (joi: ObjectSchema, settings?: Settings): InterfaceRecord[] => {
+  if (!settings) {
+    settings = {
+      defaultToRequired: false,
+      debug: false
+    };
+  }
+
+  // console.log(joi);
+
+  const types: InterfaceRecord[] = [];
+
+  const name = getLabel(joi);
+  if (!name) {
+    throw 'At least one "object" does not have a .label()';
+  }
+
+  const propertiesAndInterfaces = getPropertiesAndInterfaces(joi, settings);
+
+  types.push({
+    name,
+    content: `${getInterfaceJsDoc(joi)}
+export interface ${name} {
+${propertiesAndInterfaces.properties.map(p => p.content).join(`\n`)}
+}`
+  });
+
+  return types;
+};
+
 export const convertFromDirectory = async (
   fromDirectory: string,
   toDirectory: string,
@@ -75,98 +160,12 @@ export const convertFromDirectory = async (
     // Write interfaces
     const interfaceContent = interfacesToBeWritten.map(interfaceToBeWritten => interfaceToBeWritten.content);
 
-    fs.writeFileSync(Path.join(toDirectory, `${typeFileName}.ts`), interfaceContent.join('\n'));
+    fs.writeFileSync(Path.join(toDirectory, `${typeFileName}.ts`), interfaceContent.join('\n').concat('\n'));
   }
 
   // Write index.ts
   const exportLines = fileNamesToExport.map(fileName => `export * from './${fileName}';`);
-  fs.writeFileSync(Path.join(toDirectory, 'index.ts'), exportLines.join('\n'));
+  fs.writeFileSync(Path.join(toDirectory, 'index.ts'), exportLines.join('\n').concat('\n'));
 
   return true;
-};
-
-export const convertObject = (joi: ObjectSchema, settings?: Settings): InterfaceRecord[] => {
-  if (!settings) {
-    settings = {
-      defaultToRequired: false,
-      debug: false
-    };
-  }
-
-  // console.log(joi);
-
-  const types: InterfaceRecord[] = [];
-
-  const name = getLabel(joi);
-  if (!name) {
-    throw 'At least one "object" does not have a .label()';
-  }
-
-  const propertiesAndInterfaces = getPropertiesAndInterfaces(joi, settings);
-
-  types.push({
-    name,
-    content: `${getInterfaceJsDoc(joi)}
-export interface ${name} {
-${propertiesAndInterfaces.properties.map(p => p.content).join(`\n`)}
-}`
-  });
-
-  return types;
-};
-
-export const getPropertiesAndInterfaces = (joi: ObjectSchema, defaults: Settings): PropertiesAndInterfaces => {
-  const result: PropertiesAndInterfaces = { properties: [], interfaces: [] };
-
-  const joiProperties = getProperties(joi);
-  for (const joiProperty of joiProperties) {
-    const name = getPropertyName(joiProperty);
-    if (!name) {
-      if (defaults.debug) {
-        console.log('Property Name not found');
-      }
-      continue;
-    }
-    const type = getPropertyType(joiProperty);
-    if (!type) {
-      if (defaults.debug) {
-        console.log('Property Type not found');
-      }
-      continue;
-    }
-
-    let required = getRequired(joiProperty) ?? defaults.defaultToRequired;
-
-    const content = `  /**
-   * ${name}
-   */
-  ${name}${required ? '' : '?'}: ${type};`;
-    const property: Property = {
-      name,
-      type,
-      content
-    };
-    result.properties.push(property);
-  }
-
-  return result;
-};
-
-/**
- * Get Interface jsDoc
- */
-export const getInterfaceJsDoc = (joi: ObjectSchema): string => {
-  const name = getLabel(joi);
-  const description = getDescription(joi);
-
-  if (description) {
-    return `/**
- * ${name}
- * ${description}
- */`;
-  } else {
-    return `/**
- * ${name}
- */`;
-  }
 };
