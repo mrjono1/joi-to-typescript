@@ -1,7 +1,16 @@
 import { ObjectSchema } from "joi";
+import {
+  getLabel,
+  getDescription,
+  getRequired,
+  getProperties,
+  getPropertyName,
+  getPropertyType
+} from "joiHelpers";
 
-export interface Defaults {
-  required: boolean;
+export interface Settings {
+  defaultToRequired: boolean;
+  debug?: boolean;
 }
 export interface InterfaceRecord {
   name: string;
@@ -11,13 +20,15 @@ export interface InterfaceRecord {
 
 export const convertObject = (
   joi: ObjectSchema,
-  defaults?: Defaults
+  settings?: Settings
 ): InterfaceRecord[] => {
-  if (!defaults) {
-    defaults = {
-      required: false
+  if (!settings) {
+    settings = {
+      defaultToRequired: false,
+      debug: false
     };
   }
+
   // console.log(joi);
 
   const types: InterfaceRecord[] = [];
@@ -27,7 +38,7 @@ export const convertObject = (
     throw 'At least one "object" does not have a .label()';
   }
 
-  const propertiesAndInterfaces = getPropertiesAndInterfaces(joi, defaults);
+  const propertiesAndInterfaces = getPropertiesAndInterfaces(joi, settings);
 
   types.push({
     name,
@@ -54,35 +65,41 @@ export interface PropertiesAndInterfaces {
 
 export const getPropertiesAndInterfaces = (
   joi: ObjectSchema,
-  defaults: Defaults
+  defaults: Settings
 ): PropertiesAndInterfaces => {
   const result: PropertiesAndInterfaces = { properties: [], interfaces: [] };
 
-  const keys = joi.$_terms?.keys;
-  if (keys) {
-    for (const key of keys) {
-      const name = key.key;
-      const type = key.schema.type;
-      let required = defaults.required;
-      if (key.schema._flags?.presence) {
-        if (key.schema._flags.presence === "optional") {
-          required = false;
-        } else if (key.schema._flags.presence === "required") {
-          required = true;
-        }
+  const joiProperties = getProperties(joi);
+  for (const joiProperty of joiProperties) {
+    const name = getPropertyName(joiProperty);
+    if (!name) {
+      if (defaults.debug) {
+        console.log("Property Name not found");
       }
-      const content = `  /**
+      continue;
+    }
+    const type = getPropertyType(joiProperty);
+    if (!type) {
+      if (defaults.debug) {
+        console.log("Property Type not found");
+      }
+      continue;
+    }
+
+    let required = getRequired(joiProperty) ?? defaults.defaultToRequired;
+
+    const content = `  /**
    * ${name}
    */
   ${name}${required ? "" : "?"}: ${type};`;
-      const property: Property = {
-        name,
-        type,
-        content
-      };
-      result.properties.push(property);
-    }
+    const property: Property = {
+      name,
+      type,
+      content
+    };
+    result.properties.push(property);
   }
+
   return result;
 };
 
@@ -103,11 +120,4 @@ export const getInterfaceJsDoc = (joi: ObjectSchema): string => {
  * ${name}
  */`;
   }
-};
-export const getLabel = (joi: ObjectSchema): undefined | string => {
-  return joi?._flags?.label;
-};
-
-export const getDescription = (joi: ObjectSchema): undefined | string => {
-  return joi?._flags?.description;
 };
