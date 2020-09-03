@@ -1,14 +1,14 @@
-import Joi from "joi";
+import Joi from 'joi';
 
-import { convertObject } from "../index";
+import { convertObject } from '../index';
 
-test("basic", () => {
+test('basic', () => {
   const schema = Joi.object({
     name: Joi.string().optional(),
     propertyName1: Joi.boolean().required()
   })
-    .label("TestSchema")
-    .description("a test schema definition");
+    .label('TestSchema')
+    .description('a test schema definition');
 
   const result = convertObject(schema);
 

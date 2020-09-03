@@ -1,4 +1,4 @@
-import { ObjectSchema } from "joi";
+import { ObjectSchema } from 'joi';
 
 /**
  * This file is for interpreting the Joi Object Model
@@ -21,7 +21,7 @@ interface JoiProperty {
   schema: {
     type: string;
     _flags?: {
-      presence?: "optional" | "required";
+      presence?: 'optional' | 'required';
     };
   };
 }
@@ -29,9 +29,9 @@ interface JoiProperty {
 export const getRequired = (property: JoiProperty): undefined | boolean => {
   let required: undefined | boolean = undefined;
   if (property.schema._flags?.presence) {
-    if (property.schema._flags.presence === "optional") {
+    if (property.schema._flags.presence === 'optional') {
       required = false;
-    } else if (property.schema._flags.presence === "required") {
+    } else if (property.schema._flags.presence === 'required') {
       required = true;
     }
   }
@@ -48,14 +48,10 @@ export const getProperties = (joi: ObjectSchema): JoiProperty[] => {
   return properties;
 };
 
-export const getPropertyName = (
-  joiProperty: JoiProperty
-): undefined | string => {
+export const getPropertyName = (joiProperty: JoiProperty): undefined | string => {
   return joiProperty.key;
 };
 
-export const getPropertyType = (
-  joiProperty: JoiProperty
-): undefined | string => {
+export const getPropertyType = (joiProperty: JoiProperty): undefined | string => {
   return joiProperty.schema?.type;
 };
