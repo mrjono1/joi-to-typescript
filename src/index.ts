@@ -130,8 +130,11 @@ export const convertFromDirectory = async (
     throw `fromDirectory "${resolvedFromDirectory}" does not exist`;
   }
   if (!fs.existsSync(toDirectory)) {
-    const resolvedToDirectory = Path.resolve(toDirectory);
-    throw `toDirectory "${resolvedToDirectory}" does not exist`;
+    fs.mkdirSync(toDirectory);
+    if (!fs.existsSync(toDirectory)) {
+      const resolvedToDirectory = Path.resolve(toDirectory);
+      throw `toDirectory "${resolvedToDirectory}" does not exist`;
+    }
   }
 
   // TODO:Possible new feature clear out toDirectory
