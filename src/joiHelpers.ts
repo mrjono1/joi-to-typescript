@@ -1,4 +1,4 @@
-import { ObjectSchema } from 'joi';
+import { ObjectSchema, AnySchema, ArraySchema } from 'joi';
 
 /**
  * This file is for interpreting the Joi Object Model
@@ -8,11 +8,11 @@ import { ObjectSchema } from 'joi';
  * Get an object Label
  * @param joi Joi Object
  */
-export const getLabel = (joi: ObjectSchema): undefined | string => {
+export const getLabel = (joi: AnySchema): undefined | string => {
   return joi?._flags?.label;
 };
 
-export const getDescription = (joi: ObjectSchema): undefined | string => {
+export const getDescription = (joi: AnySchema): undefined | string => {
   return joi?._flags?.description;
 };
 
@@ -52,6 +52,17 @@ export const getPropertyName = (joiProperty: JoiProperty): undefined | string =>
   return joiProperty.key;
 };
 
+export const getItemName = (joiArray: ArraySchema): undefined | string => {
+  return joiArray?.$_terms?.items[0]?._flags?.label;
+};
+
 export const getPropertyType = (joiProperty: JoiProperty): undefined | string => {
-  return joiProperty.schema?.type;
+  const schemaType = joiProperty.schema?.type;
+
+  if (schemaType === 'array') {
+    const itemName = getItemName(joiProperty.schema as ArraySchema);
+
+    return `${itemName}[]`;
+  }
+  return schemaType;
 };

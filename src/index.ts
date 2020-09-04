@@ -1,14 +1,22 @@
-import Joi, { ObjectSchema } from 'joi';
+import Joi, { ObjectSchema, AnySchema, ArraySchema } from 'joi';
 import Path from 'path';
 import fs from 'fs';
 
-import { getLabel, getDescription, getRequired, getProperties, getPropertyName, getPropertyType } from 'joiHelpers';
+import {
+  getLabel,
+  getDescription,
+  getRequired,
+  getProperties,
+  getPropertyName,
+  getPropertyType,
+  getItemName
+} from 'joiHelpers';
 import { PropertiesAndInterfaces, Settings, InterfaceRecord, Property } from 'types';
 
 /**
  * Get Interface jsDoc
  */
-export const getInterfaceJsDoc = (joi: ObjectSchema): string => {
+export const getInterfaceJsDoc = (joi: AnySchema): string => {
   const name = getLabel(joi);
   const description = getDescription(joi);
 
@@ -60,7 +68,7 @@ export const getPropertiesAndInterfaces = (joi: ObjectSchema, defaults: Settings
 
   return result;
 };
-export const convertObject = (joi: ObjectSchema, settings?: Settings): InterfaceRecord[] => {
+export const convertSchema = (joi: AnySchema, settings?: Settings): InterfaceRecord[] => {
   if (!settings) {
     settings = {
       defaultToRequired: false,
@@ -77,15 +85,26 @@ export const convertObject = (joi: ObjectSchema, settings?: Settings): Interface
     throw 'At least one "object" does not have a .label()';
   }
 
-  const propertiesAndInterfaces = getPropertiesAndInterfaces(joi, settings);
+  if (joi.type === 'array') {
+    const itemName = getItemName(joi as ArraySchema);
+    types.push({
+      name,
+      content: `${getInterfaceJsDoc(joi)}
+export type ${name} = ${itemName}[];`
+    });
+  }
 
-  types.push({
-    name,
-    content: `${getInterfaceJsDoc(joi)}
+  if (joi.type === 'object') {
+    const propertiesAndInterfaces = getPropertiesAndInterfaces(joi as ObjectSchema, settings);
+
+    types.push({
+      name,
+      content: `${getInterfaceJsDoc(joi as ObjectSchema)}
 export interface ${name} {
 ${propertiesAndInterfaces.properties.map(p => p.content).join(`\n`)}
 }`
-  });
+    });
+  }
 
   return types;
 };
@@ -107,18 +126,12 @@ export const convertFromDirectory = async (
   }
 
   if (!fs.existsSync(fromDirectory)) {
-    if (settings.debug) {
-      const resolvedFromDirectory = Path.resolve(fromDirectory);
-      console.log(`fromDirectory "${resolvedFromDirectory}" does not exist`);
-    }
-    return false;
+    const resolvedFromDirectory = Path.resolve(fromDirectory);
+    throw `fromDirectory "${resolvedFromDirectory}" does not exist`;
   }
   if (!fs.existsSync(toDirectory)) {
-    if (settings.debug) {
-      const resolvedToDirectory = Path.resolve(toDirectory);
-      console.log(`toDirectory "${resolvedToDirectory}" does not exist`);
-    }
-    return false;
+    const resolvedToDirectory = Path.resolve(toDirectory);
+    throw `toDirectory "${resolvedToDirectory}" does not exist`;
   }
 
   // TODO:Possible new feature clear out toDirectory
@@ -138,7 +151,7 @@ export const convertFromDirectory = async (
       if (!Joi.isSchema(joiSchema)) {
         continue;
       }
-      const interfaceRecords = convertObject(joiSchema);
+      const interfaceRecords = convertSchema(joiSchema);
       allInterfaceRecords.push(...interfaceRecords);
       console.log(iterator);
     }
