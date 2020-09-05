@@ -52,7 +52,7 @@ export const getPropertyName = (joiProperty: JoiProperty): undefined | string =>
   return joiProperty.key;
 };
 
-export const getItemName = (joiArray: ArraySchema): undefined | string => {
+export const getArrayTypeName = (joiArray: ArraySchema): undefined | string => {
   return joiArray?.$_terms?.items[0]?._flags?.label;
 };
 
@@ -60,7 +60,7 @@ export const getPropertyType = (joiProperty: JoiProperty): undefined | string =>
   const schemaType = joiProperty.schema?.type;
 
   if (schemaType === 'array') {
-    const itemName = getItemName(joiProperty.schema as ArraySchema);
+    const itemName = getArrayTypeName(joiProperty.schema as ArraySchema);
 
     return `${itemName}[]`;
   }
