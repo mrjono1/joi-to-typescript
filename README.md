@@ -1,10 +1,13 @@
-# joi-ts-types
+# joi-to-typescript
 
 Convert [Joi](https://github.com/sideway/joi) Schemas to TypeScript interfaces
 
 This will allow you to reuse a Joi Schema that validates your [Hapi](https://github.com/hapijs/hapi) API to generate TypeScript interfaces saving you time.
 
-Important note: this has been built for `"joi": "^17.2.1"` and will probaly not work for older versions
+## Important
+
+- This has been built for `"joi": "^17.2.1"` and will probaly not work for older versions
+- Minimum node version 12 as Joi requries node 12
 
 ## Suggested Usage
 
@@ -63,8 +66,11 @@ export interface Settings {
 }
 ```
 
-## Possible features
+## TODO
 
+- Increase test quality and quantity
+- Support Enums
+- Support `null` fields
 - Convert sub schemas to interfaces
 - Ability to add your own custom types
 - Clear `toDirectory` to ensure there is no junk files

@@ -172,7 +172,6 @@ export const writeInterfaceFile = async (settings: Settings, schemaFileName: str
     }
     const interfaceRecords = convertSchema(settings, joiSchema);
     allInterfaceRecords.push(...interfaceRecords);
-    console.log(iterator);
   }
 
   if (allInterfaceRecords.length === 0) {

@@ -1,8 +1,7 @@
-import { ObjectSchema, AnySchema, ArraySchema } from 'joi';
-
 /**
  * This file is for interpreting the Joi Object Model
  */
+import { ObjectSchema, AnySchema, ArraySchema } from 'joi';
 
 /**
  * Get an object Label
@@ -28,10 +27,12 @@ interface JoiProperty {
 
 export const getRequired = (property: JoiProperty): undefined | boolean => {
   let required: undefined | boolean = undefined;
-  if (property.schema._flags?.presence) {
-    if (property.schema._flags.presence === 'optional') {
+  const presence: undefined | string = property.schema._flags?.presence;
+
+  if (presence) {
+    if (presence === 'optional') {
       required = false;
-    } else if (property.schema._flags.presence === 'required') {
+    } else if (presence === 'required') {
       required = true;
     }
   }
