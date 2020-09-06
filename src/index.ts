@@ -10,8 +10,8 @@ import {
   getPropertyName,
   getPropertyType,
   getArrayTypeName
-} from 'joiHelpers';
-import { PropertiesAndInterfaces, Settings, InterfaceRecord, Property } from 'types';
+} from './joiHelpers';
+import { PropertiesAndInterfaces, Settings, InterfaceRecord, Property } from './types';
 
 export { Settings };
 
