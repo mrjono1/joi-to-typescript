@@ -33,7 +33,6 @@ export interface InterfaceRecord {
   name: string;
   content: string;
   customTypes: string[];
-  //fileName?: string;
 }
 
 export interface Property {

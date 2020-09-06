@@ -89,10 +89,20 @@ export interface Settings {
 }
 ```
 
+## Joi Features Supported
+
+- .label('InterfaceName') - interface Name and in jsDoc
+- .description('What this interface is for') - jsdoc
+- .valid(['red', 'green', 'blue']) - enumerations
+- .optional() - optional properties `?`
+- .requried() - required properties
+- .array(), .object(), .string(), .number(), .boolean() - standard Joi schemas
+
+Joi Features not listed here will be ignored
+
 ## TODO
 
 - Increase test quality and quantity
-- Support Enums
 - Support `null` fields
 - Convert sub schemas to interfaces
 - Ability to add your own custom types

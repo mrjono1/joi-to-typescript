@@ -1,6 +1,10 @@
 import Joi from 'joi';
 import { PersonSchema } from './PersonSchema';
 
+export const ZebraSchema = Joi.object({
+  name: Joi.string()
+}).label('Zebra');
+
 export const ItemSchema = Joi.object({
   name: Joi.string().required()
 }).label('Item');
