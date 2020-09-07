@@ -102,6 +102,7 @@ Joi Features not listed here will be ignored
 
 ## TODO
 
+- Investigate converting code to use `AnySchema.describe()` this may enable backwards compatability
 - Increase test quality and quantity
 - Support `null` fields
 - Convert sub schemas to interfaces

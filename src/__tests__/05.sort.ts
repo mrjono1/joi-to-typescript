@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-import { convertSchema, Settings } from '../index';
+import { convertSchema } from '../index';
 
 test('basic', () => {
   const schema = Joi.object({
@@ -11,7 +11,7 @@ test('basic', () => {
     .label('TestSchema')
     .description('a test schema definition');
 
-  const result = convertSchema(({} as unknown) as Settings, schema);
+  const result = convertSchema({}, schema);
 
   expect(result[0].content).toBe(`/**
  * TestSchema

@@ -196,7 +196,7 @@ export const writeInterfaceFile = async (settings: Settings, schemaFileName: str
   // Create Type File Name
   const typeFileName = schemaFileName.endsWith(`${settings.schemaFileSuffix}.ts`)
     ? schemaFileName.substring(0, schemaFileName.length - `${settings.schemaFileSuffix}.ts`.length)
-    : schemaFileName;
+    : schemaFileName.replace('.ts', '');
 
   // Clean up interface records list
   // Sort Interfaces
