@@ -2,15 +2,7 @@ import Joi, { ObjectSchema, AnySchema, ArraySchema } from 'joi';
 import Path from 'path';
 import fs from 'fs';
 
-import {
-  getLabel,
-  getDescription,
-  getRequired,
-  getProperties,
-  getPropertyName,
-  getPropertyType,
-  getArrayTypeName
-} from './joiHelpers';
+import { getRequired, getProperties, getPropertyName, getPropertyType, getArrayTypeName, Describe } from './joiHelpers';
 import { PropertiesAndInterfaces, Settings, InterfaceRecord, Property } from './types';
 
 export { Settings };
@@ -58,9 +50,9 @@ export const isTypeCustom = (type: string): boolean => {
 /**
  * Get Interface jsDoc
  */
-export const getInterfaceJsDoc = (joi: AnySchema): string => {
-  const name = getLabel(joi);
-  const description = getDescription(joi);
+export const getInterfaceJsDoc = (details: Describe): string => {
+  const name = details.flags?.label;
+  const description = details.flags?.description;
 
   if (description) {
     return `/**
@@ -118,7 +110,9 @@ export const getPropertiesAndInterfaces = (joi: ObjectSchema, defaults: Partial<
 export const convertSchema = (settings: Partial<Settings>, joi: AnySchema): InterfaceRecord[] => {
   const types: InterfaceRecord[] = [];
 
-  const name = getLabel(joi);
+  const details = joi.describe() as Describe;
+
+  const name = details?.flags?.label;
   if (!name) {
     throw 'At least one "object" does not have a .label()';
   }
@@ -135,7 +129,7 @@ export const convertSchema = (settings: Partial<Settings>, joi: AnySchema): Inte
     types.push({
       name,
       customTypes,
-      content: `${getInterfaceJsDoc(joi)}
+      content: `${getInterfaceJsDoc(details)}
 export type ${name} = ${arrayTypeName}[];`
     });
   }
@@ -151,7 +145,7 @@ export type ${name} = ${arrayTypeName}[];`
     types.push({
       name,
       customTypes,
-      content: `${getInterfaceJsDoc(joi as ObjectSchema)}
+      content: `${getInterfaceJsDoc(details)}
 export interface ${name} {
 ${propertiesAndInterfaces.properties.map(p => p.content).join(`\n`)}
 }`

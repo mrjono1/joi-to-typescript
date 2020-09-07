@@ -1,23 +1,17 @@
 /**
  * This file is for interpreting the Joi Object Model
  */
-import { ObjectSchema, AnySchema, ArraySchema } from 'joi';
+import Joi, { ObjectSchema, ArraySchema } from 'joi';
 
 /**
- * Get a schema .label()
- * @param joi a Joi schema
+ * Not all properties have been typed so add them
  */
-export const getLabel = (joi: AnySchema): undefined | string => {
-  return joi?._flags?.label;
-};
-
-/**
- * Get schema .description()
- * @param joi a Joi schema
- */
-export const getDescription = (joi: AnySchema): undefined | string => {
-  return joi?._flags?.description;
-};
+export interface Describe extends Joi.Description {
+  flags: {
+    label?: string;
+    description?: string;
+  };
+}
 
 interface JoiProperty {
   key: string;
