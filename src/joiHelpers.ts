@@ -11,6 +11,7 @@ export interface Describe extends Joi.Description {
     label?: string;
     description?: string;
   };
+  items?: [{ flags?: { label?: string }; type?: string }];
 }
 
 interface JoiProperty {
@@ -70,8 +71,12 @@ export const getPropertyName = (joiProperty: JoiProperty): undefined | string =>
  * A .label() defined on a .array()
  * @param joiArray ArraySchema
  */
-export const getArrayTypeName = (joiArray: ArraySchema): undefined | string => {
+export const getArrayTypeNameInternal = (joiArray: ArraySchema): undefined | string => {
   return joiArray?.$_terms?.items[0]?._flags?.label ?? joiArray?.$_terms?.items[0]?.type;
+};
+
+export const getArrayTypeName = (details: Describe): undefined | string => {
+  return details?.items?.[0]?.flags?.label ?? details?.items?.[0]?.type;
 };
 
 export interface PropertyType {
@@ -86,7 +91,7 @@ export const getPropertyType = (joiProperty: JoiProperty): undefined | PropertyT
   }
 
   if (schemaType === 'array') {
-    const itemName = getArrayTypeName(joiProperty.schema as ArraySchema);
+    const itemName = getArrayTypeNameInternal(joiProperty.schema as ArraySchema);
     if (!itemName) {
       return undefined;
     }

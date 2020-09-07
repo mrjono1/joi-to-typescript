@@ -1,4 +1,4 @@
-import Joi, { ObjectSchema, AnySchema, ArraySchema } from 'joi';
+import Joi, { ObjectSchema, AnySchema } from 'joi';
 import Path from 'path';
 import fs from 'fs';
 
@@ -117,8 +117,8 @@ export const convertSchema = (settings: Partial<Settings>, joi: AnySchema): Inte
     throw 'At least one "object" does not have a .label()';
   }
 
-  if (joi.type === 'array') {
-    const arrayTypeName = getArrayTypeName(joi as ArraySchema);
+  if (details.type === 'array') {
+    const arrayTypeName = getArrayTypeName(details);
     if (!arrayTypeName) {
       throw `Array items do not have a .label() for '${name}'`;
     }
@@ -134,7 +134,7 @@ export type ${name} = ${arrayTypeName}[];`
     });
   }
 
-  if (joi.type === 'object') {
+  if (details.type === 'object') {
     const propertiesAndInterfaces = getPropertiesAndInterfaces(joi as ObjectSchema, settings);
 
     // get all the custom types on properties
