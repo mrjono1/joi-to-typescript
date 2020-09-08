@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-import { convertSchema } from '../index';
+import { convertSchema, Settings } from '../index';
 
 test('06.enums', () => {
   const schema = Joi.object({
@@ -14,7 +14,7 @@ test('06.enums', () => {
     .label('TestSchema')
     .description('a test schema definition');
 
-  const result = convertSchema({ defaultToRequired: true }, schema);
+  const result = convertSchema(({ defaultToRequired: true } as unknown) as Settings, schema);
 
   expect(result[0].content).toBe(`/**
  * TestSchema

@@ -2,13 +2,13 @@ import Joi, { ObjectSchema, AnySchema } from 'joi';
 import Path from 'path';
 import fs from 'fs';
 
-import { getRequired, getProperties, getPropertyName, getPropertyType, getArrayTypeName, Describe } from './joiHelpers';
+import { getArrayTypeName, Describe, getPropertyType } from './joiHelpers';
 import { PropertiesAndInterfaces, Settings, InterfaceRecord, Property } from './types';
 
 export { Settings };
 
-const defaultSettings = (settings: Settings): Settings => {
-  const appSettings = { ...settings };
+export const defaultSettings = (settings: Partial<Settings>): Settings => {
+  const appSettings = { ...settings } as Settings;
 
   if (!appSettings.defaultToRequired) {
     appSettings.defaultToRequired = false;
@@ -66,30 +66,46 @@ export const getInterfaceJsDoc = (details: Describe): string => {
   }
 };
 
-export const getPropertiesAndInterfaces = (joi: ObjectSchema, defaults: Partial<Settings>): PropertiesAndInterfaces => {
+/**
+ * .optional() or .required() if not use settings default
+ */
+export const getRequired = (details: Describe, settings: Settings): boolean => {
+  const presence = details.flags?.presence;
+
+  if (presence === 'optional') {
+    return false;
+  } else if (presence === 'required') {
+    return true;
+  } else {
+    return settings.defaultToRequired;
+  }
+};
+
+export const getPropertiesAndInterfaces = (joi: ObjectSchema, settings: Settings): PropertiesAndInterfaces => {
   const result: PropertiesAndInterfaces = { properties: [], interfaces: [] };
 
-  const joiProperties = getProperties(joi);
-  for (const joiProperty of joiProperties) {
-    const name = getPropertyName(joiProperty);
-    if (!name) {
-      if (defaults.debug) {
-        console.log('Property Name not found');
-      }
-      continue;
-    }
-    const type = getPropertyType(joiProperty);
+  const details = joi.describe() as Describe;
+  if (!details.keys) {
+    return result;
+  }
+
+  for (const [name, key] of Object.entries(details.keys)) {
+    const propertyObject = key as Describe;
+
+    const type = getPropertyType(propertyObject);
     if (!type) {
-      if (defaults.debug) {
+      if (settings.debug) {
         console.log('Property Type not found');
       }
       continue;
     }
 
-    const required = getRequired(joiProperty) ?? defaults.defaultToRequired;
+    const description = propertyObject.flags?.description;
+
+    const required = getRequired(propertyObject, settings);
 
     const content = `  /**
-   * ${name}
+   * ${name}${description ? `\n   * ${description}` : ''}
    */
   ${name}${required ? '' : '?'}: ${type.typeName};`;
     const property: Property = {
@@ -98,6 +114,7 @@ export const getPropertiesAndInterfaces = (joi: ObjectSchema, defaults: Partial<
       content,
       customType: isTypeCustom(type.baseTypeName) ? type.baseTypeName : undefined
     };
+
     result.properties.push(property);
   }
 
@@ -107,7 +124,7 @@ export const getPropertiesAndInterfaces = (joi: ObjectSchema, defaults: Partial<
   return result;
 };
 
-export const convertSchema = (settings: Partial<Settings>, joi: AnySchema): InterfaceRecord[] => {
+export const convertSchema = (settings: Settings, joi: AnySchema): InterfaceRecord[] => {
   const types: InterfaceRecord[] = [];
 
   const details = joi.describe() as Describe;
@@ -237,12 +254,12 @@ export const writeIndexFile = (settings: Settings, fileNamesToExport: string[]):
  * Create interfaces from schemas from a directory
  * @param settings Settings
  */
-export const convertFromDirectory = async (settings: Settings): Promise<boolean> => {
+export const convertFromDirectory = async (settings: Partial<Settings>): Promise<boolean> => {
   const appSettings = defaultSettings(settings);
 
   // Check and resolve directories
-  appSettings.schemaDirectory = Path.resolve(settings.schemaDirectory);
-  if (!fs.existsSync(settings.schemaDirectory)) {
+  appSettings.schemaDirectory = Path.resolve(appSettings.schemaDirectory);
+  if (!fs.existsSync(appSettings.schemaDirectory)) {
     throw `schemaDirectory "${appSettings.schemaDirectory}" does not exist`;
   }
   appSettings.interfaceDirectory = Path.resolve(appSettings.interfaceDirectory);

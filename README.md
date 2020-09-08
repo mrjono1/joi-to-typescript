@@ -19,7 +19,7 @@ This will allow you to reuse a Joi Schema that validates your [Hapi](https://git
 ## Suggested Usage
 
 1. Create a Schemas Folder eg. `src/schemas`
-1. Create a Types Folder eg. `src/types`
+1. Create a interfaces Folder eg. `src/interfaces`
 1. Create Joi Schemas in the Schemas folder with a file name suffix of Schemas eg. `AddressSchema.ts`
    - The file name suffix ensures that type file and schema file imports are not confusing
 
@@ -30,10 +30,47 @@ This will allow you to reuse a Joi Schema that validates your [Hapi](https://git
 ```typescript
 import Joi from 'joi';
 
+// Input
 export const PersonSchema = Joi.object({
   firstName: Joi.string().required(),
-  lastName: Joi.string().required()
+  lastName: Joi.string()
+    .required()
+    .description('Last Name'),
+  people: PeopleSchema
 }).label('Person');
+
+export const PeopleSchema = Joi.array()
+  .items(PersonSchema)
+  .required()
+  .label('People')
+  .description('A list of People');
+
+// Output
+/**
+ * Person
+ */
+export interface Person {
+  /**
+   * firstName
+   */
+  firstName: string;
+  /**
+   * lastName
+   * Last Name
+   */
+  lastName: string;
+  /**
+   * people
+   * A list of People
+   */
+  people: People;
+}
+
+/**
+ * People
+ * A list of People
+ */
+export type People = Person[];
 ```
 
 ##### Points of Interest
@@ -49,7 +86,7 @@ import { convertFromDirectory } from 'joi-to-typescript';
 
 convertFromDirectory({
   schemaDirectory: './src/schemas',
-  interfaceDirectory: './src/types',
+  interfaceDirectory: './src/interfaces',
   debug: true
 });
 ```
@@ -71,21 +108,21 @@ export interface Settings {
   /**
    * Should interface properties be defaulted to optional or required
    */
-  defaultToRequired?: boolean;
+  defaultToRequired: boolean;
   /**
    * What schema file name suffix will be removed when creating the interface file name
    * Defaults to `Schema`
    * This ensures that an interface and Schema with the file name are not confused
    */
-  schemaFileSuffix?: string;
+  schemaFileSuffix: string;
   /**
    * If `true` the console will include more information
    */
-  debug?: boolean;
+  debug: boolean;
   /**
    * File Header content for generated files
    */
-  fileHeader?: string;
+  fileHeader: string;
 }
 ```
 
@@ -102,7 +139,7 @@ Joi Features not listed here will be ignored
 
 ## TODO
 
-- Investigate converting code to use `AnySchema.describe()` this may enable backwards compatability
+- Now using `AnySchema.describe()` investigate if this project now supports backwards compatability to older joi versions
 - Increase test quality and quantity
 - Support `null` fields
 - Convert sub schemas to interfaces

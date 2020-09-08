@@ -13,20 +13,20 @@ export interface Settings {
   /**
    * Should interface properties be defaulted to optional or required
    */
-  defaultToRequired?: boolean;
+  defaultToRequired: boolean;
   /**
    * What schema file name suffix will be removed when creating the interface file name
    * Defaults to `Schema`
    */
-  schemaFileSuffix?: string;
+  schemaFileSuffix: string;
   /**
    * If `true` the console will include more information
    */
-  debug?: boolean;
+  debug: boolean;
   /**
    * File Header content for generated files
    */
-  fileHeader?: string;
+  fileHeader: string;
 }
 
 export interface InterfaceRecord {

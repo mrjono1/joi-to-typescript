@@ -1,11 +1,13 @@
 import Joi from 'joi';
 
-import { convertSchema } from '../index';
+import { convertSchema, Settings } from '../index';
 
 test('01.basic', () => {
   const schema = Joi.object({
     // basic types
-    name: Joi.string().optional(),
+    name: Joi.string()
+      .optional()
+      .description('Test Schema Name'),
     propertyName1: Joi.boolean().required(),
     dateCreated: Joi.date(),
     count: Joi.number()
@@ -13,7 +15,7 @@ test('01.basic', () => {
     .label('TestSchema')
     .description('a test schema definition');
 
-  const result = convertSchema({}, schema);
+  const result = convertSchema(({} as unknown) as Settings, schema);
 
   expect(result[0].content).toBe(`/**
  * TestSchema
@@ -30,6 +32,7 @@ export interface TestSchema {
   dateCreated?: Date;
   /**
    * name
+   * Test Schema Name
    */
   name?: string;
   /**
@@ -49,16 +52,16 @@ export interface TestSchema {
     dateCreated: Joi.array().items(Joi.date()),
     count: Joi.array().items(Joi.number())
   })
-    .label('ArraySchema')
+    .label('ArrayObject')
     .description('an Array test schema definition');
 
-  const arrayResult = convertSchema({}, schemaArray);
+  const arrayResult = convertSchema(({} as unknown) as Settings, schemaArray);
 
   expect(arrayResult[0].content).toBe(`/**
- * ArraySchema
+ * ArrayObject
  * an Array test schema definition
  */
-export interface ArraySchema {
+export interface ArrayObject {
   /**
    * count
    */
