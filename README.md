@@ -13,7 +13,7 @@ This will allow you to reuse a Joi Schema that validates your [Hapi](https://git
 
 ## Important
 
-- This has been built for `"joi": "^17.2.1"` and will probaly not work for older versions
+- This has been built for `"joi": "^17.2.1"` and will probaly not work for older versions, mainly due to package name changes
 - Minimum node version 12 as Joi requries node 12
 
 ## Suggested Usage
@@ -135,11 +135,10 @@ export interface Settings {
 - .requried() - required properties
 - .array(), .object(), .string(), .number(), .boolean() - standard Joi schemas
 
-Joi Features not listed here will be ignored
+Joi Features not listed here will probably be ignored
 
 ## TODO
 
-- Now using `AnySchema.describe()` investigate if this project now supports backwards compatability to older joi versions
 - Increase test quality and quantity
 - Support `null` fields
 - Convert sub schemas to interfaces

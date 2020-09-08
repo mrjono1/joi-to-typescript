@@ -1,4 +1,4 @@
-import Joi, { ObjectSchema, AnySchema } from 'joi';
+import Joi, { AnySchema } from 'joi';
 import Path from 'path';
 import fs from 'fs';
 
@@ -81,10 +81,9 @@ export const getRequired = (details: Describe, settings: Settings): boolean => {
   }
 };
 
-export const getPropertiesAndInterfaces = (joi: ObjectSchema, settings: Settings): PropertiesAndInterfaces => {
+export const getPropertiesAndInterfaces = (details: Describe, settings: Settings): PropertiesAndInterfaces => {
   const result: PropertiesAndInterfaces = { properties: [], interfaces: [] };
 
-  const details = joi.describe() as Describe;
   if (!details.keys) {
     return result;
   }
@@ -152,7 +151,7 @@ export type ${name} = ${arrayTypeName}[];`
   }
 
   if (details.type === 'object') {
-    const propertiesAndInterfaces = getPropertiesAndInterfaces(joi as ObjectSchema, settings);
+    const propertiesAndInterfaces = getPropertiesAndInterfaces(details, settings);
 
     // get all the custom types on properties
     const customTypes: string[] = propertiesAndInterfaces.properties
