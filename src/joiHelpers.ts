@@ -60,5 +60,12 @@ export const getPropertyType = (joiProperty: Describe): undefined | PropertyType
     return { typeName: 'Date', baseTypeName: 'Date' };
   }
 
+  if (schemaType === 'object') {
+    const objectType = joiProperty.flags.label;
+    if (objectType) {
+      return { typeName: objectType, baseTypeName: objectType };
+    }
+  }
+
   return { typeName: schemaType, baseTypeName: schemaType };
 };

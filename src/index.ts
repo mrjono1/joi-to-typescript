@@ -40,6 +40,7 @@ export const isTypeCustom = (type: string): boolean => {
     case 'string':
     case 'boolean':
     case 'number':
+    case 'object':
     case 'Date':
       return false;
     default:
