@@ -32,7 +32,6 @@ export * from './Readme';
  */
 
 /**
- * TestSchema
  * a test schema definition
  */
 export interface TestSchema {
@@ -60,7 +59,6 @@ export interface TestSchema {
  */
 export interface Bar {
   /**
-   * id
    * Id
    */
   id: number;
@@ -71,12 +69,10 @@ export interface Bar {
  */
 export interface Foo {
   /**
-   * bar
    * Bar
    */
   bar: Bar;
   /**
-   * id
    * Id
    */
   id: number;
@@ -105,7 +101,6 @@ export interface Job {
 }
 
 /**
- * People
  * A list of People
  */
 export type People = Person[];
@@ -123,7 +118,6 @@ export interface Person {
    */
   job?: Job;
   /**
-   * lastName
    * Last Name
    */
   lastName: string;

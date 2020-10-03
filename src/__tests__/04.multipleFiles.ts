@@ -26,11 +26,11 @@ import { Person } from '.';
  */
 export interface Item {
   /**
-   * femaleZebra
+   * Female Zebra
    */
   femaleZebra?: Zebra;
   /**
-   * maleZebra
+   * Male Zebra
    */
   maleZebra?: Zebra;
   /**
@@ -40,13 +40,11 @@ export interface Item {
 }
 
 /**
- * People
  * A list of People
  */
 export type People = Person[];
 
 /**
- * Test
  * a test schema definition
  */
 export interface Test {
@@ -55,7 +53,6 @@ export interface Test {
    */
   name?: string;
   /**
-   * people
    * A list of People
    */
   people?: Person[];

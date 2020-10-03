@@ -55,9 +55,9 @@ export const getInterfaceJsDoc = (details: Describe): string => {
   const name = details.flags?.label;
   const description = details.flags?.description;
 
+  // only show description if it has one, no need to double up
   if (description) {
     return `/**
- * ${name}
  * ${description}
  */`;
   } else {
@@ -104,9 +104,12 @@ export const getPropertiesAndInterfaces = (details: Describe, settings: Settings
 
     const required = getRequired(propertyObject, settings);
 
-    const content = `  /**
-   * ${name}${description ? `\n   * ${description}` : ''}
-   */
+    // only show description if it has one, no need to double up
+    const propertyJsDoc = `  /**
+   * ${description ? description : name}
+   */`;
+
+    const content = `${propertyJsDoc}
   ${name}${required ? '' : '?'}: ${type.typeName};`;
     const property: Property = {
       name,

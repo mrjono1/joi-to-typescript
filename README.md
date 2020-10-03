@@ -73,7 +73,6 @@ export interface Job {
 }
 
 /**
- * People
  * A list of People
  */
 export type People = Person[];
@@ -91,7 +90,6 @@ export interface Person {
    */
   job?: Job;
   /**
-   * lastName
    * Last Name
    */
   lastName: string;

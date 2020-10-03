@@ -18,7 +18,6 @@ test('01.basic', () => {
   const result = convertSchema(({} as unknown) as Settings, schema);
 
   expect(result[0].content).toBe(`/**
- * TestSchema
  * a test schema definition
  */
 export interface TestSchema {
@@ -31,7 +30,6 @@ export interface TestSchema {
    */
   dateCreated?: Date;
   /**
-   * name
    * Test Schema Name
    */
   name?: string;
@@ -58,7 +56,6 @@ export interface TestSchema {
   const arrayResult = convertSchema(({} as unknown) as Settings, schemaArray);
 
   expect(arrayResult[0].content).toBe(`/**
- * ArrayObject
  * an Array test schema definition
  */
 export interface ArrayObject {

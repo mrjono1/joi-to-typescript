@@ -14,7 +14,6 @@ test('basic', () => {
   const result = convertSchema(({} as unknown) as Settings, schema);
 
   expect(result[0].content).toBe(`/**
- * TestSchema
  * a test schema definition
  */
 export interface TestSchema {

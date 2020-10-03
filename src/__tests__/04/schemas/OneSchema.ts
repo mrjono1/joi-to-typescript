@@ -7,8 +7,8 @@ export const ZebraSchema = Joi.object({
 
 export const ItemSchema = Joi.object({
   name: Joi.string().required(),
-  maleZebra: ZebraSchema,
-  femaleZebra: ZebraSchema
+  maleZebra: ZebraSchema.description('Male Zebra'),
+  femaleZebra: ZebraSchema.description('Female Zebra')
 }).label('Item');
 
 export const PeopleSchema = Joi.array()

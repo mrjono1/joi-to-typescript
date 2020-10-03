@@ -29,7 +29,6 @@ export interface Item {
 }
 
 /**
- * Test
  * a test schema definition
  */
 export interface Test {
@@ -48,7 +47,6 @@ export interface Test {
 }
 
 /**
- * TestList
  * A list of Test object
  */
 export type TestList = Test[];
