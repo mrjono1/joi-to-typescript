@@ -6,7 +6,9 @@ export const ZebraSchema = Joi.object({
 }).label('Zebra');
 
 export const ItemSchema = Joi.object({
-  name: Joi.string().required()
+  name: Joi.string().required(),
+  maleZebra: ZebraSchema,
+  femaleZebra: ZebraSchema
 }).label('Item');
 
 export const PeopleSchema = Joi.array()
