@@ -35,14 +35,37 @@ export const getArrayTypeName = (details: Describe): undefined | string => {
 
 export const getCustomTypes = (types: BasicJoiType[]): string[] => {
   return filterMap(types, property => {
-    return property.customType ? property.customType : undefined;
-  });
+    return property.customTypes ? property.customTypes : undefined;
+  }).flat();
 };
 
 export interface PropertyType {
   typeName: string;
-  baseTypeName: string;
+  baseTypeName: string | string[];
 }
+
+export const parseDescribe = (details: Describe): undefined | BasicJoiType => {
+  const type = exports.getSchemaType(details);
+  if (!type) {
+    return undefined;
+  }
+  // const name = details?.flags?.label;
+  // if (!name) {
+  //   throw 'no label field on ${JSON.stringify(details, null, 4)}';
+  // }
+  const content = type.typeName;
+  return {
+    type: type.typeName,
+    content,
+    customTypes: exports.filterOutBasicTypes(type.baseTypeName)
+  };
+};
+
+export const parseMatches = (details: Match[]): BasicJoiType[] => {
+  return filterMap(details, detail => {
+    return parseDescribe(detail.schema);
+  });
+};
 
 export const getSchemaType = (joiProperty: Describe): undefined | PropertyType => {
   const schemaType = joiProperty?.type;
@@ -83,6 +106,16 @@ export const getSchemaType = (joiProperty: Describe): undefined | PropertyType =
     }
   }
 
+  if (schemaType === 'alternatives') {
+    const typesToUnion = parseMatches(joiProperty.matches as Match[]);
+    if (typesToUnion.length === 0) {
+      return undefined;
+    }
+    const types = typesToUnion.map(t => t.content);
+    const unionStr = types.join(' | ');
+    return { typeName: unionStr, baseTypeName: types };
+  }
+
   return { typeName: schemaType, baseTypeName: schemaType };
 };
 
@@ -101,4 +134,15 @@ export const isTypeCustom = (type: string): boolean => {
     default:
       return true;
   }
+};
+
+export const filterOutBasicTypes = (types: string[] | string): string[] | undefined => {
+  if (!Array.isArray(types)) {
+    types = [types];
+  }
+  const customTypes = types.filter(type => isTypeCustom(type));
+  if (customTypes.length === 0) {
+    return undefined;
+  }
+  return customTypes;
 };

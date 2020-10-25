@@ -44,9 +44,9 @@ export interface BasicJoiType {
    */
   type: string;
   /**
-   * If a label is set for the schema, it is here
+   * used to reference any other schemas
    */
-  customType?: string;
+  customTypes?: string[];
   /**
    * The typescript result
    */

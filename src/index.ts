@@ -2,7 +2,16 @@ import Joi, { AnySchema } from 'joi';
 import Path from 'path';
 import fs from 'fs';
 
-import { getArrayTypeName, Describe, getSchemaType, getCustomTypes, isTypeCustom, Match } from './joiHelpers';
+import {
+  getArrayTypeName,
+  Describe,
+  getSchemaType,
+  getCustomTypes,
+  isTypeCustom,
+  Match,
+  parseDescribe,
+  filterOutBasicTypes
+} from './joiHelpers';
 import { PropertiesAndInterfaces, Settings, InterfaceRecord, Property, BasicJoiType } from './types';
 import { filterMap } from 'utils';
 
@@ -99,7 +108,7 @@ export const getPropertiesAndInterfaces = (details: Describe, settings: Settings
       name,
       type: type.typeName,
       content,
-      customType: isTypeCustom(type.baseTypeName) ? type.baseTypeName : undefined
+      customTypes: filterOutBasicTypes(type.baseTypeName)
     };
 
     result.properties.push(property);
@@ -111,23 +120,9 @@ export const getPropertiesAndInterfaces = (details: Describe, settings: Settings
   return result;
 };
 
-export const parseMatches = (details: Match[], settings: Settings): BasicJoiType[] => {
-  return filterMap(details, propertyObject => {
-    const type = getSchemaType(propertyObject.schema);
-    if (!type) {
-      if (settings.debug) {
-        console.log('Property Type not found');
-      }
-      return undefined;
-    }
-
-    const content = type.typeName;
-    return {
-      name,
-      type: type.typeName,
-      content,
-      customType: isTypeCustom(type.baseTypeName) ? type.baseTypeName : undefined
-    };
+export const parseMatches = (details: Match[]): BasicJoiType[] => {
+  return filterMap(details, detail => {
+    return parseDescribe(detail.schema);
   });
 };
 
@@ -174,7 +169,7 @@ ${propertiesAndInterfaces.properties.map(p => p.content).join(`\n`)}
   }
 
   if (details.type === 'alternatives') {
-    const typesToUnion = parseMatches(details.matches as Match[], settings);
+    const typesToUnion = parseMatches(details.matches as Match[]);
     const customTypes = getCustomTypes(typesToUnion);
     const unionStr = typesToUnion.map(t => t.content).join(' | ');
     types.push({
@@ -222,7 +217,7 @@ export const writeInterfaceFile = async (settings: Settings, schemaFileName: str
   const typeFileName = schemaFileName.endsWith(`${settings.schemaFileSuffix}.ts`)
     ? schemaFileName.substring(0, schemaFileName.length - `${settings.schemaFileSuffix}.ts`.length)
     : schemaFileName.replace('.ts', '');
-
+  console.log(`index.ts:219~~~~~~~~~~~~~~~~~~~${JSON.stringify(allInterfaceRecords, null, 4)}~~~~~~~~~~~~~~~~~~~`);
   // Clean up interface records list
   // Sort Interfaces
   const interfacesToBeWritten = allInterfaceRecords.sort(
@@ -236,6 +231,9 @@ export const writeInterfaceFile = async (settings: Settings, schemaFileName: str
   const externalTypes: string[] = [];
   const allExternalTypes: string[] = [];
   const allCurentFileInterfaceNames = interfacesToBeWritten.map(interfaceToBeWritten => interfaceToBeWritten.name);
+  console.log(
+    `index.ts:233~~~~~~~~~~~~~~~~~~~${JSON.stringify(allCurentFileInterfaceNames, null, 4)}~~~~~~~~~~~~~~~~~~~`
+  );
   for (const interfaceToBeWritten of interfacesToBeWritten) {
     for (const customType of interfaceToBeWritten.customTypes) {
       if (!allCurentFileInterfaceNames.includes(customType)) {
