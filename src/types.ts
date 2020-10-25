@@ -35,11 +35,29 @@ export interface InterfaceRecord {
   customTypes: string[];
 }
 
-export interface Property {
-  name: string;
+/**
+ * Basic info on a joi schema
+ */
+export interface BasicJoiType {
+  /**
+   * number, string literals, Joi.label, etc
+   */
   type: string;
+  /**
+   * If a label is set for the schema, it is here
+   */
   customType?: string;
+  /**
+   * The typescript result
+   */
   content: string;
+}
+
+export interface Property extends BasicJoiType {
+  /**
+   * The object key this schema was stored under
+   */
+  name: string;
 }
 
 export interface PropertiesAndInterfaces {

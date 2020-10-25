@@ -2,8 +2,9 @@ import Joi, { AnySchema } from 'joi';
 import Path from 'path';
 import fs from 'fs';
 
-import { getArrayTypeName, Describe, getPropertyType } from './joiHelpers';
-import { PropertiesAndInterfaces, Settings, InterfaceRecord, Property } from './types';
+import { getArrayTypeName, Describe, getSchemaType, getCustomTypes, isTypeCustom, Match } from './joiHelpers';
+import { PropertiesAndInterfaces, Settings, InterfaceRecord, Property, BasicJoiType } from './types';
+import { filterMap } from 'utils';
 
 export { Settings };
 
@@ -29,23 +30,6 @@ export const defaultSettings = (settings: Partial<Settings>): Settings => {
  */`;
   }
   return appSettings;
-};
-
-/**
- * Is the type a TypeScript type or Custom
- * @param type type name
- */
-export const isTypeCustom = (type: string): boolean => {
-  switch (type.replace('[]', '')) {
-    case 'string':
-    case 'boolean':
-    case 'number':
-    case 'object':
-    case 'Date':
-      return false;
-    default:
-      return true;
-  }
 };
 
 /**
@@ -92,7 +76,7 @@ export const getPropertiesAndInterfaces = (details: Describe, settings: Settings
   for (const [name, key] of Object.entries(details.keys)) {
     const propertyObject = key as Describe;
 
-    const type = getPropertyType(propertyObject);
+    const type = getSchemaType(propertyObject);
     if (!type) {
       if (settings.debug) {
         console.log('Property Type not found');
@@ -127,11 +111,30 @@ export const getPropertiesAndInterfaces = (details: Describe, settings: Settings
   return result;
 };
 
+export const parseMatches = (details: Match[], settings: Settings): BasicJoiType[] => {
+  return filterMap(details, propertyObject => {
+    const type = getSchemaType(propertyObject.schema);
+    if (!type) {
+      if (settings.debug) {
+        console.log('Property Type not found');
+      }
+      return undefined;
+    }
+
+    const content = type.typeName;
+    return {
+      name,
+      type: type.typeName,
+      content,
+      customType: isTypeCustom(type.baseTypeName) ? type.baseTypeName : undefined
+    };
+  });
+};
+
 export const convertSchema = (settings: Settings, joi: AnySchema): InterfaceRecord[] => {
   const types: InterfaceRecord[] = [];
 
   const details = joi.describe() as Describe;
-
   const name = details?.flags?.label;
   if (!name) {
     throw 'At least one "object" does not have a .label()';
@@ -158,9 +161,7 @@ export type ${name} = ${arrayTypeName}[];`
     const propertiesAndInterfaces = getPropertiesAndInterfaces(details, settings);
 
     // get all the custom types on properties
-    const customTypes: string[] = propertiesAndInterfaces.properties
-      .filter(property => property.customType)
-      .map(property => property.customType) as string[];
+    const customTypes = getCustomTypes(propertiesAndInterfaces.properties);
 
     types.push({
       name,
@@ -172,6 +173,16 @@ ${propertiesAndInterfaces.properties.map(p => p.content).join(`\n`)}
     });
   }
 
+  if (details.type === 'alternatives') {
+    const typesToUnion = parseMatches(details.matches as Match[], settings);
+    const customTypes = getCustomTypes(typesToUnion);
+    const unionStr = typesToUnion.map(t => t.content).join(' | ');
+    types.push({
+      name,
+      customTypes,
+      content: `${getInterfaceJsDoc(details)}\nexport type ${name} = ${unionStr};\n`
+    });
+  }
   return types;
 };
 
