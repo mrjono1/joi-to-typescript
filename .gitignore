@@ -105,3 +105,9 @@ dist
 
 # Dont save test models
 **/__tests__/**/models
+
+
+
+# ignore nix files
+.envrc
+shell.nix
