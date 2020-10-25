@@ -15,5 +15,19 @@ module.exports = {
     ecmaVersion: 2018,
     sourceType: 'module' // Allows for the use of imports
   },
-  rules: { 'lines-between-class-members': ['error', 'always', { exceptAfterSingleLine: true }] }
+  rules: {
+    'lines-between-class-members': [
+      'error',
+      'always',
+      {
+        exceptAfterSingleLine: true
+      }
+    ],
+    '@typescript-eslint/no-use-before-define': [
+      'error',
+      {
+        functions: false
+      }
+    ]
+  }
 };

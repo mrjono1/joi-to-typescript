@@ -2,7 +2,7 @@
  * This file is for interpreting the Joi Object Model
  */
 import Joi from 'joi';
-import { BasicJoiType } from './types';
+import { BasicJoiType, TypeContent } from './types';
 import { filterMap } from './utils';
 
 export interface Match {
@@ -20,7 +20,7 @@ export interface Describe extends Joi.Description {
     presence?: 'optional' | 'required';
     only?: boolean;
   };
-  items?: [{ flags?: { label?: string }; type?: string }];
+  items?: [{ flags?: { label?: string }; type?: string; matches?: Match[] }];
   matches?: Match[];
 }
 
@@ -29,8 +29,21 @@ export interface Describe extends Joi.Description {
  * @param details joi.details() object
  */
 export const getArrayTypeName = (details: Describe): undefined | string => {
-  // TODO: handle parsing nested joi objects
-  return details?.items?.[0]?.flags?.label ?? details?.items?.[0]?.type;
+  // TODO: handle parsing nested joi schemas
+  const label = details?.items?.[0]?.flags?.label;
+  if (label) {
+    return label;
+  }
+
+  const type = details?.items?.[0]?.type;
+  if (type === 'alternatives') {
+    const typesToUnion = parseMatches(details?.items?.[0]?.matches as Match[]);
+    if (typesToUnion.length === 0) {
+      return undefined;
+    }
+    return `(${typesToUnion.map(t => t.content).join(' | ')})`;
+  }
+  return type;
 };
 
 export const getCustomTypes = (types: BasicJoiType[]): string[] => {
@@ -45,7 +58,7 @@ export interface PropertyType {
 }
 
 export const parseDescribe = (details: Describe): undefined | BasicJoiType => {
-  const type = exports.getSchemaType(details);
+  const type = getSchemaType(details);
   if (!type) {
     return undefined;
   }
@@ -57,19 +70,19 @@ export const parseDescribe = (details: Describe): undefined | BasicJoiType => {
   return {
     type: type.typeName,
     content,
-    customTypes: exports.filterOutBasicTypes(type.baseTypeName)
+    customTypes: filterOutBasicTypes(type.baseTypeName)
   };
 };
 
-export const parseMatches = (details: Match[]): BasicJoiType[] => {
+export function parseMatches(details: Match[]): BasicJoiType[] {
   return filterMap(details, detail => {
     return parseDescribe(detail.schema);
   });
-};
+}
 
-export const getSchemaType = (joiProperty: Describe): undefined | PropertyType => {
+export function getSchemaType(joiProperty: Describe): undefined | TypeContent {
   const schemaType = joiProperty?.type;
-
+  // TODO: switch to use TypeContent. Will need to do custom type checking in here
   if (!schemaType) {
     return undefined;
   }
@@ -117,7 +130,7 @@ export const getSchemaType = (joiProperty: Describe): undefined | PropertyType =
   }
 
   return { typeName: schemaType, baseTypeName: schemaType };
-};
+}
 
 /**
  * Is the type a TypeScript type or Custom
@@ -136,7 +149,7 @@ export const isTypeCustom = (type: string): boolean => {
   }
 };
 
-export const filterOutBasicTypes = (types: string[] | string): string[] | undefined => {
+export function filterOutBasicTypes(types: string[] | string): string[] | undefined {
   if (!Array.isArray(types)) {
     types = [types];
   }
@@ -145,4 +158,4 @@ export const filterOutBasicTypes = (types: string[] | string): string[] | undefi
     return undefined;
   }
   return customTypes;
-};
+}

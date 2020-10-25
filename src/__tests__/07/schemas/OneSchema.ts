@@ -8,7 +8,7 @@ export const otherSchema = Joi.object({
   other: Joi.string().optional()
 }).label('Other');
 
-const basicSchema = Joi.alternatives()
+export const basicSchema = Joi.alternatives()
   .try(Joi.number(), Joi.string())
   .label('Basic')
   .description('a test schema definition');
@@ -21,8 +21,8 @@ export const TestSchema = Joi.object({
   .label('Test')
   .description('a test schema definition');
 
-export const TestAltSchema = Joi.array()
-  .items(TestSchema)
+export const TestListOfAltsSchema = Joi.array()
+  .items(Joi.alternatives().try(Joi.bool(), Joi.string()))
   .required()
-  .label('TestAlt')
-  .description('A Test object');
+  .label('TestList')
+  .description('A list of Test object');

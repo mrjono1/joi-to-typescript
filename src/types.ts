@@ -35,6 +35,41 @@ export interface InterfaceRecord {
   customTypes: string[];
 }
 
+export interface TypeContentRoot {
+  __isRoot: true;
+  /**
+   * How to join the children types together
+   */
+  joinOperation: 'list' | 'union' | 'intersection' | 'object';
+  /**
+   * Interface, property, or type name
+   */
+  name: string;
+
+  /**
+   * Children types
+   */
+  children?: TypeContent[];
+}
+
+export interface TypeContentChild {
+  __isRoot: false;
+
+  /**
+   * Other non-basic schemas referenced in this type
+   */
+  customTypes?: string[];
+  /**
+   * The typescript result
+   */
+  content?: string;
+}
+
+/**
+ * Holds information for conversion to ts
+ */
+export type TypeContent = TypeContentRoot | TypeContentChild;
+
 /**
  * Basic info on a joi schema
  */
@@ -44,7 +79,7 @@ export interface BasicJoiType {
    */
   type: string;
   /**
-   * used to reference any other schemas
+   * Other schemas referenced in this schema
    */
   customTypes?: string[];
   /**

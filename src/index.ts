@@ -7,7 +7,6 @@ import {
   Describe,
   getSchemaType,
   getCustomTypes,
-  isTypeCustom,
   Match,
   parseDescribe,
   filterOutBasicTypes
@@ -136,19 +135,20 @@ export const convertSchema = (settings: Settings, joi: AnySchema): InterfaceReco
   }
 
   if (details.type === 'array') {
-    const arrayTypeName = getArrayTypeName(details);
-    if (!arrayTypeName) {
+    const arrayTypeNames = getArrayTypeName(details);
+    if (!arrayTypeNames) {
       throw `Array items do not have a .label() for '${name}'`;
     }
-    const isCustom = isTypeCustom(arrayTypeName);
-
-    const customTypes: string[] = isCustom ? [arrayTypeName] : [];
-
+    const customTypes: string[] = filterOutBasicTypes(arrayTypeNames) ?? [];
+    let arrayTypes = arrayTypeNames.join(' | ');
+    if (arrayTypeNames.length > 1) {
+      arrayTypes = `(${arrayTypes})`;
+    }
     types.push({
       name,
       customTypes,
       content: `${getInterfaceJsDoc(details)}
-export type ${name} = ${arrayTypeName}[];`
+export type ${name} = ${arrayTypes}[];`
     });
   }
 
@@ -175,7 +175,7 @@ ${propertiesAndInterfaces.properties.map(p => p.content).join(`\n`)}
     types.push({
       name,
       customTypes,
-      content: `${getInterfaceJsDoc(details)}\nexport type ${name} = ${unionStr};\n`
+      content: `${getInterfaceJsDoc(details)}\nexport type ${name} = ${unionStr};`
     });
   }
   return types;
