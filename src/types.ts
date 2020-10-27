@@ -35,34 +35,82 @@ export interface InterfaceRecord {
   customTypes: string[];
 }
 
-export interface TypeContentRoot {
+export interface BaseTypeContent {
+  /**
+   * Interface, property, or type name (from label or key name)
+   */
+  name?: string;
+
+  /**
+   * will add this to the jsDoc output
+   */
+  description?: string;
+}
+
+/**
+ * Holds multiple TypeContents that will be joined together
+ */
+export interface TypeContentRoot extends BaseTypeContent {
   __isRoot: true;
   /**
    * How to join the children types together
    */
   joinOperation: 'list' | 'union' | 'intersection' | 'object';
-  /**
-   * Interface, property, or type name
-   */
-  name: string;
 
   /**
    * Children types
    */
-  children?: TypeContent[];
+  children: TypeContent[];
 }
 
-export interface TypeContentChild {
+/**
+ * A single type
+ */
+export interface TypeContentChild extends BaseTypeContent {
   __isRoot: false;
 
   /**
    * Other non-basic schemas referenced in this type
    */
   customTypes?: string[];
+
   /**
-   * The typescript result
+   * The typescript result ex: string, 'literalString', 42, SomeTypeName
    */
-  content?: string;
+  content: string;
+
+  /**
+   * If this is an object property is it required
+   */
+  required?: boolean;
+}
+
+export function makeTypeContentChild({
+  content,
+  customTypes,
+  required,
+  name
+}: Omit<TypeContentChild, '__isRoot'>): TypeContentChild {
+  return {
+    __isRoot: false,
+    content,
+    customTypes,
+    required,
+    name
+  };
+}
+
+export function makeTypeContentRoot({
+  joinOperation,
+  name,
+  children
+}: Omit<TypeContentRoot, '__isRoot'>): TypeContentRoot {
+  return {
+    __isRoot: true,
+    joinOperation,
+    name,
+    children
+  };
 }
 
 /**
