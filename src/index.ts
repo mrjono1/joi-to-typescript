@@ -2,17 +2,8 @@ import Joi, { AnySchema } from 'joi';
 import Path from 'path';
 import fs from 'fs';
 
-import {
-  getArrayTypeName,
-  Describe,
-  getSchemaType,
-  getCustomTypes,
-  Match,
-  parseDescribe,
-  filterOutBasicTypes
-} from './joiHelpers';
-import { PropertiesAndInterfaces, Settings, InterfaceRecord, Property, BasicJoiType } from './types';
-import { filterMap } from 'utils';
+import { Describe, parseSchema, getAllCustomTypes, typeContentToTs } from './parse';
+import { Settings, InterfaceRecord } from './types';
 
 export { Settings };
 
@@ -74,111 +65,25 @@ export const getRequired = (details: Describe, settings: Settings): boolean => {
   }
 };
 
-export const getPropertiesAndInterfaces = (details: Describe, settings: Settings): PropertiesAndInterfaces => {
-  const result: PropertiesAndInterfaces = { properties: [], interfaces: [] };
-
-  if (!details.keys) {
-    return result;
-  }
-
-  for (const [name, key] of Object.entries(details.keys)) {
-    const propertyObject = key as Describe;
-
-    const type = getSchemaType(propertyObject);
-    if (!type) {
-      if (settings.debug) {
-        console.log('Property Type not found');
-      }
-      continue;
-    }
-
-    const description = propertyObject.flags?.description;
-
-    const required = getRequired(propertyObject, settings);
-
-    // only show description if it has one, no need to double up
-    const propertyJsDoc = `  /**
-   * ${description ? description : name}
-   */`;
-
-    const content = `${propertyJsDoc}
-  ${name}${required ? '' : '?'}: ${type.typeName};`;
-    const property: Property = {
-      name,
-      type: type.typeName,
-      content,
-      customTypes: filterOutBasicTypes(type.baseTypeName)
-    };
-
-    result.properties.push(property);
-  }
-
-  // Sort Properties
-  result.properties = result.properties.sort((property1, property2) => 0 - (property1.name > property2.name ? -1 : 1));
-
-  return result;
-};
-
-export const parseMatches = (details: Match[]): BasicJoiType[] => {
-  return filterMap(details, detail => {
-    return parseDescribe(detail.schema);
-  });
-};
-
-export const convertSchema = (settings: Settings, joi: AnySchema): InterfaceRecord[] => {
-  const types: InterfaceRecord[] = [];
-
+export const convertSchema = (settings: Settings, joi: AnySchema): InterfaceRecord | undefined => {
   const details = joi.describe() as Describe;
   const name = details?.flags?.label;
   if (!name) {
     throw 'At least one "object" does not have a .label()';
   }
 
-  if (details.type === 'array') {
-    const arrayTypeNames = getArrayTypeName(details);
-    if (!arrayTypeNames) {
-      throw `Array items do not have a .label() for '${name}'`;
-    }
-    const customTypes: string[] = filterOutBasicTypes(arrayTypeNames) ?? [];
-    let arrayTypes = arrayTypeNames.join(' | ');
-    if (arrayTypeNames.length > 1) {
-      arrayTypes = `(${arrayTypes})`;
-    }
-    types.push({
+  const parsedSchema = parseSchema(details, false);
+  if (parsedSchema) {
+    const customTypes = getAllCustomTypes(parsedSchema);
+    const content = typeContentToTs(parsedSchema, true);
+    return {
       name,
       customTypes,
-      content: `${getInterfaceJsDoc(details)}
-export type ${name} = ${arrayTypes}[];`
-    });
+      content
+    };
   }
 
-  if (details.type === 'object') {
-    const propertiesAndInterfaces = getPropertiesAndInterfaces(details, settings);
-
-    // get all the custom types on properties
-    const customTypes = getCustomTypes(propertiesAndInterfaces.properties);
-
-    types.push({
-      name,
-      customTypes,
-      content: `${getInterfaceJsDoc(details)}
-export interface ${name} {
-${propertiesAndInterfaces.properties.map(p => p.content).join(`\n`)}
-}`
-    });
-  }
-
-  if (details.type === 'alternatives') {
-    const typesToUnion = parseMatches(details.matches as Match[]);
-    const customTypes = getCustomTypes(typesToUnion);
-    const unionStr = typesToUnion.map(t => t.content).join(' | ');
-    types.push({
-      name,
-      customTypes,
-      content: `${getInterfaceJsDoc(details)}\nexport type ${name} = ${unionStr};`
-    });
-  }
-  return types;
+  return undefined;
 };
 
 /**
@@ -198,8 +103,10 @@ export const writeInterfaceFile = async (settings: Settings, schemaFileName: str
     if (!Joi.isSchema(joiSchema)) {
       continue;
     }
-    const interfaceRecords = convertSchema(settings, joiSchema);
-    allInterfaceRecords.push(...interfaceRecords);
+    const interfaceRecord = convertSchema(settings, joiSchema);
+    if (interfaceRecord) {
+      allInterfaceRecords.push(interfaceRecord);
+    }
   }
 
   if (allInterfaceRecords.length === 0) {
@@ -217,7 +124,7 @@ export const writeInterfaceFile = async (settings: Settings, schemaFileName: str
   const typeFileName = schemaFileName.endsWith(`${settings.schemaFileSuffix}.ts`)
     ? schemaFileName.substring(0, schemaFileName.length - `${settings.schemaFileSuffix}.ts`.length)
     : schemaFileName.replace('.ts', '');
-  console.log(`index.ts:219~~~~~~~~~~~~~~~~~~~${JSON.stringify(allInterfaceRecords, null, 4)}~~~~~~~~~~~~~~~~~~~`);
+
   // Clean up interface records list
   // Sort Interfaces
   const interfacesToBeWritten = allInterfaceRecords.sort(
@@ -231,9 +138,7 @@ export const writeInterfaceFile = async (settings: Settings, schemaFileName: str
   const externalTypes: string[] = [];
   const allExternalTypes: string[] = [];
   const allCurentFileInterfaceNames = interfacesToBeWritten.map(interfaceToBeWritten => interfaceToBeWritten.name);
-  console.log(
-    `index.ts:233~~~~~~~~~~~~~~~~~~~${JSON.stringify(allCurentFileInterfaceNames, null, 4)}~~~~~~~~~~~~~~~~~~~`
-  );
+
   for (const interfaceToBeWritten of interfacesToBeWritten) {
     for (const customType of interfaceToBeWritten.customTypes) {
       if (!allCurentFileInterfaceNames.includes(customType)) {

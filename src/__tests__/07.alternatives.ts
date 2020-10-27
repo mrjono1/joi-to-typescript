@@ -1,20 +1,23 @@
-import Joi from 'joi';
+// import Joi from 'joi';
 
-import { convertSchema, Settings, convertFromDirectory } from '../index';
+import {
+  convertFromDirectory
+  // convertSchema, Settings,
+} from '../index';
 import { readFileSync } from 'fs';
 
 test('07.alternatives', async () => {
-  const basicSchema = Joi.alternatives()
-    .try(Joi.number(), Joi.string())
-    .label('BasicAltSchema')
-    .description('a test schema definition');
+  //   const basicSchema = Joi.alternatives()
+  //     .try(Joi.number(), Joi.string())
+  //     .label('BasicAltSchema')
+  //     .description('a test schema definition');
 
-  const basicRes = convertSchema(({ defaultToRequired: true } as unknown) as Settings, basicSchema);
+  //   const basicRes = convertSchema(({ defaultToRequired: true } as unknown) as Settings, basicSchema);
 
-  expect(basicRes[0].content).toBe(`/**
- * a test schema definition
- */
-export type BasicAltSchema = number | string;`);
+  //   expect(basicRes[0].content).toBe(`/**
+  //  * a test schema definition
+  //  */
+  // export type BasicAltSchema = number | string;`);
 
   const interfaceDirectory = './src/__tests__/07/models';
   const result = await convertFromDirectory({
