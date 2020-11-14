@@ -11,7 +11,7 @@ export const otherSchema = Joi.object({
 export const basicSchema = Joi.alternatives()
   .try(Joi.number(), Joi.string())
   .label('Basic')
-  .description('a test schema definition');
+  .description('a description for basic');
 
 export const TestSchema = Joi.object({
   name: Joi.string().optional(),

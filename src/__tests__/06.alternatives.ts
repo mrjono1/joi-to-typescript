@@ -6,22 +6,10 @@ import {
 } from '../index';
 import { readFileSync } from 'fs';
 
-test('07.alternatives', async () => {
-  //   const basicSchema = Joi.alternatives()
-  //     .try(Joi.number(), Joi.string())
-  //     .label('BasicAltSchema')
-  //     .description('a test schema definition');
-
-  //   const basicRes = convertSchema(({ defaultToRequired: true } as unknown) as Settings, basicSchema);
-
-  //   expect(basicRes[0].content).toBe(`/**
-  //  * a test schema definition
-  //  */
-  // export type BasicAltSchema = number | string;`);
-
-  const interfaceDirectory = './src/__tests__/07/models';
+test('06.alternatives', async () => {
+  const interfaceDirectory = './src/__tests__/06/models';
   const result = await convertFromDirectory({
-    schemaDirectory: './src/__tests__/07/schemas',
+    schemaDirectory: './src/__tests__/06/schemas',
     interfaceDirectory
   });
 
@@ -35,7 +23,7 @@ test('07.alternatives', async () => {
  */
 
 /**
- * a test schema definition
+ * a description for basic
  */
 export type Basic = number | string;
 
@@ -54,10 +42,6 @@ export interface Other {
  */
 export interface Test {
   /**
-   * a test schema definition
-   */
-  basic?: number | string;
-  /**
    * name
    */
   name?: string;
@@ -65,6 +49,10 @@ export interface Test {
    * value
    */
   value?: Thing | Other;
+  /**
+   * a description for basic
+   */
+  basic?: Basic;
 }
 
 /**

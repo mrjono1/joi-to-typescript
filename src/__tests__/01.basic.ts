@@ -16,19 +16,11 @@ test('01.basic', () => {
     .description('a test schema definition');
 
   const result = convertSchema(({} as unknown) as Settings, schema);
-
-  expect(result[0].content).toBe(`/**
+  expect(result).not.toBeUndefined;
+  expect(result?.content).toBe(`/**
  * a test schema definition
  */
 export interface TestSchema {
-  /**
-   * count
-   */
-  count?: number;
-  /**
-   * dateCreated
-   */
-  dateCreated?: Date;
   /**
    * Test Schema Name
    */
@@ -37,6 +29,14 @@ export interface TestSchema {
    * propertyName1
    */
   propertyName1: boolean;
+  /**
+   * dateCreated
+   */
+  dateCreated?: Date;
+  /**
+   * count
+   */
+  count?: number;
 }`);
 
   const schemaArray = Joi.object({
@@ -54,19 +54,12 @@ export interface TestSchema {
     .description('an Array test schema definition');
 
   const arrayResult = convertSchema(({} as unknown) as Settings, schemaArray);
+  expect(arrayResult).not.toBeUndefined;
 
-  expect(arrayResult[0].content).toBe(`/**
+  expect(arrayResult?.content).toBe(`/**
  * an Array test schema definition
  */
 export interface ArrayObject {
-  /**
-   * count
-   */
-  count?: number[];
-  /**
-   * dateCreated
-   */
-  dateCreated?: Date[];
   /**
    * name
    */
@@ -75,5 +68,13 @@ export interface ArrayObject {
    * propertyName1
    */
   propertyName1: boolean[];
+  /**
+   * dateCreated
+   */
+  dateCreated?: Date[];
+  /**
+   * count
+   */
+  count?: number[];
 }`);
 });
