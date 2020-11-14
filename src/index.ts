@@ -32,25 +32,6 @@ export const defaultSettings = (settings: Partial<Settings>): Settings => {
 };
 
 /**
- * Get Interface jsDoc
- */
-export const getInterfaceJsDoc = (details: Describe): string => {
-  const name = details.flags?.label;
-  const description = details.flags?.description;
-
-  // only show description if it has one, no need to double up
-  if (description) {
-    return `/**
- * ${description}
- */`;
-  } else {
-    return `/**
- * ${name}
- */`;
-  }
-};
-
-/**
  * .optional() or .required() if not use settings default
  */
 export const getRequired = (details: Describe, settings: Settings): boolean => {
@@ -72,7 +53,7 @@ export const convertSchema = (settings: Settings, joi: AnySchema): InterfaceReco
     throw 'At least one "object" does not have a .label()';
   }
 
-  const parsedSchema = parseSchema(details, false);
+  const parsedSchema = parseSchema(details, settings, false);
   if (parsedSchema) {
     const customTypes = getAllCustomTypes(parsedSchema);
     const content = typeContentToTs(parsedSchema, true);

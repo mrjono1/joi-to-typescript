@@ -45,6 +45,11 @@ export interface BaseTypeContent {
    * will add this to the jsDoc output
    */
   description?: string;
+
+  /**
+   * If this is an object property is it required
+   */
+  required?: boolean;
 }
 
 /**
@@ -78,38 +83,39 @@ export interface TypeContentChild extends BaseTypeContent {
    * The typescript result ex: string, 'literalString', 42, SomeTypeName
    */
   content: string;
-
-  /**
-   * If this is an object property is it required
-   */
-  required?: boolean;
 }
 
 export function makeTypeContentChild({
   content,
   customTypes,
   required,
-  name
+  name,
+  description
 }: Omit<TypeContentChild, '__isRoot'>): TypeContentChild {
   return {
     __isRoot: false,
     content,
     customTypes,
     required,
-    name
+    name,
+    description
   };
 }
 
 export function makeTypeContentRoot({
   joinOperation,
   name,
-  children
+  children,
+  required,
+  description
 }: Omit<TypeContentRoot, '__isRoot'>): TypeContentRoot {
   return {
     __isRoot: true,
     joinOperation,
     name,
-    children
+    children,
+    required,
+    description
   };
 }
 
