@@ -27,6 +27,10 @@ export interface Settings {
    * File Header content for generated files
    */
   fileHeader: string;
+  /**
+   * If true will sort properties on interface by name
+   */
+  sortPropertiesByName: boolean;
 }
 
 export interface InterfaceRecord {

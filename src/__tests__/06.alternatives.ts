@@ -10,7 +10,8 @@ test('06.alternatives', async () => {
   const interfaceDirectory = './src/__tests__/06/models';
   const result = await convertFromDirectory({
     schemaDirectory: './src/__tests__/06/schemas',
-    interfaceDirectory
+    interfaceDirectory,
+    sortPropertiesByName: false
   });
 
   expect(result).toBe(true);

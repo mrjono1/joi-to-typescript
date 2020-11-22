@@ -39,6 +39,9 @@ export interface BasicDescribe extends BaseDescribe {
 
 export type Describe = ArrayDescribe | BasicDescribe | ObjectDescribe | AlternativesDescribe | StringDescribe;
 
+// Sometimes we know the type content will have name set
+type TypeContentWithName = TypeContent & { name: string };
+
 function getCommonDetails(
   details: Describe,
   settings: Settings
@@ -116,7 +119,7 @@ function typeContentToTsHelper(
       if (doExport) {
         return { tsContent: `export type ${parsedSchema.name} = ${unionStr};`, description: parsedSchema.description };
       }
-      return { tsContent: `${unionStr}`, description: parsedSchema.description };
+      return { tsContent: unionStr, description: parsedSchema.description };
     }
     case 'object': {
       const childrenContent = children.map(child => {
@@ -138,7 +141,7 @@ function typeContentToTsHelper(
       return { tsContent: objectStr, description: parsedSchema.description };
     }
     default:
-      throw 'Unsupported join operation ${parsedSchema.joinOperation}';
+      throw `Unsupported join operation ${parsedSchema.joinOperation}`;
   }
 }
 
@@ -245,19 +248,28 @@ function parseAlternatives(details: AlternativesDescribe, settings: Settings): T
 }
 
 function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent | undefined {
-  const children = filterMap(Object.entries(details.keys), ([key, value]) => {
+  let children = filterMap(Object.entries(details.keys), ([key, value]) => {
     const parsedSchema = parseSchema(value, settings);
     if (!parsedSchema) {
       return undefined;
     }
     parsedSchema.name = key;
-    return parsedSchema;
+    return parsedSchema as TypeContentWithName;
   });
 
   if (children.length === 0) {
     return undefined;
   }
-
+  if (settings.sortPropertiesByName) {
+    children = children.sort((a, b) => {
+      if (a.name > b.name) {
+        return 1;
+      } else if (a.name < b.name) {
+        return -1;
+      }
+      return 0;
+    });
+  }
   const { label: name, description } = getCommonDetails(details, settings);
   return makeTypeContentRoot({ joinOperation: 'object', children, name, description });
 }

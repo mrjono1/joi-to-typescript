@@ -26,17 +26,17 @@ import { Person } from '.';
  */
 export interface Item {
   /**
-   * name
+   * Female Zebra
    */
-  name: string;
+  femaleZebra?: Zebra;
   /**
    * Male Zebra
    */
   maleZebra?: Zebra;
   /**
-   * Female Zebra
+   * name
    */
-  femaleZebra?: Zebra;
+  name: string;
 }
 
 /**
@@ -53,13 +53,13 @@ export interface Test {
    */
   name?: string;
   /**
-   * propertyName1
-   */
-  propertyName1: boolean;
-  /**
    * A list of People
    */
   people?: People;
+  /**
+   * propertyName1
+   */
+  propertyName1: boolean;
 }
 
 /**

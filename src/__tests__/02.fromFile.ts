@@ -69,13 +69,13 @@ export interface Bar {
  */
 export interface Foo {
   /**
-   * Id
-   */
-  id: number;
-  /**
    * Bar
    */
   bar: Bar;
+  /**
+   * Id
+   */
+  id: number;
 }
 `);
 
@@ -114,13 +114,13 @@ export interface Person {
    */
   firstName: string;
   /**
-   * Last Name
-   */
-  lastName: string;
-  /**
    * job
    */
   job?: Job;
+  /**
+   * Last Name
+   */
+  lastName: string;
 }
 `);
 });

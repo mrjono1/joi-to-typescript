@@ -15,12 +15,20 @@ test('01.basic', () => {
     .label('TestSchema')
     .description('a test schema definition');
 
-  const result = convertSchema(({} as unknown) as Settings, schema);
+  const result = convertSchema(({ sortPropertiesByName: true } as unknown) as Settings, schema);
   expect(result).not.toBeUndefined;
   expect(result?.content).toBe(`/**
  * a test schema definition
  */
 export interface TestSchema {
+  /**
+   * count
+   */
+  count?: number;
+  /**
+   * dateCreated
+   */
+  dateCreated?: Date;
   /**
    * Test Schema Name
    */
@@ -29,14 +37,6 @@ export interface TestSchema {
    * propertyName1
    */
   propertyName1: boolean;
-  /**
-   * dateCreated
-   */
-  dateCreated?: Date;
-  /**
-   * count
-   */
-  count?: number;
 }`);
 
   const schemaArray = Joi.object({
@@ -53,13 +53,21 @@ export interface TestSchema {
     .label('ArrayObject')
     .description('an Array test schema definition');
 
-  const arrayResult = convertSchema(({} as unknown) as Settings, schemaArray);
+  const arrayResult = convertSchema(({ sortPropertiesByName: true } as unknown) as Settings, schemaArray);
   expect(arrayResult).not.toBeUndefined;
 
   expect(arrayResult?.content).toBe(`/**
  * an Array test schema definition
  */
 export interface ArrayObject {
+  /**
+   * count
+   */
+  count?: number[];
+  /**
+   * dateCreated
+   */
+  dateCreated?: Date[];
   /**
    * name
    */
@@ -68,13 +76,5 @@ export interface ArrayObject {
    * propertyName1
    */
   propertyName1: boolean[];
-  /**
-   * dateCreated
-   */
-  dateCreated?: Date[];
-  /**
-   * count
-   */
-  count?: number[];
 }`);
 });

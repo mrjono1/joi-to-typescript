@@ -33,6 +33,10 @@ export interface Item {
  */
 export interface Test {
   /**
+   * items
+   */
+  items?: Item[];
+  /**
    * name
    */
   name?: string;
@@ -40,10 +44,6 @@ export interface Test {
    * propertyName1
    */
   propertyName1: boolean;
-  /**
-   * items
-   */
-  items?: Item[];
 }
 
 /**

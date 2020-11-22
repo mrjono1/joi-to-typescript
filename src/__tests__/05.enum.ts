@@ -14,19 +14,22 @@ test('05.enums', () => {
     .label('TestSchema')
     .description('a test schema definition');
 
-  const result = convertSchema(({ defaultToRequired: true } as unknown) as Settings, schema);
+  const result = convertSchema(
+    ({ defaultToRequired: true, sortPropertiesByName: true } as unknown) as Settings,
+    schema
+  );
   expect(result).not.toBeUndefined;
   expect(result?.content).toBe(`/**
  * a test schema definition
  */
 export interface TestSchema {
   /**
-   * topColour
-   */
-  topColour: 'red' | 'green' | 'orange' | 'blue';
-  /**
    * bottomColour
    */
   bottomColour: 'red' | 'green' | 'orange' | 'blue';
+  /**
+   * topColour
+   */
+  topColour: 'red' | 'green' | 'orange' | 'blue';
 }`);
 });
