@@ -109,7 +109,7 @@ import { convertFromDirectory } from 'joi-to-typescript';
 
 convertFromDirectory({
   schemaDirectory: './src/schemas',
-  interfaceDirectory: './src/interfaces',
+  TypeOutputDirectory: './src/interfaces',
   debug: true
 });
 ```
@@ -124,10 +124,10 @@ export interface Settings {
    */
   schemaDirectory: string;
   /**
-   * The output/interface directory
+   * The output/type directory
    * Will also attempt to create this directory
    */
-  interfaceDirectory: string;
+  TypeOutputDirectory: string;
   /**
    * Should interface properties be defaulted to optional or required
    */
@@ -166,4 +166,4 @@ Joi Features not listed here will probably be ignored
 - Support `null` fields
 - Convert sub schemas to interfaces
 - Ability to add your own custom types
-- Clear `interfaceDirectory` to ensure there is no junk files
+- Clear `TypeOutputDirectory` to ensure there is no junk files

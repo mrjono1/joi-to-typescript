@@ -9,7 +9,7 @@ export interface Settings {
   /**
    * The output/interface directory
    */
-  interfaceDirectory: string;
+  TypeOutputDirectory: string;
   /**
    * Should interface properties be defaulted to optional or required
    */
@@ -33,7 +33,7 @@ export interface Settings {
   sortPropertiesByName: boolean;
 }
 
-export interface InterfaceRecord {
+export interface ConvertedType {
   name: string;
   content: string;
   customTypes: string[];
@@ -151,9 +151,4 @@ export interface Property extends BasicJoiType {
    * The object key this schema was stored under
    */
   name: string;
-}
-
-export interface PropertiesAndInterfaces {
-  properties: Property[];
-  interfaces: InterfaceRecord[];
 }
