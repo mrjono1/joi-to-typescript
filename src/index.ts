@@ -2,21 +2,21 @@ import Joi, { AnySchema } from 'joi';
 import Path from 'path';
 import fs from 'fs';
 
-import { getArrayTypeName, Describe, getPropertyType } from './joiHelpers';
-import { PropertiesAndInterfaces, Settings, InterfaceRecord, Property } from './types';
+import { Describe, parseSchema, getAllCustomTypes, typeContentToTs } from './parse';
+import { Settings, ConvertedType } from './types';
 
 export { Settings };
 
 export const defaultSettings = (settings: Partial<Settings>): Settings => {
   const appSettings = { ...settings } as Settings;
 
-  if (!appSettings.defaultToRequired) {
+  if (appSettings.defaultToRequired === undefined) {
     appSettings.defaultToRequired = false;
   }
   if (!appSettings.schemaFileSuffix) {
     appSettings.schemaFileSuffix = 'Schema';
   }
-  if (!appSettings.debug) {
+  if (appSettings.debug === undefined) {
     appSettings.debug = false;
   }
   if (!appSettings.schemaFileSuffix) {
@@ -28,160 +28,40 @@ export const defaultSettings = (settings: Partial<Settings>): Settings => {
  * Do not modify this file manually
  */`;
   }
+  if (appSettings.sortPropertiesByName === undefined) {
+    appSettings.sortPropertiesByName = true;
+  }
   return appSettings;
 };
 
-/**
- * Is the type a TypeScript type or Custom
- * @param type type name
- */
-export const isTypeCustom = (type: string): boolean => {
-  switch (type.replace('[]', '')) {
-    case 'string':
-    case 'boolean':
-    case 'number':
-    case 'object':
-    case 'Date':
-      return false;
-    default:
-      return true;
-  }
-};
-
-/**
- * Get Interface jsDoc
- */
-export const getInterfaceJsDoc = (details: Describe): string => {
-  const name = details.flags?.label;
-  const description = details.flags?.description;
-
-  // only show description if it has one, no need to double up
-  if (description) {
-    return `/**
- * ${description}
- */`;
-  } else {
-    return `/**
- * ${name}
- */`;
-  }
-};
-
-/**
- * .optional() or .required() if not use settings default
- */
-export const getRequired = (details: Describe, settings: Settings): boolean => {
-  const presence = details.flags?.presence;
-
-  if (presence === 'optional') {
-    return false;
-  } else if (presence === 'required') {
-    return true;
-  } else {
-    return settings.defaultToRequired;
-  }
-};
-
-export const getPropertiesAndInterfaces = (details: Describe, settings: Settings): PropertiesAndInterfaces => {
-  const result: PropertiesAndInterfaces = { properties: [], interfaces: [] };
-
-  if (!details.keys) {
-    return result;
-  }
-
-  for (const [name, key] of Object.entries(details.keys)) {
-    const propertyObject = key as Describe;
-
-    const type = getPropertyType(propertyObject);
-    if (!type) {
-      if (settings.debug) {
-        console.log('Property Type not found');
-      }
-      continue;
-    }
-
-    const description = propertyObject.flags?.description;
-
-    const required = getRequired(propertyObject, settings);
-
-    // only show description if it has one, no need to double up
-    const propertyJsDoc = `  /**
-   * ${description ? description : name}
-   */`;
-
-    const content = `${propertyJsDoc}
-  ${name}${required ? '' : '?'}: ${type.typeName};`;
-    const property: Property = {
-      name,
-      type: type.typeName,
-      content,
-      customType: isTypeCustom(type.baseTypeName) ? type.baseTypeName : undefined
-    };
-
-    result.properties.push(property);
-  }
-
-  // Sort Properties
-  result.properties = result.properties.sort((property1, property2) => 0 - (property1.name > property2.name ? -1 : 1));
-
-  return result;
-};
-
-export const convertSchema = (settings: Settings, joi: AnySchema): InterfaceRecord[] => {
-  const types: InterfaceRecord[] = [];
-
+export const convertSchema = (settings: Settings, joi: AnySchema): ConvertedType | undefined => {
   const details = joi.describe() as Describe;
-
   const name = details?.flags?.label;
   if (!name) {
     throw 'At least one "object" does not have a .label()';
   }
 
-  if (details.type === 'array') {
-    const arrayTypeName = getArrayTypeName(details);
-    if (!arrayTypeName) {
-      throw `Array items do not have a .label() for '${name}'`;
-    }
-    const isCustom = isTypeCustom(arrayTypeName);
-
-    const customTypes: string[] = isCustom ? [arrayTypeName] : [];
-
-    types.push({
+  const parsedSchema = parseSchema(details, settings, false);
+  if (parsedSchema) {
+    const customTypes = getAllCustomTypes(parsedSchema);
+    const content = typeContentToTs(parsedSchema, true);
+    return {
       name,
       customTypes,
-      content: `${getInterfaceJsDoc(details)}
-export type ${name} = ${arrayTypeName}[];`
-    });
+      content
+    };
   }
 
-  if (details.type === 'object') {
-    const propertiesAndInterfaces = getPropertiesAndInterfaces(details, settings);
-
-    // get all the custom types on properties
-    const customTypes: string[] = propertiesAndInterfaces.properties
-      .filter(property => property.customType)
-      .map(property => property.customType) as string[];
-
-    types.push({
-      name,
-      customTypes,
-      content: `${getInterfaceJsDoc(details)}
-export interface ${name} {
-${propertiesAndInterfaces.properties.map(p => p.content).join(`\n`)}
-}`
-    });
-  }
-
-  return types;
+  return undefined;
 };
 
 /**
- * Write interface file
+ * Write type file
  * @param settings Settings
  * @param schemaFileName Schema File Name
  */
-export const writeInterfaceFile = async (settings: Settings, schemaFileName: string): Promise<undefined | string> => {
-  const allInterfaceRecords: InterfaceRecord[] = [];
+export const writeTypeFile = async (settings: Settings, schemaFileName: string): Promise<undefined | string> => {
+  const allConvertedTypes: ConvertedType[] = [];
 
   const fullFilePath = Path.join(settings.schemaDirectory, schemaFileName);
   const schemaFile = await require(fullFilePath);
@@ -192,11 +72,13 @@ export const writeInterfaceFile = async (settings: Settings, schemaFileName: str
     if (!Joi.isSchema(joiSchema)) {
       continue;
     }
-    const interfaceRecords = convertSchema(settings, joiSchema);
-    allInterfaceRecords.push(...interfaceRecords);
+    const convertedType = convertSchema(settings, joiSchema);
+    if (convertedType) {
+      allConvertedTypes.push(convertedType);
+    }
   }
 
-  if (allInterfaceRecords.length === 0) {
+  if (allConvertedTypes.length === 0) {
     if (settings.debug) {
       console.log(`${schemaFile} - Skipped - no Joi Schemas found`);
     }
@@ -212,22 +94,23 @@ export const writeInterfaceFile = async (settings: Settings, schemaFileName: str
     ? schemaFileName.substring(0, schemaFileName.length - `${settings.schemaFileSuffix}.ts`.length)
     : schemaFileName.replace('.ts', '');
 
-  // Clean up interface records list
-  // Sort Interfaces
-  const interfacesToBeWritten = allInterfaceRecords.sort(
+  // Clean up type list
+  // Sort Types
+  const typesToBeWritten = allConvertedTypes.sort(
     (interface1, interface2) => 0 - (interface1.name > interface2.name ? -1 : 1)
   );
 
-  // Write interfaces
-  const interfaceContent = interfacesToBeWritten.map(interfaceToBeWritten => interfaceToBeWritten.content);
+  // Write types
+  const typeContent = typesToBeWritten.map(typeToBeWritten => typeToBeWritten.content);
 
   // Get imports for the current file
   const externalTypes: string[] = [];
   const allExternalTypes: string[] = [];
-  const allCurentFileInterfaceNames = interfacesToBeWritten.map(interfaceToBeWritten => interfaceToBeWritten.name);
-  for (const interfaceToBeWritten of interfacesToBeWritten) {
-    for (const customType of interfaceToBeWritten.customTypes) {
-      if (!allCurentFileInterfaceNames.includes(customType)) {
+  const allCurrentFileTypeNames = typesToBeWritten.map(typeToBeWritten => typeToBeWritten.name);
+
+  for (const typeToBeWritten of typesToBeWritten) {
+    for (const customType of typeToBeWritten.customTypes) {
+      if (!allCurrentFileTypeNames.includes(customType)) {
         allExternalTypes.push(customType);
       }
     }
@@ -235,9 +118,9 @@ export const writeInterfaceFile = async (settings: Settings, schemaFileName: str
   externalTypes.push(...new Set(allExternalTypes));
   const typeImports: string = externalTypes.length == 0 ? '' : `import { ${externalTypes.join(',\n')} } from '.';\n\n`;
 
-  const fileContent = `${settings.fileHeader}\n\n${typeImports}${interfaceContent.join('\n\n').concat('\n')}`;
+  const fileContent = `${settings.fileHeader}\n\n${typeImports}${typeContent.join('\n\n').concat('\n')}`;
 
-  fs.writeFileSync(Path.join(settings.interfaceDirectory, `${typeFileName}.ts`), fileContent);
+  fs.writeFileSync(Path.join(settings.TypeOutputDirectory, `${typeFileName}.ts`), fileContent);
 
   return typeFileName;
 };
@@ -250,11 +133,11 @@ export const writeInterfaceFile = async (settings: Settings, schemaFileName: str
 export const writeIndexFile = (settings: Settings, fileNamesToExport: string[]): void => {
   const exportLines = fileNamesToExport.map(fileName => `export * from './${fileName}';`);
   const fileContent = `${settings.fileHeader}\n\n${exportLines.join('\n').concat('\n')}`;
-  fs.writeFileSync(Path.join(settings.interfaceDirectory, 'index.ts'), fileContent);
+  fs.writeFileSync(Path.join(settings.TypeOutputDirectory, 'index.ts'), fileContent);
 };
 
 /**
- * Create interfaces from schemas from a directory
+ * Create types from schemas from a directory
  * @param settings Settings
  */
 export const convertFromDirectory = async (settings: Partial<Settings>): Promise<boolean> => {
@@ -265,20 +148,20 @@ export const convertFromDirectory = async (settings: Partial<Settings>): Promise
   if (!fs.existsSync(appSettings.schemaDirectory)) {
     throw `schemaDirectory "${appSettings.schemaDirectory}" does not exist`;
   }
-  appSettings.interfaceDirectory = Path.resolve(appSettings.interfaceDirectory);
-  if (!fs.existsSync(appSettings.interfaceDirectory)) {
-    fs.mkdirSync(appSettings.interfaceDirectory);
-    if (!fs.existsSync(appSettings.interfaceDirectory)) {
-      throw `interfaceDirectory "${appSettings.interfaceDirectory}" does not exist`;
+  appSettings.TypeOutputDirectory = Path.resolve(appSettings.TypeOutputDirectory);
+  if (!fs.existsSync(appSettings.TypeOutputDirectory)) {
+    fs.mkdirSync(appSettings.TypeOutputDirectory);
+    if (!fs.existsSync(appSettings.TypeOutputDirectory)) {
+      throw `TypeOutputDirectory "${appSettings.TypeOutputDirectory}" does not exist`;
     }
   }
 
   const fileNamesToExport: string[] = [];
 
-  // Load files and get all interface records
+  // Load files and get all types
   const files = fs.readdirSync(appSettings.schemaDirectory);
   for (const schemaFileName of files) {
-    const typeFileName = await writeInterfaceFile(appSettings, schemaFileName);
+    const typeFileName = await writeTypeFile(appSettings, schemaFileName);
     if (typeFileName) {
       fileNamesToExport.push(typeFileName);
     }

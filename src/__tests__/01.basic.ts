@@ -15,9 +15,9 @@ test('01.basic', () => {
     .label('TestSchema')
     .description('a test schema definition');
 
-  const result = convertSchema(({} as unknown) as Settings, schema);
-
-  expect(result[0].content).toBe(`/**
+  const result = convertSchema(({ sortPropertiesByName: true } as unknown) as Settings, schema);
+  expect(result).not.toBeUndefined;
+  expect(result?.content).toBe(`/**
  * a test schema definition
  */
 export interface TestSchema {
@@ -53,9 +53,10 @@ export interface TestSchema {
     .label('ArrayObject')
     .description('an Array test schema definition');
 
-  const arrayResult = convertSchema(({} as unknown) as Settings, schemaArray);
+  const arrayResult = convertSchema(({ sortPropertiesByName: true } as unknown) as Settings, schemaArray);
+  expect(arrayResult).not.toBeUndefined;
 
-  expect(arrayResult[0].content).toBe(`/**
+  expect(arrayResult?.content).toBe(`/**
  * an Array test schema definition
  */
 export interface ArrayObject {

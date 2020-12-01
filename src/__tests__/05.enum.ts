@@ -2,7 +2,7 @@ import Joi from 'joi';
 
 import { convertSchema, Settings } from '../index';
 
-test('06.enums', () => {
+test('05.enums', () => {
   const schema = Joi.object({
     topColour: Joi.string()
       .valid('red', 'green', 'orange', 'blue')
@@ -14,9 +14,12 @@ test('06.enums', () => {
     .label('TestSchema')
     .description('a test schema definition');
 
-  const result = convertSchema(({ defaultToRequired: true } as unknown) as Settings, schema);
-
-  expect(result[0].content).toBe(`/**
+  const result = convertSchema(
+    ({ defaultToRequired: true, sortPropertiesByName: true } as unknown) as Settings,
+    schema
+  );
+  expect(result).not.toBeUndefined;
+  expect(result?.content).toBe(`/**
  * a test schema definition
  */
 export interface TestSchema {
