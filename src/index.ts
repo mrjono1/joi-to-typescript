@@ -160,7 +160,9 @@ export const convertFromDirectory = async (settings: Partial<Settings>): Promise
 
   // Load files and get all types
   const files = fs.readdirSync(appSettings.schemaDirectory);
-  for (const schemaFileName of files.filter((dirent: string) => !fs.lstatSync(appSettings.schemaDirectory + '/' + dirent).isDirectory())) {
+  for (const schemaFileName of files.filter(
+    (dirent: string) => !fs.lstatSync(appSettings.schemaDirectory + '/' + dirent).isDirectory()
+  )) {
     const typeFileName = await writeTypeFile(appSettings, schemaFileName);
     if (typeFileName) {
       fileNamesToExport.push(typeFileName);
