@@ -2,15 +2,15 @@ import { convertFromDirectory } from '../index';
 import { readFileSync } from 'fs';
 
 test('03.array', async () => {
-  const TypeOutputDirectory = './src/__tests__/03/models';
+  const typeOutputDirectory = './src/__tests__/03/models';
   const result = await convertFromDirectory({
     schemaDirectory: './src/__tests__/03/schemas',
-    TypeOutputDirectory
+    typeOutputDirectory
   });
 
   expect(result).toBe(true);
 
-  const oneContent = readFileSync(`${TypeOutputDirectory}/One.ts`).toString();
+  const oneContent = readFileSync(`${typeOutputDirectory}/One.ts`).toString();
 
   expect(oneContent).toBe(
     `/**

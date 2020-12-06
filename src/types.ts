@@ -9,7 +9,7 @@ export interface Settings {
   /**
    * The output/interface directory
    */
-  TypeOutputDirectory: string;
+  typeOutputDirectory: string;
   /**
    * Should interface properties be defaulted to optional or required
    */
