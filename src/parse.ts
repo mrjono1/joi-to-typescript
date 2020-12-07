@@ -215,12 +215,27 @@ function parseBasicSchema(details: BasicDescribe, settings: Settings): TypeConte
   return makeTypeContentChild({ content, name, description });
 }
 
+const speicalAllowValues = [null, ''];
 function parseStringSchema(details: StringDescribe, settings: Settings): TypeContent | undefined {
   const { label: name, description } = getCommonDetails(details, settings);
   const values = details.allow;
+
+  // at least one value
   if (values && values.length !== 0) {
-    const allowedValues = values.map(value => makeTypeContentChild({ content: `'${value}'` }));
-    return makeTypeContentRoot({ joinOperation: 'union', children: allowedValues, name, description });
+    if (values.length === 1 && values[0] === '') {
+      // special case of empty string sometimes used in Joi to allow just empty string
+    } else {
+      const allowedValues = values.map(value =>
+        speicalAllowValues.includes(value) && value !== ''
+          ? makeTypeContentChild({ content: `${value}` })
+          : makeTypeContentChild({ content: `'${value}'` })
+      );
+
+      if (values.filter(value => speicalAllowValues.includes(value)).length == values.length) {
+        allowedValues.unshift(makeTypeContentChild({ content: 'string' }));
+      }
+      return makeTypeContentRoot({ joinOperation: 'union', children: allowedValues, name, description });
+    }
   }
   return makeTypeContentChild({ content: 'string', name, description });
 }

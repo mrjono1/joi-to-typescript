@@ -1,9 +1,4 @@
-// import Joi from 'joi';
-
-import {
-  convertFromDirectory
-  // convertSchema, Settings,
-} from '../index';
+import { convertFromDirectory } from '../index';
 import { readFileSync } from 'fs';
 
 test('06.alternatives', async () => {
