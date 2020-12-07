@@ -19,7 +19,13 @@ test('08.allow', () => {
     normalList: Joi.string().allow('red', 'green', 'blue'),
     normalRequiredList: Joi.string()
       .allow('red', 'green', 'blue')
-      .required()
+      .required(),
+    numbers: Joi.number()
+      .optional()
+      .allow(1, 2, 3, 4, 5),
+    nullNumber: Joi.number()
+      .optional()
+      .allow(null)
   })
     .label('TestSchema')
     .description('a test schema definition');
@@ -50,6 +56,14 @@ export interface TestSchema {
    * normalRequiredList
    */
   normalRequiredList: 'red' | 'green' | 'blue';
+  /**
+   * numbers
+   */
+  numbers?: 1 | 2 | 3 | 4 | 5;
+  /**
+   * nullNumber
+   */
+  nullNumber?: number | null;
 }`);
 
   expect(() => {
