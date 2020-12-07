@@ -31,6 +31,18 @@ export interface Settings {
    * If true will sort properties on interface by name
    */
   sortPropertiesByName: boolean;
+  /**
+   * If true will not output to subDirectories in output/interface directory. It will flatten the structure.
+   */
+  flattenTree: boolean;
+  /**
+   * If true will only read the files in the root directory of the input/schema directory. Will not parse through sub-directories.
+   */
+  rootDirectoyOnly: boolean;
+  /**
+   * If true will write all exports *'s to root index.ts in output/interface directory.
+   */
+  indexAllToRoot: boolean;
 }
 
 export interface ConvertedType {

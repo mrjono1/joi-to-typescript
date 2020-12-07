@@ -55,6 +55,12 @@ export const convertSchema = (settings: Settings, joi: AnySchema): ConvertedType
   return undefined;
 };
 
+const getTypeFileNameFromSchema = (schemaFileName: string, settings: Settings): string => {
+  return schemaFileName.endsWith(`${settings.schemaFileSuffix}.ts`)
+    ? schemaFileName.substring(0, schemaFileName.length - `${settings.schemaFileSuffix}.ts`.length)
+    : schemaFileName.replace('.ts', '');
+};
+
 /**
  * Write type file
  * @param settings Settings
@@ -90,9 +96,7 @@ export const writeTypeFile = async (settings: Settings, schemaFileName: string):
   }
 
   // Create Type File Name
-  const typeFileName = schemaFileName.endsWith(`${settings.schemaFileSuffix}.ts`)
-    ? schemaFileName.substring(0, schemaFileName.length - `${settings.schemaFileSuffix}.ts`.length)
-    : schemaFileName.replace('.ts', '');
+  const typeFileName = getTypeFileNameFromSchema(schemaFileName, settings);
 
   // Clean up type list
   // Sort Types
@@ -140,9 +144,7 @@ export const writeIndexFile = (settings: Settings, fileNamesToExport: string[]):
  * Create types from schemas from a directory
  * @param settings Settings
  */
-export const convertFromDirectory = async (settings: Partial<Settings>): Promise<boolean> => {
-  const appSettings = defaultSettings(settings);
-
+const convertFilesInDirectory = async (appSettings: Settings, ogTypeOutputDir: string): Promise<string[]> => {
   // Check and resolve directories
   appSettings.schemaDirectory = Path.resolve(appSettings.schemaDirectory);
   if (!fs.existsSync(appSettings.schemaDirectory)) {
@@ -156,21 +158,66 @@ export const convertFromDirectory = async (settings: Partial<Settings>): Promise
     }
   }
 
-  const fileNamesToExport: string[] = [];
+  let fileNamesToExport: string[] = [];
 
   // Load files and get all types
   const files = fs.readdirSync(appSettings.schemaDirectory);
-  for (const schemaFileName of files.filter(
-    (dirent: string) => !fs.lstatSync(appSettings.schemaDirectory + '/' + dirent).isDirectory()
-  )) {
-    const typeFileName = await writeTypeFile(appSettings, schemaFileName);
-    if (typeFileName) {
-      fileNamesToExport.push(typeFileName);
+  for (const schemaFileName of files) {
+    const subDirectoryPath = Path.join(appSettings.schemaDirectory, schemaFileName);
+    if (!appSettings.rootDirectoyOnly && fs.lstatSync(subDirectoryPath).isDirectory()) {
+      const typeOutputDirectory = appSettings.flattenTree
+        ? appSettings.typeOutputDirectory
+        : Path.join(appSettings.typeOutputDirectory, schemaFileName);
+
+      const thisDirsFileNamesToExport = await convertFilesInDirectory(
+        {
+          ...appSettings,
+          schemaDirectory: subDirectoryPath,
+          typeOutputDirectory
+        },
+        ogTypeOutputDir
+      );
+
+      if (appSettings.indexAllToRoot || appSettings.flattenTree) {
+        fileNamesToExport = fileNamesToExport.concat(thisDirsFileNamesToExport);
+      }
+    } else {
+      const typeFileName = await writeTypeFile(appSettings, schemaFileName);
+      if (typeFileName) {
+        let dirTypeFileName = typeFileName;
+        if (appSettings.indexAllToRoot) {
+          const findIndexEnd =
+            Path.resolve(appSettings.typeOutputDirectory).indexOf(ogTypeOutputDir) + ogTypeOutputDir.length + 1;
+          dirTypeFileName = Path.join(
+            appSettings.typeOutputDirectory.substring(findIndexEnd),
+            getTypeFileNameFromSchema(schemaFileName, appSettings)
+          );
+        }
+        fileNamesToExport.push(dirTypeFileName);
+      }
     }
   }
 
-  // Write index.ts
-  writeIndexFile(appSettings, fileNamesToExport);
+  if (!appSettings.indexAllToRoot && !appSettings.flattenTree) {
+    // Write index.ts
+    writeIndexFile(appSettings, fileNamesToExport);
+  }
+
+  return fileNamesToExport;
+};
+
+/**
+ * Create types from schemas from a directory
+ * @param settings Settings
+ */
+export const convertFromDirectory = async (settings: Partial<Settings>): Promise<boolean> => {
+  const appSettings = defaultSettings(settings);
+  const fileNamesToExport = await convertFilesInDirectory(appSettings, Path.resolve(appSettings.typeOutputDirectory));
+
+  if (appSettings.indexAllToRoot || appSettings.flattenTree) {
+    // Write index.ts
+    writeIndexFile(appSettings, fileNamesToExport);
+  }
 
   return true;
 };
