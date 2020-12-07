@@ -1,11 +1,15 @@
-import { convertFromDirectory } from '../index';
+// import Joi from 'joi';
+
+import {
+  convertFromDirectory
+  // convertSchema, Settings,
+} from '../index';
 import { readFileSync } from 'fs';
 
-test('04.multipleFiles', async () => {
-  const typeOutputDirectory = './src/__tests__/04/models';
-
+test('06.alternatives', async () => {
+  const typeOutputDirectory = './src/__tests__/07/models';
   const result = await convertFromDirectory({
-    schemaDirectory: './src/__tests__/04/schemas',
+    schemaDirectory: './src/__tests__/07/schemas',
     typeOutputDirectory
   });
 

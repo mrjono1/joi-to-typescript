@@ -109,7 +109,7 @@ import { convertFromDirectory } from 'joi-to-typescript';
 
 convertFromDirectory({
   schemaDirectory: './src/schemas',
-  TypeOutputDirectory: './src/interfaces',
+  typeOutputDirectory: './src/interfaces',
   debug: true
 });
 ```
@@ -127,7 +127,7 @@ export interface Settings {
    * The output/type directory
    * Will also attempt to create this directory
    */
-  TypeOutputDirectory: string;
+  typeOutputDirectory: string;
   /**
    * Should interface properties be defaulted to optional or required
    */
@@ -157,13 +157,24 @@ export interface Settings {
 - .optional() - optional properties `?`
 - .requried() - required properties
 - .array(), .object(), .string(), .number(), .boolean() - standard Joi schemas
+- .alternatives()
 
 Joi Features not listed here will probably be ignored
 
 ## TODO
 
-- Increase test quality and quantity
 - Support `null` fields
 - Convert sub schemas to interfaces
 - Ability to add your own custom types
-- Clear `TypeOutputDirectory` to ensure there is no junk files
+- Clear `typeOutputDirectory` to ensure there is no junk files
+
+## Contributing
+
+```bash
+nvm use # using NVM to select node version
+yarn install # using yarn
+yarn test # run local tests
+
+yarn coverage # test coverage report
+yarn lint # lint the code
+```

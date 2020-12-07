@@ -120,7 +120,7 @@ export const writeTypeFile = async (settings: Settings, schemaFileName: string):
 
   const fileContent = `${settings.fileHeader}\n\n${typeImports}${typeContent.join('\n\n').concat('\n')}`;
 
-  fs.writeFileSync(Path.join(settings.TypeOutputDirectory, `${typeFileName}.ts`), fileContent);
+  fs.writeFileSync(Path.join(settings.typeOutputDirectory, `${typeFileName}.ts`), fileContent);
 
   return typeFileName;
 };
@@ -133,7 +133,7 @@ export const writeTypeFile = async (settings: Settings, schemaFileName: string):
 export const writeIndexFile = (settings: Settings, fileNamesToExport: string[]): void => {
   const exportLines = fileNamesToExport.map(fileName => `export * from './${fileName}';`);
   const fileContent = `${settings.fileHeader}\n\n${exportLines.join('\n').concat('\n')}`;
-  fs.writeFileSync(Path.join(settings.TypeOutputDirectory, 'index.ts'), fileContent);
+  fs.writeFileSync(Path.join(settings.typeOutputDirectory, 'index.ts'), fileContent);
 };
 
 /**
@@ -148,11 +148,11 @@ export const convertFromDirectory = async (settings: Partial<Settings>): Promise
   if (!fs.existsSync(appSettings.schemaDirectory)) {
     throw `schemaDirectory "${appSettings.schemaDirectory}" does not exist`;
   }
-  appSettings.TypeOutputDirectory = Path.resolve(appSettings.TypeOutputDirectory);
-  if (!fs.existsSync(appSettings.TypeOutputDirectory)) {
-    fs.mkdirSync(appSettings.TypeOutputDirectory);
-    if (!fs.existsSync(appSettings.TypeOutputDirectory)) {
-      throw `TypeOutputDirectory "${appSettings.TypeOutputDirectory}" does not exist`;
+  appSettings.typeOutputDirectory = Path.resolve(appSettings.typeOutputDirectory);
+  if (!fs.existsSync(appSettings.typeOutputDirectory)) {
+    fs.mkdirSync(appSettings.typeOutputDirectory);
+    if (!fs.existsSync(appSettings.typeOutputDirectory)) {
+      throw `typeOutputDirectory "${appSettings.typeOutputDirectory}" does not exist`;
     }
   }
 
@@ -160,7 +160,9 @@ export const convertFromDirectory = async (settings: Partial<Settings>): Promise
 
   // Load files and get all types
   const files = fs.readdirSync(appSettings.schemaDirectory);
-  for (const schemaFileName of files) {
+  for (const schemaFileName of files.filter(
+    (dirent: string) => !fs.lstatSync(appSettings.schemaDirectory + '/' + dirent).isDirectory()
+  )) {
     const typeFileName = await writeTypeFile(appSettings, schemaFileName);
     if (typeFileName) {
       fileNamesToExport.push(typeFileName);

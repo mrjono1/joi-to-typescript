@@ -111,3 +111,5 @@ dist
 # ignore nix files
 .envrc
 shell.nix
+
+package-lock.json
