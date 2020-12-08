@@ -10,6 +10,7 @@ export interface BaseDescribe extends Joi.Description {
     label?: string;
     description?: string;
     presence?: 'optional' | 'required';
+    unknown?: boolean;
   };
 }
 
@@ -223,13 +224,14 @@ function parseBasicSchema(details: BasicDescribe, settings: Settings): TypeConte
     }
     return makeTypeContentRoot({ joinOperation: 'union', children: allowedValues, name, description });
   }
+
   return makeTypeContentChild({ content, name, description });
 }
 
-const stringAllowValues = [null, ''];
 function parseStringSchema(details: StringDescribe, settings: Settings): TypeContent | undefined {
   const { label: name, description } = getCommonDetails(details, settings);
   const values = details.allow;
+  const stringAllowValues = [null, ''];
 
   // at least one value
   if (values && values.length !== 0) {
@@ -248,6 +250,7 @@ function parseStringSchema(details: StringDescribe, settings: Settings): TypeCon
       return makeTypeContentRoot({ joinOperation: 'union', children: allowedValues, name, description });
     }
   }
+
   return makeTypeContentChild({ content: 'string', name, description });
 }
 
@@ -282,6 +285,16 @@ function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent 
     parsedSchema.name = key;
     return parsedSchema as TypeContentWithName;
   });
+
+  if (details?.flags?.unknown === true) {
+    const unknownProperty = {
+      content: 'any',
+      name: '[x: string]',
+      required: true,
+      description: 'Unknown Property'
+    } as TypeContentWithName;
+    children.push(unknownProperty);
+  }
 
   if (children.length === 0) {
     return undefined;
