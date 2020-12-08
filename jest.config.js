@@ -3,7 +3,7 @@ module.exports = {
     '^.+\\.ts$': 'ts-jest'
   },
   testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.ts$',
-  testPathIgnorePatterns: ['/schemas/', '/models/'],
+  testPathIgnorePatterns: ['/schemas/', '/models/', 'AssertionCriteria'],
   moduleFileExtensions: ['ts', 'js'],
   modulePaths: ['<rootDir>', '<rootDir>/src']
 };

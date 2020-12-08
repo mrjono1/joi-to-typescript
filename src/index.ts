@@ -1,9 +1,11 @@
-import Joi, { AnySchema } from 'joi';
+import { AnySchema } from 'joi';
 import Path from 'path';
 import fs from 'fs';
 
 import { Describe, parseSchema, getAllCustomTypes, typeContentToTs } from './parse';
 import { Settings, ConvertedType } from './types';
+import { convertFilesInDirectory } from './convertFilesInDirectory';
+import { writeTypeFile } from './writeTypeFile';
 
 export { Settings };
 
@@ -55,74 +57,10 @@ export const convertSchema = (settings: Settings, joi: AnySchema): ConvertedType
   return undefined;
 };
 
-/**
- * Write type file
- * @param settings Settings
- * @param schemaFileName Schema File Name
- */
-export const writeTypeFile = async (settings: Settings, schemaFileName: string): Promise<undefined | string> => {
-  const allConvertedTypes: ConvertedType[] = [];
-
-  const fullFilePath = Path.join(settings.schemaDirectory, schemaFileName);
-  const schemaFile = await require(fullFilePath);
-
-  for (const iterator in schemaFile) {
-    const joiSchema = schemaFile[iterator];
-
-    if (!Joi.isSchema(joiSchema)) {
-      continue;
-    }
-    const convertedType = convertSchema(settings, joiSchema);
-    if (convertedType) {
-      allConvertedTypes.push(convertedType);
-    }
-  }
-
-  if (allConvertedTypes.length === 0) {
-    if (settings.debug) {
-      console.log(`${schemaFile} - Skipped - no Joi Schemas found`);
-    }
-    return;
-  }
-
-  if (settings.debug) {
-    console.log(`${schemaFileName} - Processing`);
-  }
-
-  // Create Type File Name
-  const typeFileName = schemaFileName.endsWith(`${settings.schemaFileSuffix}.ts`)
+export const getTypeFileNameFromSchema = (schemaFileName: string, settings: Settings): string => {
+  return schemaFileName.endsWith(`${settings.schemaFileSuffix}.ts`)
     ? schemaFileName.substring(0, schemaFileName.length - `${settings.schemaFileSuffix}.ts`.length)
     : schemaFileName.replace('.ts', '');
-
-  // Clean up type list
-  // Sort Types
-  const typesToBeWritten = allConvertedTypes.sort(
-    (interface1, interface2) => 0 - (interface1.name > interface2.name ? -1 : 1)
-  );
-
-  // Write types
-  const typeContent = typesToBeWritten.map(typeToBeWritten => typeToBeWritten.content);
-
-  // Get imports for the current file
-  const externalTypes: string[] = [];
-  const allExternalTypes: string[] = [];
-  const allCurrentFileTypeNames = typesToBeWritten.map(typeToBeWritten => typeToBeWritten.name);
-
-  for (const typeToBeWritten of typesToBeWritten) {
-    for (const customType of typeToBeWritten.customTypes) {
-      if (!allCurrentFileTypeNames.includes(customType)) {
-        allExternalTypes.push(customType);
-      }
-    }
-  }
-  externalTypes.push(...new Set(allExternalTypes));
-  const typeImports: string = externalTypes.length == 0 ? '' : `import { ${externalTypes.join(',\n')} } from '.';\n\n`;
-
-  const fileContent = `${settings.fileHeader}\n\n${typeImports}${typeContent.join('\n\n').concat('\n')}`;
-
-  fs.writeFileSync(Path.join(settings.typeOutputDirectory, `${typeFileName}.ts`), fileContent);
-
-  return typeFileName;
 };
 
 /**
@@ -142,35 +80,16 @@ export const writeIndexFile = (settings: Settings, fileNamesToExport: string[]):
  */
 export const convertFromDirectory = async (settings: Partial<Settings>): Promise<boolean> => {
   const appSettings = defaultSettings(settings);
+  const filesInDirectory = await convertFilesInDirectory(appSettings, Path.resolve(appSettings.typeOutputDirectory));
 
-  // Check and resolve directories
-  appSettings.schemaDirectory = Path.resolve(appSettings.schemaDirectory);
-  if (!fs.existsSync(appSettings.schemaDirectory)) {
-    throw `schemaDirectory "${appSettings.schemaDirectory}" does not exist`;
-  }
-  appSettings.typeOutputDirectory = Path.resolve(appSettings.typeOutputDirectory);
-  if (!fs.existsSync(appSettings.typeOutputDirectory)) {
-    fs.mkdirSync(appSettings.typeOutputDirectory);
-    if (!fs.existsSync(appSettings.typeOutputDirectory)) {
-      throw `typeOutputDirectory "${appSettings.typeOutputDirectory}" does not exist`;
-    }
+  for (const exportType of filesInDirectory.types) {
+    writeTypeFile(appSettings, exportType.typeFileName, filesInDirectory.types);
   }
 
-  const fileNamesToExport: string[] = [];
-
-  // Load files and get all types
-  const files = fs.readdirSync(appSettings.schemaDirectory);
-  for (const schemaFileName of files.filter(
-    (dirent: string) => !fs.lstatSync(appSettings.schemaDirectory + '/' + dirent).isDirectory()
-  )) {
-    const typeFileName = await writeTypeFile(appSettings, schemaFileName);
-    if (typeFileName) {
-      fileNamesToExport.push(typeFileName);
-    }
+  if (appSettings.indexAllToRoot || appSettings.flattenTree) {
+    // Write index.ts
+    writeIndexFile(appSettings, filesInDirectory.typeFileNames);
   }
-
-  // Write index.ts
-  writeIndexFile(appSettings, fileNamesToExport);
 
   return true;
 };

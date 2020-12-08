@@ -31,12 +31,25 @@ export interface Settings {
    * If true will sort properties on interface by name
    */
   sortPropertiesByName: boolean;
+  /**
+   * If true will not output to subDirectories in output/interface directory. It will flatten the structure.
+   */
+  flattenTree: boolean;
+  /**
+   * If true will only read the files in the root directory of the input/schema directory. Will not parse through sub-directories.
+   */
+  rootDirectoyOnly: boolean;
+  /**
+   * If true will write all exports *'s to root index.ts in output/interface directory.
+   */
+  indexAllToRoot: boolean;
 }
 
 export interface ConvertedType {
   name: string;
   content: string;
   customTypes: string[];
+  location?: string;
 }
 
 export interface BaseTypeContent {
@@ -151,4 +164,39 @@ export interface Property extends BasicJoiType {
    * The object key this schema was stored under
    */
   name: string;
+}
+
+export interface GenerateTypeFile {
+  /**
+   * External Types required by File
+   */
+  externalTypes: ConvertedType[];
+  /**
+   * Internal Types provided by File
+   */
+  internalTypes: ConvertedType[];
+  /**
+   * Contents of file exported.
+   */
+  fileContent: string;
+  /**
+   * File Name of file exported.
+   */
+  typeFileName: string;
+
+  /**
+   * File Location of where file is exported.
+   */
+  typeFileLocation: string;
+}
+
+export interface GenerateTypesDir {
+  /**
+   * Types generated in Directory/SubDirectory
+   */
+  types: GenerateTypeFile[];
+  /**
+   * FileNames of files exported.
+   */
+  typeFileNames: string[];
 }
