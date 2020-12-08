@@ -66,12 +66,16 @@ export interface Zebra {
   public static oneContentTree =
     AssertionCriteria.autoGenHeader + `import { Person } from './subDir';` + AssertionCriteria.oneContentGeneratedModel;
 
-  public static personContent =
-    AssertionCriteria.autoGenHeader +
-    `/**
+  public static personContentModel = `
+
+/**
  * Person
  */
 export interface Person {
+  /**
+   * address
+   */
+  address: Address;
   /**
    * firstName
    */
@@ -83,25 +87,86 @@ export interface Person {
 }
 `;
 
+  public static personContentTree =
+    AssertionCriteria.autoGenHeader + `import { Address } from '.';` + AssertionCriteria.personContentModel;
+
+  public static personRootIndexContent =
+    AssertionCriteria.autoGenHeader + `import { Address } from '..';` + AssertionCriteria.personContentModel;
+
   public static defaultRootIndexContent =
     AssertionCriteria.autoGenHeader +
     `export * from './One';
- `;
+`;
 
   public static subDirIndexContent =
     AssertionCriteria.autoGenHeader +
-    `export * from './Person';
- `;
+    `export * from './Address';
+export * from './Person';
+`;
 
   public static flattenedRootIndexContent =
     AssertionCriteria.autoGenHeader +
     `export * from './One';
+export * from './Address';
 export * from './Person';
+export * from './Employee';
 `;
 
   public static indexAllToRootIndexContent =
     AssertionCriteria.autoGenHeader +
     `export * from './One';
+export * from './subDir/Address';
 export * from './subDir/Person';
+export * from './subDir2/Employee';
+`;
+
+  public static addressContent =
+    AssertionCriteria.autoGenHeader +
+    `/**
+ * Address
+ */
+export interface Address {
+  /**
+   * Suburb
+   */
+  Suburb: string;
+  /**
+   * addressLineNumber1
+   */
+  addressLineNumber1: string;
+}
+`;
+
+  public static employeeContentModel = `
+
+/**
+ * Employee
+ */
+export interface Employee {
+  /**
+   * personalDetails
+   */
+  personalDetails: Person;
+  /**
+   * pet
+   */
+  pet: Item;
+}
+`;
+
+  public static employeeContentTree =
+    AssertionCriteria.autoGenHeader +
+    `import { Person } from '../subDir';\nimport { Item } from '..';` +
+    AssertionCriteria.employeeContentModel;
+
+  public static employeeContentFlattened =
+    AssertionCriteria.autoGenHeader + `import { Person, Item } from '.';` + AssertionCriteria.employeeContentModel;
+
+  public static employeeRootIndexContent =
+    AssertionCriteria.autoGenHeader + `import { Person, Item } from '..';` + AssertionCriteria.employeeContentModel;
+
+  public static subDir2IndexContent =
+    AssertionCriteria.autoGenHeader +
+    `export * from './Employee';
 `;
 }

@@ -49,6 +49,7 @@ export interface ConvertedType {
   name: string;
   content: string;
   customTypes: string[];
+  location?: string;
 }
 
 export interface BaseTypeContent {
@@ -163,4 +164,39 @@ export interface Property extends BasicJoiType {
    * The object key this schema was stored under
    */
   name: string;
+}
+
+export interface GenerateTypeFile {
+  /**
+   * External Types required by File
+   */
+  externalTypes: ConvertedType[];
+  /**
+   * Internal Types provided by File
+   */
+  internalTypes: ConvertedType[];
+  /**
+   * Contents of file exported.
+   */
+  fileContent: string;
+  /**
+   * File Name of file exported.
+   */
+  typeFileName: string;
+
+  /**
+   * File Location of where file is exported.
+   */
+  typeFileLocation: string;
+}
+
+export interface GenerateTypesDir {
+  /**
+   * Types generated in Directory/SubDirectory
+   */
+  types: GenerateTypeFile[];
+  /**
+   * FileNames of files exported.
+   */
+  typeFileNames: string[];
 }
