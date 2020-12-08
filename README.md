@@ -158,15 +158,10 @@ export interface Settings {
 - .requried() - required properties
 - .array(), .object(), .string(), .number(), .boolean() - standard Joi schemas
 - .alternatives()
+- .allow('') - will be ignored on a string
+- .allow(null) - will add as an optional type eg `string | null`
 
 Joi Features not listed here will probably be ignored
-
-## TODO
-
-- Support `null` fields
-- Convert sub schemas to interfaces
-- Ability to add your own custom types
-- Clear `typeOutputDirectory` to ensure there is no junk files
 
 ## Contributing
 
