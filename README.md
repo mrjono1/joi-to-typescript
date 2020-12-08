@@ -160,6 +160,7 @@ export interface Settings {
 - .alternatives()
 - .allow('') - will be ignored on a string
 - .allow(null) - will add as an optional type eg `string | null`
+- .unknown(true) - will add a property `[x: string]: any;`
 
 Joi Features not listed here will probably be ignored
 
