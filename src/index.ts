@@ -69,7 +69,7 @@ export const getTypeFileNameFromSchema = (schemaFileName: string, settings: Sett
  * @param fileNamesToExport list of file names that will be added to the index.ts file
  */
 export const writeIndexFile = (settings: Settings, fileNamesToExport: string[]): void => {
-  const exportLines = fileNamesToExport.map(fileName => `export * from './${fileName}';`);
+  const exportLines = fileNamesToExport.map(fileName => `export * from './${fileName.replace(/\\/g, '/')}';`);
   const fileContent = `${settings.fileHeader}\n\n${exportLines.join('\n').concat('\n')}`;
   fs.writeFileSync(Path.join(settings.typeOutputDirectory, 'index.ts'), fileContent);
 };
