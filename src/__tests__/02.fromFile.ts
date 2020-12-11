@@ -35,13 +35,7 @@ export * from './Readme';
  * a test schema definition
  */
 export interface TestSchema {
-  /**
-   * name
-   */
   name?: string;
-  /**
-   * propertyName1
-   */
   propertyName1: boolean;
 }
 `
@@ -54,9 +48,6 @@ export interface TestSchema {
  * Do not modify this file manually
  */
 
-/**
- * Bar
- */
 export interface Bar {
   /**
    * Id
@@ -64,9 +55,6 @@ export interface Bar {
   id: number;
 }
 
-/**
- * Foo
- */
 export interface Foo {
   /**
    * Bar
@@ -86,17 +74,8 @@ export interface Foo {
  * Do not modify this file manually
  */
 
-/**
- * Job
- */
 export interface Job {
-  /**
-   * businessName
-   */
   businessName: string;
-  /**
-   * jobTitle
-   */
   jobTitle: string;
 }
 
@@ -105,17 +84,8 @@ export interface Job {
  */
 export type People = Person[];
 
-/**
- * Person
- */
 export interface Person {
-  /**
-   * firstName
-   */
   firstName: string;
-  /**
-   * job
-   */
   job?: Job;
   /**
    * Last Name

@@ -23,13 +23,7 @@ test('05.enums', () => {
  * a test schema definition
  */
 export interface TestSchema {
-  /**
-   * bottomColour
-   */
   bottomColour: 'red' | 'green' | 'orange' | 'blue';
-  /**
-   * topColour
-   */
   topColour: 'red' | 'green' | 'orange' | 'blue';
 }`);
 });

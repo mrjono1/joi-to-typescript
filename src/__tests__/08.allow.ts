@@ -44,25 +44,10 @@ export interface TestSchema {
    * nullable
    */
   nullName?: string | null;
-  /**
-   * blankNull
-   */
   blankNull?: string | null | '';
-  /**
-   * normalList
-   */
   normalList?: 'red' | 'green' | 'blue';
-  /**
-   * normalRequiredList
-   */
   normalRequiredList: 'red' | 'green' | 'blue';
-  /**
-   * numbers
-   */
   numbers?: 1 | 2 | 3 | 4 | 5;
-  /**
-   * nullNumber
-   */
   nullNumber?: number | null;
 }`);
 

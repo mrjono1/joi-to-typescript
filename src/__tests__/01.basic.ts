@@ -21,21 +21,12 @@ test('01.basic', () => {
  * a test schema definition
  */
 export interface TestSchema {
-  /**
-   * count
-   */
   count?: number;
-  /**
-   * dateCreated
-   */
   dateCreated?: Date;
   /**
    * Test Schema Name
    */
   name?: string;
-  /**
-   * propertyName1
-   */
   propertyName1: boolean;
 }`);
 
@@ -60,21 +51,9 @@ export interface TestSchema {
  * an Array test schema definition
  */
 export interface ArrayObject {
-  /**
-   * count
-   */
   count?: number[];
-  /**
-   * dateCreated
-   */
   dateCreated?: Date[];
-  /**
-   * name
-   */
   name?: string[];
-  /**
-   * propertyName1
-   */
   propertyName1: boolean[];
 }`);
 });

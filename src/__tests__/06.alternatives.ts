@@ -23,13 +23,7 @@ test('06.alternatives', async () => {
  */
 export type Basic = number | string;
 
-/**
- * Other
- */
 export interface Other {
-  /**
-   * other
-   */
   other?: string;
 }
 
@@ -37,13 +31,7 @@ export interface Other {
  * a test schema definition
  */
 export interface Test {
-  /**
-   * name
-   */
   name?: string;
-  /**
-   * value
-   */
   value?: Thing | Other;
   /**
    * a description for basic
@@ -56,13 +44,7 @@ export interface Test {
  */
 export type TestList = (boolean | string)[];
 
-/**
- * Thing
- */
 export interface Thing {
-  /**
-   * thing
-   */
   thing: string;
 }
 `
