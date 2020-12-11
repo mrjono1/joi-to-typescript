@@ -79,9 +79,10 @@ function getIndentStr(indentLevel: number): string {
  * Get Interface jsDoc
  */
 function getDescriptionStr(name: string, description?: string, indentLevel = 0): string {
+  if (!description) return '';
   const docStr = description ? description : name;
   const lines = ['/**', ` * ${docStr}`, ' */'];
-  return lines.map(line => `${getIndentStr(indentLevel)}${line}`).join('\n');
+  return lines.map(line => `${getIndentStr(indentLevel)}${line}`).join('\n') + '\n';
 }
 
 function typeContentToTsHelper(
