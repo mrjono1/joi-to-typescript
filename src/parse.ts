@@ -131,8 +131,7 @@ function typeContentToTsHelper(
         // forcing name to be defined here, might need a runtime check but it should be set if we are here
         const descriptionStr = getDescriptionStr(child.name as string, childInfo.description, indentLevel + 1);
         const optionalStr = child.required ? '' : '?';
-        const name = /^[$A-Z_][0-9A-Z_$]*$/i.test(child.name || '') ? child.name : `"${child.name}"`;
-        return `${descriptionStr}  ${getIndentStr(indentLevel)}${name}${optionalStr}: ${childInfo.tsContent};`;
+        return `${descriptionStr}  ${getIndentStr(indentLevel)}${child.name}${optionalStr}: ${childInfo.tsContent};`;
       });
 
       const objectStr = `{\n${childrenContent.join('\n')}\n${getIndentStr(indentLevel)}}`;
@@ -153,7 +152,7 @@ export function typeContentToTs(parsedSchema: TypeContent, doExport = false): st
   const { tsContent, description } = typeContentToTsHelper(parsedSchema, doExport);
   // forcing name to be defined here, might need a runtime check but it should be set if we are here
   const descriptionStr = getDescriptionStr(parsedSchema.name as string, description);
-  return `${descriptionStr}\n${tsContent}`;
+  return `${descriptionStr}${tsContent}`;
 }
 
 // TODO: will be issues with useLabels if a nested schema has a label but is not exported on its own
@@ -287,7 +286,7 @@ function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent 
     if (!parsedSchema) {
       return undefined;
     }
-    parsedSchema.name = key;
+    parsedSchema.name = /^[$A-Z_][0-9A-Z_$]*$/i.test(key || '') ? key : `"${key}"`;
     return parsedSchema as TypeContentWithName;
   });
 
