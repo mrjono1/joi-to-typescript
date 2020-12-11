@@ -219,7 +219,7 @@ function parseBasicSchema(details: BasicDescribe, settings: Settings): TypeConte
 
   // at least one value
   if (values && values.length !== 0) {
-    const allowedValues = values.map((value: unknown) => makeTypeContentChild({ content: `${value}` }));
+    const allowedValues = values.map((value: unknown) => makeTypeContentChild({ content: typeof value === 'string' ? `'${value}'` : `${value}` }));
 
     if (values[0] === null) {
       allowedValues.unshift(makeTypeContentChild({ content: joiType }));
