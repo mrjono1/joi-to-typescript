@@ -126,15 +126,16 @@ function typeContentToTsHelper(
     case 'object': {
       if (!children.length && !doExport) return { tsContent: 'object', description: parsedSchema.description };
       const childrenContent = children.map(child => {
-        const childInfo = typeContentToTsHelper(child);
+        const childInfo = typeContentToTsHelper(child, false, indentLevel + 1);
         // TODO: configure indent length
         // forcing name to be defined here, might need a runtime check but it should be set if we are here
         const descriptionStr = getDescriptionStr(child.name as string, childInfo.description, indentLevel + 1);
         const optionalStr = child.required ? '' : '?';
-        return `${descriptionStr}\n  ${child.name}${optionalStr}: ${childInfo.tsContent};`;
+        const name = /^[$A-Z_][0-9A-Z_$]*$/i.test(child.name || '') ? child.name : `"${child.name}"`;
+        return `${descriptionStr}  ${getIndentStr(indentLevel)}${name}${optionalStr}: ${childInfo.tsContent};`;
       });
 
-      const objectStr = `{\n${childrenContent.join('\n')}\n}`;
+      const objectStr = `{\n${childrenContent.join('\n')}\n${getIndentStr(indentLevel)}}`;
       if (doExport) {
         return {
           tsContent: `export interface ${parsedSchema.name} ${objectStr}`,
