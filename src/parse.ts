@@ -222,7 +222,7 @@ function parseBasicSchema(details: BasicDescribe, settings: Settings): TypeConte
     const allowedValues = values.map((value: unknown) => makeTypeContentChild({ content: typeof value === 'string' ? `'${value}'` : `${value}` }));
 
     if (values[0] === null) {
-      allowedValues.unshift(makeTypeContentChild({ content: joiType }));
+      allowedValues.unshift(makeTypeContentChild({ content }));
     }
     return makeTypeContentRoot({ joinOperation: 'union', children: allowedValues, name, description });
   }
