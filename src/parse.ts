@@ -279,7 +279,7 @@ function parseAlternatives(details: AlternativesDescribe, settings: Settings): T
 }
 
 function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent | undefined {
-  let children = filterMap(Object.entries(details.keys), ([key, value]) => {
+  let children = filterMap(Object.entries(details.keys || {}), ([key, value]) => {
     const parsedSchema = parseSchema(value, settings);
     if (!parsedSchema) {
       return undefined;
@@ -298,9 +298,6 @@ function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent 
     children.push(unknownProperty);
   }
 
-  if (children.length === 0) {
-    return undefined;
-  }
   if (settings.sortPropertiesByName) {
     children = children.sort((a, b) => {
       if (a.name > b.name) {
