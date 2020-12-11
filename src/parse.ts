@@ -220,7 +220,9 @@ function parseBasicSchema(details: BasicDescribe, settings: Settings): TypeConte
 
   // at least one value
   if (values && values.length !== 0) {
-    const allowedValues = values.map((value: unknown) => makeTypeContentChild({ content: typeof value === 'string' ? `'${value}'` : `${value}` }));
+    const allowedValues = values.map((value: unknown) =>
+      makeTypeContentChild({ content: typeof value === 'string' ? `'${value}'` : `${value}` })
+    );
 
     if (values[0] === null) {
       allowedValues.unshift(makeTypeContentChild({ content }));
@@ -259,7 +261,7 @@ function parseStringSchema(details: StringDescribe, settings: Settings): TypeCon
 
 function parseArray(details: ArrayDescribe, settings: Settings): TypeContent | undefined {
   // TODO: handle multiple things in the items arr
-  const item = details.items ? details.items[0] : { type: 'any' } as Describe;
+  const item = details.items ? details.items[0] : ({ type: 'any' } as Describe);
   const { label: name, description } = getCommonDetails(details, settings);
 
   const child = parseSchema(item, settings);
