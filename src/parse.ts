@@ -259,7 +259,7 @@ function parseStringSchema(details: StringDescribe, settings: Settings): TypeCon
 
 function parseArray(details: ArrayDescribe, settings: Settings): TypeContent | undefined {
   // TODO: handle multiple things in the items arr
-  const item = details.items[0];
+  const item = details.items ? details.items[0] : { type: 'any' } as Describe;
   const { label: name, description } = getCommonDetails(details, settings);
 
   const child = parseSchema(item, settings);
