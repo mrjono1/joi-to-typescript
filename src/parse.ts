@@ -124,6 +124,7 @@ function typeContentToTsHelper(
       return { tsContent: unionStr, description: parsedSchema.description };
     }
     case 'object': {
+      if (!children.length && !doExport) return { tsContent: 'object', description: parsedSchema.description };
       const childrenContent = children.map(child => {
         const childInfo = typeContentToTsHelper(child);
         // TODO: configure indent length
