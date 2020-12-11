@@ -60,7 +60,9 @@ export const writeTypeFile = async (
         let relativePath = Path.relative(generatedFile.typeFileLocation, customTypeLocation);
         relativePath = relativePath ? `${relativePath}` : '.';
         relativePath = relativePath.includes('..') || relativePath == '.' ? relativePath : `./${relativePath}`;
-        typeImports += `import { ${customTypeLocationDict[customTypeLocation].join(', ')} } from '${relativePath.replace(/\\/g, '/')}';\n`;
+        typeImports += `import { ${customTypeLocationDict[customTypeLocation].join(
+          ', '
+        )} } from '${relativePath.replace(/\\/g, '/')}';\n`;
       }
 
       if (typeImports) {
