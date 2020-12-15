@@ -33,6 +33,9 @@ export const defaultSettings = (settings: Partial<Settings>): Settings => {
   if (appSettings.sortPropertiesByName === undefined) {
     appSettings.sortPropertiesByName = true;
   }
+  if (appSettings.commentEverything === undefined) {
+    appSettings.commentEverything = false;
+  }
   return appSettings;
 };
 
@@ -46,7 +49,7 @@ export const convertSchema = (settings: Settings, joi: AnySchema): ConvertedType
   const parsedSchema = parseSchema(details, settings, false);
   if (parsedSchema) {
     const customTypes = getAllCustomTypes(parsedSchema);
-    const content = typeContentToTs(parsedSchema, true);
+    const content = typeContentToTs(settings.commentEverything, parsedSchema, true);
     return {
       name,
       customTypes,
