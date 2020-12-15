@@ -294,7 +294,7 @@ function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent 
     if (!parsedSchema) {
       return undefined;
     }
-    parsedSchema.name = /^[$A-Z_][0-9A-Z_$]*$/i.test(key || '') ? key : `"${key}"`;
+    parsedSchema.name = /^[$A-Z_][0-9A-Z_$]*$/i.test(key || '') ? key : `'${key}'`;
     return parsedSchema as TypeContentWithName;
   });
 

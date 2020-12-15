@@ -35,6 +35,7 @@ export * from './Readme';
  * a test schema definition
  */
 export interface TestSchema {
+  'yellow.flower'?: string;
   name?: string;
   propertyName1: boolean;
 }

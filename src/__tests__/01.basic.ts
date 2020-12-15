@@ -98,6 +98,6 @@ test('01.basic.nested', () => {
      */
     aType?: Blue;
   };
-  "x.y"?: string;
+  'x.y'?: string;
 }`);
 });
