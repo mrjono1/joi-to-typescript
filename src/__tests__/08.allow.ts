@@ -25,7 +25,10 @@ test('08.allow', () => {
       .allow(1, 2, 3, 4, 5),
     nullNumber: Joi.number()
       .optional()
+      .allow(null),
+    date: Joi.date()
       .allow(null)
+      .description('This is date')
   })
     .label('TestSchema')
     .description('a test schema definition');
@@ -49,6 +52,10 @@ export interface TestSchema {
   normalRequiredList: 'red' | 'green' | 'blue';
   numbers?: 1 | 2 | 3 | 4 | 5;
   nullNumber?: number | null;
+  /**
+   * This is date
+   */
+  date?: Date | null;
 }`);
 
   expect(() => {
