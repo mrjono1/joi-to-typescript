@@ -8,9 +8,6 @@ export class AssertionCriteria {
 
   private static oneContentGeneratedModel = `
 
-/**
- * Item
- */
 export interface Item {
   /**
    * Female Zebra
@@ -20,9 +17,6 @@ export interface Item {
    * Male Zebra
    */
   maleZebra?: Zebra;
-  /**
-   * name
-   */
   name: string;
 }
 
@@ -35,27 +29,15 @@ export type People = Person[];
  * a test schema definition
  */
 export interface Test {
-  /**
-   * name
-   */
   name?: string;
   /**
    * A list of People
    */
   people?: People;
-  /**
-   * propertyName1
-   */
   propertyName1: boolean;
 }
 
-/**
- * Zebra
- */
 export interface Zebra {
-  /**
-   * name
-   */
   name?: string;
 }
 `;
@@ -68,21 +50,9 @@ export interface Zebra {
 
   public static personContentModel = `
 
-/**
- * Person
- */
 export interface Person {
-  /**
-   * address
-   */
   address: Address;
-  /**
-   * firstName
-   */
   firstName: string;
-  /**
-   * lastName
-   */
   lastName: string;
 }
 `;
@@ -122,34 +92,16 @@ export * from './subDir2/Employee';
 
   public static addressContent =
     AssertionCriteria.autoGenHeader +
-    `/**
- * Address
- */
-export interface Address {
-  /**
-   * Suburb
-   */
+    `export interface Address {
   Suburb: string;
-  /**
-   * addressLineNumber1
-   */
   addressLineNumber1: string;
 }
 `;
 
   public static employeeContentModel = `
 
-/**
- * Employee
- */
 export interface Employee {
-  /**
-   * personalDetails
-   */
   personalDetails: Person;
-  /**
-   * pet
-   */
   pet: Item;
 }
 `;

@@ -2,7 +2,7 @@ import Joi from 'joi';
 
 import { convertSchema, Settings } from '../index';
 
-test('01.basic', () => {
+test('01.basic.types', () => {
   const schema = Joi.object({
     // basic types
     name: Joi.string()
@@ -10,7 +10,8 @@ test('01.basic', () => {
       .description('Test Schema Name'),
     propertyName1: Joi.boolean().required(),
     dateCreated: Joi.date(),
-    count: Joi.number()
+    count: Joi.number(),
+    obj: Joi.object()
   })
     .label('TestSchema')
     .description('a test schema definition');
@@ -21,24 +22,18 @@ test('01.basic', () => {
  * a test schema definition
  */
 export interface TestSchema {
-  /**
-   * count
-   */
   count?: number;
-  /**
-   * dateCreated
-   */
   dateCreated?: Date;
   /**
    * Test Schema Name
    */
   name?: string;
-  /**
-   * propertyName1
-   */
+  obj?: object;
   propertyName1: boolean;
 }`);
+});
 
+test('01.basic.array', () => {
   const schemaArray = Joi.object({
     // basic types
     name: Joi.array()
@@ -48,7 +43,8 @@ export interface TestSchema {
       .items(Joi.boolean())
       .required(),
     dateCreated: Joi.array().items(Joi.date()),
-    count: Joi.array().items(Joi.number())
+    count: Joi.array().items(Joi.number()),
+    arr: Joi.array()
   })
     .label('ArrayObject')
     .description('an Array test schema definition');
@@ -60,21 +56,48 @@ export interface TestSchema {
  * an Array test schema definition
  */
 export interface ArrayObject {
-  /**
-   * count
-   */
+  arr?: any[];
   count?: number[];
-  /**
-   * dateCreated
-   */
   dateCreated?: Date[];
-  /**
-   * name
-   */
   name?: string[];
-  /**
-   * propertyName1
-   */
   propertyName1: boolean[];
+}`);
+});
+
+test('01.basic.nested', () => {
+  const schema = Joi.object({
+    nested: Joi.object({ a: Joi.object({ b: Joi.string() }) }),
+    nestedComments: Joi.object({ a: Joi.object({ b: Joi.string().description('nested comment') }) }),
+    nestedObject: Joi.object({
+      aType: Joi.object()
+        .label('Blue')
+        .description('A blue object property')
+    }),
+    'x.y': Joi.string()
+  }).label('TestSchema');
+
+  const result = convertSchema(({} as unknown) as Settings, schema);
+  expect(result).not.toBeUndefined;
+  expect(result?.content).toBe(`export interface TestSchema {
+  nested?: {
+    a?: {
+      b?: string;
+    };
+  };
+  nestedComments?: {
+    a?: {
+      /**
+       * nested comment
+       */
+      b?: string;
+    };
+  };
+  nestedObject?: {
+    /**
+     * A blue object property
+     */
+    aType?: Blue;
+  };
+  'x.y'?: string;
 }`);
 });

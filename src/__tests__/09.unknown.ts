@@ -16,9 +16,6 @@ test('09.unknown', () => {
  * a test schema definition
  */
 export interface TestSchema {
-  /**
-   * name
-   */
   name?: string;
   /**
    * Unknown Property
@@ -39,9 +36,6 @@ export interface TestSchema {
  * a test schema definition
  */
 export interface TestSchema {
-  /**
-   * name
-   */
   name?: string;
 }`);
 });

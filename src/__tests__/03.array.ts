@@ -18,13 +18,7 @@ test('03.array', async () => {
  * Do not modify this file manually
  */
 
-/**
- * Item
- */
 export interface Item {
-  /**
-   * name
-   */
   name: string;
 }
 
@@ -32,17 +26,8 @@ export interface Item {
  * a test schema definition
  */
 export interface Test {
-  /**
-   * items
-   */
   items?: Item[];
-  /**
-   * name
-   */
   name?: string;
-  /**
-   * propertyName1
-   */
   propertyName1: boolean;
 }
 

@@ -146,6 +146,28 @@ export interface Settings {
    * File Header content for generated files
    */
   fileHeader: string;
+  /**
+   * If true will sort properties on interface by name
+   * Defaults to `true`
+   */
+  sortPropertiesByName: boolean;
+  /**
+   * If true will not output to subDirectories in output/interface directory. It will flatten the structure.
+   */
+  flattenTree: boolean;
+  /**
+   * If true will only read the files in the root directory of the input/schema directory. Will not parse through sub-directories.
+   */
+  rootDirectoyOnly: boolean;
+  /**
+   * If true will write all exports *'s to root index.ts in output/interface directory.
+   */
+  indexAllToRoot: boolean;
+  /**
+   * Comment every interface and property even with just a duplicate of the interface and property name
+   * Defaults to `false`
+   */
+  commentEverything: boolean;
 }
 ```
 

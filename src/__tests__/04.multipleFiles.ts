@@ -21,9 +21,6 @@ test('04.multipleFiles', async () => {
 
 import { Person } from '.';
 
-/**
- * Item
- */
 export interface Item {
   /**
    * Female Zebra
@@ -33,9 +30,6 @@ export interface Item {
    * Male Zebra
    */
   maleZebra?: Zebra;
-  /**
-   * name
-   */
   name: string;
 }
 
@@ -48,27 +42,15 @@ export type People = Person[];
  * a test schema definition
  */
 export interface Test {
-  /**
-   * name
-   */
   name?: string;
   /**
    * A list of People
    */
   people?: People;
-  /**
-   * propertyName1
-   */
   propertyName1: boolean;
 }
 
-/**
- * Zebra
- */
 export interface Zebra {
-  /**
-   * name
-   */
   name?: string;
 }
 `

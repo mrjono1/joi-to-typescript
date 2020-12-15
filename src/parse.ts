@@ -78,13 +78,17 @@ function getIndentStr(indentLevel: number): string {
 /**
  * Get Interface jsDoc
  */
-function getDescriptionStr(name: string, description?: string, indentLevel = 0): string {
+function getDescriptionStr(commentEverything: boolean, name: string, description?: string, indentLevel = 0): string {
+  if (!commentEverything && !description) {
+    return '';
+  }
   const docStr = description ? description : name;
   const lines = ['/**', ` * ${docStr}`, ' */'];
-  return lines.map(line => `${getIndentStr(indentLevel)}${line}`).join('\n');
+  return lines.map(line => `${getIndentStr(indentLevel)}${line}`).join('\n') + '\n';
 }
 
 function typeContentToTsHelper(
+  commentEverything: boolean,
   parsedSchema: TypeContent,
   doExport = false,
   indentLevel = 0
@@ -99,7 +103,7 @@ function typeContentToTsHelper(
   }
   switch (parsedSchema.joinOperation) {
     case 'list': {
-      const childrenContent = children.map(child => typeContentToTsHelper(child));
+      const childrenContent = children.map(child => typeContentToTsHelper(commentEverything, child));
       if (childrenContent.length > 1) {
         throw 'Multiple array item types not supported';
       }
@@ -115,7 +119,7 @@ function typeContentToTsHelper(
       return { tsContent: arrayStr, description: parsedSchema.description };
     }
     case 'union': {
-      const childrenContent = children.map(child => typeContentToTsHelper(child).tsContent);
+      const childrenContent = children.map(child => typeContentToTsHelper(commentEverything, child).tsContent);
       const unionStr = childrenContent.join(' | ');
       if (doExport) {
         return { tsContent: `export type ${parsedSchema.name} = ${unionStr};`, description: parsedSchema.description };
@@ -123,16 +127,22 @@ function typeContentToTsHelper(
       return { tsContent: unionStr, description: parsedSchema.description };
     }
     case 'object': {
+      if (!children.length && !doExport) return { tsContent: 'object', description: parsedSchema.description };
       const childrenContent = children.map(child => {
-        const childInfo = typeContentToTsHelper(child);
+        const childInfo = typeContentToTsHelper(commentEverything, child, false, indentLevel + 1);
         // TODO: configure indent length
         // forcing name to be defined here, might need a runtime check but it should be set if we are here
-        const descriptionStr = getDescriptionStr(child.name as string, childInfo.description, indentLevel + 1);
+        const descriptionStr = getDescriptionStr(
+          commentEverything,
+          child.name as string,
+          childInfo.description,
+          indentLevel + 1
+        );
         const optionalStr = child.required ? '' : '?';
-        return `${descriptionStr}\n  ${child.name}${optionalStr}: ${childInfo.tsContent};`;
+        return `${descriptionStr}  ${getIndentStr(indentLevel)}${child.name}${optionalStr}: ${childInfo.tsContent};`;
       });
 
-      const objectStr = `{\n${childrenContent.join('\n')}\n}`;
+      const objectStr = `{\n${childrenContent.join('\n')}\n${getIndentStr(indentLevel)}}`;
       if (doExport) {
         return {
           tsContent: `export interface ${parsedSchema.name} ${objectStr}`,
@@ -146,11 +156,11 @@ function typeContentToTsHelper(
   }
 }
 
-export function typeContentToTs(parsedSchema: TypeContent, doExport = false): string {
-  const { tsContent, description } = typeContentToTsHelper(parsedSchema, doExport);
+export function typeContentToTs(commentEverything: boolean, parsedSchema: TypeContent, doExport = false): string {
+  const { tsContent, description } = typeContentToTsHelper(commentEverything, parsedSchema, doExport);
   // forcing name to be defined here, might need a runtime check but it should be set if we are here
-  const descriptionStr = getDescriptionStr(parsedSchema.name as string, description);
-  return `${descriptionStr}\n${tsContent}`;
+  const descriptionStr = getDescriptionStr(commentEverything, parsedSchema.name as string, description);
+  return `${descriptionStr}${tsContent}`;
 }
 
 // TODO: will be issues with useLabels if a nested schema has a label but is not exported on its own
@@ -217,10 +227,12 @@ function parseBasicSchema(details: BasicDescribe, settings: Settings): TypeConte
 
   // at least one value
   if (values && values.length !== 0) {
-    const allowedValues = values.map((value: unknown) => makeTypeContentChild({ content: `${value}` }));
+    const allowedValues = values.map((value: unknown) =>
+      makeTypeContentChild({ content: typeof value === 'string' ? `'${value}'` : `${value}` })
+    );
 
     if (values[0] === null) {
-      allowedValues.unshift(makeTypeContentChild({ content: joiType }));
+      allowedValues.unshift(makeTypeContentChild({ content }));
     }
     return makeTypeContentRoot({ joinOperation: 'union', children: allowedValues, name, description });
   }
@@ -256,7 +268,7 @@ function parseStringSchema(details: StringDescribe, settings: Settings): TypeCon
 
 function parseArray(details: ArrayDescribe, settings: Settings): TypeContent | undefined {
   // TODO: handle multiple things in the items arr
-  const item = details.items[0];
+  const item = details.items ? details.items[0] : ({ type: 'any' } as Describe);
   const { label: name, description } = getCommonDetails(details, settings);
 
   const child = parseSchema(item, settings);
@@ -277,12 +289,12 @@ function parseAlternatives(details: AlternativesDescribe, settings: Settings): T
 }
 
 function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent | undefined {
-  let children = filterMap(Object.entries(details.keys), ([key, value]) => {
+  let children = filterMap(Object.entries(details.keys || {}), ([key, value]) => {
     const parsedSchema = parseSchema(value, settings);
     if (!parsedSchema) {
       return undefined;
     }
-    parsedSchema.name = key;
+    parsedSchema.name = /^[$A-Z_][0-9A-Z_$]*$/i.test(key || '') ? key : `'${key}'`;
     return parsedSchema as TypeContentWithName;
   });
 
@@ -296,9 +308,6 @@ function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent 
     children.push(unknownProperty);
   }
 
-  if (children.length === 0) {
-    return undefined;
-  }
   if (settings.sortPropertiesByName) {
     children = children.sort((a, b) => {
       if (a.name > b.name) {

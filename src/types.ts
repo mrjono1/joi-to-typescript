@@ -4,10 +4,12 @@
 export interface Settings {
   /**
    * The input/schema directory
+   * Directory must exist
    */
   schemaDirectory: string;
   /**
-   * The output/interface directory
+   * The output/type directory
+   * Will also attempt to create this directory
    */
   typeOutputDirectory: string;
   /**
@@ -17,6 +19,7 @@ export interface Settings {
   /**
    * What schema file name suffix will be removed when creating the interface file name
    * Defaults to `Schema`
+   * This ensures that an interface and Schema with the file name are not confused
    */
   schemaFileSuffix: string;
   /**
@@ -29,6 +32,7 @@ export interface Settings {
   fileHeader: string;
   /**
    * If true will sort properties on interface by name
+   * Defaults to `true`
    */
   sortPropertiesByName: boolean;
   /**
@@ -43,6 +47,11 @@ export interface Settings {
    * If true will write all exports *'s to root index.ts in output/interface directory.
    */
   indexAllToRoot: boolean;
+  /**
+   * Comment every interface and property even with just a duplicate of the interface and property name
+   * Defaults to `false`
+   */
+  commentEverything: boolean;
 }
 
 export interface ConvertedType {
