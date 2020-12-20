@@ -27,7 +27,7 @@ This will allow you to reuse a Joi Schema that validates your [Hapi](https://git
 
 #### Example Schema in src/schemas
 
-This example can be found in `src/__tests__/schemasReadmeSchema.ts`
+This example can be found in `src/__tests__/readme`
 
 ```typescript
 import Joi from 'joi';
@@ -58,17 +58,8 @@ export const PeopleSchema = Joi.array()
  * Do not modify this file manually
  */
 
-/**
- * Job
- */
 export interface Job {
-  /**
-   * businessName
-   */
   businessName: string;
-  /**
-   * jobTitle
-   */
   jobTitle: string;
 }
 
@@ -81,13 +72,7 @@ export type People = Person[];
  * Person
  */
 export interface Person {
-  /**
-   * firstName
-   */
   firstName: string;
-  /**
-   * job
-   */
   job?: Job;
   /**
    * Last Name
@@ -187,6 +172,9 @@ export interface Settings {
 Joi Features not listed here will probably be ignored
 
 ## Contributing
+
+Recommended Editor is VS Code
+This project also many settings for this editor in the `./.vscode` directory
 
 ```bash
 nvm use # using NVM to select node version
