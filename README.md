@@ -23,6 +23,9 @@ This will allow you to reuse a Joi Schema that validates your [Hapi](https://git
 1. Create Joi Schemas in the Schemas folder with a file name suffix of Schemas eg. `AddressSchema.ts`
    - The file name suffix ensures that type file and schema file imports are not confusing
 
+[Example Project](https://github.com/mrjono1/joi-to-typescript/tree/master/example)
+The example project allows the use of `yarn types` or `npm run types` to run this package
+
 ## Example Usage
 
 #### Example Schema in src/schemas
