@@ -1,6 +1,6 @@
-import { convertFromDirectory } from '../index';
+import { convertFromDirectory } from '../../index';
 import { readFileSync, rmdirSync } from 'fs';
-import { AssertionCriteria } from './07/AssertionCriteria';
+import { AssertionCriteria } from './AssertionCriteria';
 
 describe('07. subDirectories', () => {
   const typeOutputDirectory = './src/__tests__/07/models';

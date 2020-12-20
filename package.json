@@ -1,7 +1,7 @@
 {
   "name": "joi-to-typescript",
   "description": "Convert Joi Schemas to TypeScript interfaces",
-  "version": "1.7.0",
+  "version": "1.8.0-beta.0",
   "author": "Jono Clarnette",
   "keywords": [
     "joi",
@@ -17,15 +17,15 @@
   "bugs": {
     "url": "https://github.com/mrjono1/joi-to-typescript/issues"
   },
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "eslint 'src/**'",
     "test": "jest --config jest.config.js",
     "coverage": "yarn test --coverage",
-    "pub": "tsc && cp package.json ./dist && cp README.md ./dist && cp LICENSE ./dist && cd ./dist && yarn publish"
+    "pub": "tsc && yarn publish"
   },
   "dependencies": {
     "joi": "^17.2.1"

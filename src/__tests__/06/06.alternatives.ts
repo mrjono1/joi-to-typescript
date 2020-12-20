@@ -1,4 +1,4 @@
-import { convertFromDirectory } from '../index';
+import { convertFromDirectory } from '../../index';
 import { readFileSync } from 'fs';
 
 test('06.alternatives', async () => {

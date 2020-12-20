@@ -1,11 +1,10 @@
-import { convertFromDirectory } from '../index';
+import { convertFromDirectory } from '../../index';
 import { readFileSync } from 'fs';
 
-test('04.multipleFiles', async () => {
-  const typeOutputDirectory = './src/__tests__/04/models';
-
+test('03.array', async () => {
+  const typeOutputDirectory = './src/__tests__/03/models';
   const result = await convertFromDirectory({
-    schemaDirectory: './src/__tests__/04/schemas',
+    schemaDirectory: './src/__tests__/03/schemas',
     typeOutputDirectory
   });
 
@@ -19,40 +18,23 @@ test('04.multipleFiles', async () => {
  * Do not modify this file manually
  */
 
-import { Person } from '.';
-
 export interface Item {
-  /**
-   * Female Zebra
-   */
-  femaleZebra?: Zebra;
-  /**
-   * Male Zebra
-   */
-  maleZebra?: Zebra;
   name: string;
 }
-
-/**
- * A list of People
- */
-export type People = Person[];
 
 /**
  * a test schema definition
  */
 export interface Test {
+  items?: Item[];
   name?: string;
-  /**
-   * A list of People
-   */
-  people?: People;
   propertyName1: boolean;
 }
 
-export interface Zebra {
-  name?: string;
-}
+/**
+ * A list of Test object
+ */
+export type TestList = Test[];
 `
   );
 });
