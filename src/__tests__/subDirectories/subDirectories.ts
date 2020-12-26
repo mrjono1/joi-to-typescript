@@ -1,10 +1,11 @@
-import { convertFromDirectory } from '../../index';
 import { readFileSync, rmdirSync } from 'fs';
+
+import { convertFromDirectory } from '../../index';
 import { AssertionCriteria } from './AssertionCriteria';
 
-describe('07. subDirectories', () => {
-  const typeOutputDirectory = './src/__tests__/07/models';
-  const schemaDirectory = './src/__tests__/07/schemas';
+describe('subDirectories', () => {
+  const typeOutputDirectory = './src/__tests__/subDirectories/models';
+  const schemaDirectory = './src/__tests__/subDirectories/schemas';
 
   beforeAll(() => {
     rmdirSync(typeOutputDirectory, { recursive: true });
