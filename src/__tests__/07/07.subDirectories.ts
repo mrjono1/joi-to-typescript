@@ -84,7 +84,7 @@ describe('07. subDirectories', () => {
     const result = await convertFromDirectory({
       schemaDirectory: schemaDirectory + '/subDir', // Need to choose a directory with schemas that don't contain outer/sub dependencies.
       typeOutputDirectory,
-      rootDirectoyOnly: true
+      rootDirectoryOnly: true
     });
 
     expect(result).toBe(true);
