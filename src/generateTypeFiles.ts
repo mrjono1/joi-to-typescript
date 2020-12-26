@@ -22,13 +22,13 @@ export const generateTypeFiles = async (
   const typeFileName = getTypeFileNameFromSchema(schemaFileName, settings);
   const fullOutputFilePath = Path.join(settings.typeOutputDirectory, typeFileName);
 
-  for (const iterator in schemaFile) {
-    const joiSchema = schemaFile[iterator];
+  for (const exportedName in schemaFile) {
+    const joiSchema = schemaFile[exportedName];
 
     if (!Joi.isSchema(joiSchema)) {
       continue;
     }
-    const convertedType = convertSchema(settings, joiSchema);
+    const convertedType = convertSchema(settings, joiSchema, exportedName);
     if (convertedType) {
       allConvertedTypes.push({ ...convertedType, location: fullOutputFilePath });
     }

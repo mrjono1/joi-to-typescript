@@ -99,7 +99,7 @@ function typeContentToTsHelper(
 
   const children = parsedSchema.children;
   if (doExport && !parsedSchema.name) {
-    throw 'Type ${JSON.stringify(parsedSchema)} needs a name to be exported';
+    throw `Type ${JSON.stringify(parsedSchema)} needs a name to be exported`;
   }
   switch (parsedSchema.joinOperation) {
     case 'list': {

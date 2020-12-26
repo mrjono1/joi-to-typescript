@@ -39,11 +39,18 @@ export const defaultSettings = (settings: Partial<Settings>): Settings => {
   return appSettings;
 };
 
-export const convertSchema = (settings: Settings, joi: AnySchema): ConvertedType | undefined => {
+export const convertSchema = (settings: Settings, joi: AnySchema, exportedName?: string): ConvertedType | undefined => {
   const details = joi.describe() as Describe;
-  const name = details?.flags?.label;
+  const name = details?.flags?.label || exportedName;
+
   if (!name) {
-    throw 'At least one "object" does not have a .label()';
+    throw `At least one "object" does not have a .label(). Details: ${JSON.stringify(details)}`;
+  }
+
+  if (!details.flags) {
+    details.flags = { label: name };
+  } else if (!details.flags.label) {
+    details.flags.label = name;
   }
 
   const parsedSchema = parseSchema(details, settings, false);

@@ -42,7 +42,7 @@ export interface Settings {
   /**
    * If true will only read the files in the root directory of the input/schema directory. Will not parse through sub-directories.
    */
-  rootDirectoyOnly: boolean;
+  rootDirectoryOnly: boolean;
   /**
    * If true will write all exports *'s to root index.ts in output/interface directory.
    */

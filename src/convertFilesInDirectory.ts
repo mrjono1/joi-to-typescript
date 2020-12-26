@@ -34,8 +34,8 @@ export const convertFilesInDirectory = async (
   for (const schemaFileName of files) {
     const subDirectoryPath = Path.join(appSettings.schemaDirectory, schemaFileName);
     if (
-      !appSettings.rootDirectoyOnly &&
-      !appSettings.rootDirectoyOnly &&
+      !appSettings.rootDirectoryOnly &&
+      !appSettings.rootDirectoryOnly &&
       fs.lstatSync(subDirectoryPath).isDirectory()
     ) {
       const typeOutputDirectory = appSettings.flattenTree
