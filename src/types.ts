@@ -52,6 +52,11 @@ export interface Settings {
    * Defaults to `false`
    */
   commentEverything: boolean;
+  /**
+   * List of files or folders that should be ignored from conversion. These can either be
+   * filenames (AddressSchema.ts) or filepaths postfixed with a / (addressSchemas/)
+   */
+  ignoreFiles: string[];
 }
 
 export interface ConvertedType {

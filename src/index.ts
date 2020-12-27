@@ -33,6 +33,9 @@ export const defaultSettings = (settings: Partial<Settings>): Settings => {
   if (appSettings.commentEverything === undefined) {
     appSettings.commentEverything = false;
   }
+  if (!appSettings.ignoreFiles) {
+    appSettings.ignoreFiles = [];
+  }
   return appSettings;
 };
 
