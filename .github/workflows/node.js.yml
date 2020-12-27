@@ -15,7 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [12.x, 14.x]
+        node-version: [12.x, 14.x, 15.x]
 
     steps:
       - uses: actions/checkout@v2
@@ -26,4 +26,7 @@ jobs:
       - run: yarn
       - run: yarn lint
       - run: yarn build
-      - run: yarn test
+      - name: Run tests and Code coverage
+        run: yarn coverage
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
