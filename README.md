@@ -1,6 +1,6 @@
 # joi-to-typescript
 
-[![NPM version][npm-image]][npm-url] ![Latest Build](https://github.com/mrjono1/joi-to-typescript/workflows/Node.js%20CI/badge.svg) ![NPM Release Build](https://github.com/mrjono1/joi-to-typescript/workflows/Node.js%20Package/badge.svg) ![GitHub top language](https://img.shields.io/github/languages/top/mrjono1/joi-to-typescript)[![codecov](https://codecov.io/gh/mrjono1/joi-to-typescript/branch/master/graph/badge.svg?token=7UtmWfj5cA)](https://codecov.io/gh/mrjono1/joi-to-typescript)
+[![NPM version][npm-image]][npm-url] ![Latest Build](https://github.com/mrjono1/joi-to-typescript/workflows/Node.js%20CI/badge.svg) ![NPM Release Build](https://github.com/mrjono1/joi-to-typescript/workflows/Node.js%20Package/badge.svg) ![GitHub top language](https://img.shields.io/github/languages/top/mrjono1/joi-to-typescript) [![codecov](https://codecov.io/gh/mrjono1/joi-to-typescript/branch/master/graph/badge.svg?token=7UtmWfj5cA)](https://codecov.io/gh/mrjono1/joi-to-typescript)
 
 [joi-to-typescript on GitHub](https://github.com/mrjono1/joi-to-typescript)
 
@@ -88,7 +88,7 @@ export interface Person {
 
 - `export const PersonSchema` schema must be exported
 - `export const PersonSchema` schema includes a suffix of Schema
-- `.label('Person');` required for this library and is used as the `interface` name
+- `.label('Person');` Sets `interface` name using TypeScript conventions (TitleCase Interface name, camlCase property name)
 
 #### Example Call
 

@@ -315,6 +315,9 @@ function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent 
       } else if (a.name < b.name) {
         return -1;
       }
+      // this next line can never happen as the object is totally invalid as the object is invalid
+      // the code would not build so ignoring this
+      /* istanbul ignore next */
       return 0;
     });
   }
