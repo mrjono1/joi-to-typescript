@@ -99,13 +99,13 @@ function typeContentToTsHelper(
 
   const children = parsedSchema.children;
   if (doExport && !parsedSchema.name) {
-    throw `Type ${JSON.stringify(parsedSchema)} needs a name to be exported`;
+    throw new Error(`Type ${JSON.stringify(parsedSchema)} needs a name to be exported`);
   }
   switch (parsedSchema.joinOperation) {
     case 'list': {
       const childrenContent = children.map(child => typeContentToTsHelper(commentEverything, child));
       if (childrenContent.length > 1) {
-        throw 'Multiple array item types not supported';
+        throw new Error('Multiple array item types not supported');
       }
       let content = childrenContent[0].tsContent;
       if (content.includes('|')) {
@@ -152,7 +152,7 @@ function typeContentToTsHelper(
       return { tsContent: objectStr, description: parsedSchema.description };
     }
     default:
-      throw `Unsupported join operation ${parsedSchema.joinOperation}`;
+      throw new Error(`Unsupported join operation ${parsedSchema.joinOperation}`);
   }
 }
 

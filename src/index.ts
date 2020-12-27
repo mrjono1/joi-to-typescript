@@ -44,7 +44,7 @@ export const convertSchema = (settings: Settings, joi: AnySchema, exportedName?:
   const name = details?.flags?.label || exportedName;
 
   if (!name) {
-    throw `At least one "object" does not have a .label(). Details: ${JSON.stringify(details)}`;
+    throw new Error(`At least one "object" does not have a .label(). Details: ${JSON.stringify(details)}`);
   }
 
   if (!details.flags) {
