@@ -1,6 +1,7 @@
 import { readFileSync } from 'fs';
+import Joi from 'joi';
 
-import { convertFromDirectory } from '../../index';
+import { convertFromDirectory, convertSchema, Settings } from '../../index';
 
 // Its not recommended to use this default action as TypeScript formatting styleguides
 // are camlCase for properties and TitleCase for interfaces
@@ -29,5 +30,16 @@ export interface thingSchema {
 }
 `
     );
+  });
+
+  test('no label() and no property name', () => {
+    expect(() => {
+      convertSchema(
+        ({} as unknown) as Settings,
+        Joi.object({
+          name: Joi.string().optional()
+        })
+      );
+    }).toThrowError();
   });
 });

@@ -127,22 +127,29 @@ function typeContentToTsHelper(
       return { tsContent: unionStr, description: parsedSchema.description };
     }
     case 'object': {
-      if (!children.length && !doExport) return { tsContent: 'object', description: parsedSchema.description };
-      const childrenContent = children.map(child => {
-        const childInfo = typeContentToTsHelper(commentEverything, child, false, indentLevel + 1);
-        // TODO: configure indent length
-        // forcing name to be defined here, might need a runtime check but it should be set if we are here
-        const descriptionStr = getDescriptionStr(
-          commentEverything,
-          child.name as string,
-          childInfo.description,
-          indentLevel + 1
-        );
-        const optionalStr = child.required ? '' : '?';
-        return `${descriptionStr}  ${getIndentStr(indentLevel)}${child.name}${optionalStr}: ${childInfo.tsContent};`;
-      });
+      if (!children.length && !doExport) {
+        return { tsContent: 'object', description: parsedSchema.description };
+      }
 
-      const objectStr = `{\n${childrenContent.join('\n')}\n${getIndentStr(indentLevel)}}`;
+      // interface can have no properties {} if the joi object has none defined
+      let objectStr = '{}';
+
+      if (children.length !== 0) {
+        const childrenContent = children.map(child => {
+          const childInfo = typeContentToTsHelper(commentEverything, child, false, indentLevel + 1);
+          // TODO: configure indent length
+          // forcing name to be defined here, might need a runtime check but it should be set if we are here
+          const descriptionStr = getDescriptionStr(
+            commentEverything,
+            child.name as string,
+            childInfo.description,
+            indentLevel + 1
+          );
+          const optionalStr = child.required ? '' : '?';
+          return `${descriptionStr}  ${getIndentStr(indentLevel)}${child.name}${optionalStr}: ${childInfo.tsContent};`;
+        });
+        objectStr = `{\n${childrenContent.join('\n')}\n${getIndentStr(indentLevel)}}`;
+      }
       if (doExport) {
         return {
           tsContent: `export interface ${parsedSchema.name} ${objectStr}`,
@@ -281,7 +288,10 @@ function parseAlternatives(details: AlternativesDescribe, settings: Settings): T
   const children = filterMap(details.matches, match => {
     return parseSchema(match.schema, settings, true, ignoreLabels);
   });
+  // This is an check that cannot be tested as Joi throws an error before this package
+  // can be called, there is test for it in alternatives
   if (children.length === 0) {
+    /* istanbul ignore next */
     return undefined;
   }
 
@@ -291,7 +301,10 @@ function parseAlternatives(details: AlternativesDescribe, settings: Settings): T
 function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent | undefined {
   let children = filterMap(Object.entries(details.keys || {}), ([key, value]) => {
     const parsedSchema = parseSchema(value, settings);
+    // The only type that could return this is alternatives
+    // see parseAlternatives for why this is ignored
     if (!parsedSchema) {
+      /* istanbul ignore next */
       return undefined;
     }
     parsedSchema.name = /^[$A-Z_][0-9A-Z_$]*$/i.test(key || '') ? key : `'${key}'`;

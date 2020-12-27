@@ -44,9 +44,12 @@ export const convertSchema = (settings: Settings, joi: AnySchema, exportedName?:
     throw new Error(`At least one "object" does not have a .label(). Details: ${JSON.stringify(details)}`);
   }
 
+  // Set the label from the exportedName if missing
   if (!details.flags) {
     details.flags = { label: name };
   } else if (!details.flags.label) {
+    // Unable to build any test cases for this line but will keep it if joi.describe() changes
+    /* istanbul ignore next */
     details.flags.label = name;
   }
 
@@ -61,6 +64,9 @@ export const convertSchema = (settings: Settings, joi: AnySchema, exportedName?:
     };
   }
 
+  // The only type that could return this is alternatives
+  // see parseAlternatives for why this is ignored
+  /* istanbul ignore next */
   return undefined;
 };
 
@@ -88,6 +94,10 @@ export const writeIndexFile = (settings: Settings, fileNamesToExport: string[]):
 export const convertFromDirectory = async (settings: Partial<Settings>): Promise<boolean> => {
   const appSettings = defaultSettings(settings);
   const filesInDirectory = await convertFilesInDirectory(appSettings, Path.resolve(appSettings.typeOutputDirectory));
+
+  if (!filesInDirectory.types || filesInDirectory.types.length === 0) {
+    throw new Error('No schemas found, cannot generate interfaces');
+  }
 
   for (const exportType of filesInDirectory.types) {
     writeTypeFile(appSettings, exportType.typeFileName, filesInDirectory.types);

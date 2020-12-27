@@ -1,5 +1,6 @@
 import Path from 'path';
 import fs from 'fs';
+
 import { Settings, GenerateTypeFile } from './types';
 
 /**
@@ -81,5 +82,8 @@ export const writeTypeFile = async (
     return generatedFile.typeFileName;
   }
 
+  // This function is intended to only be called by `convertFromDirectory` where the input
+  // data is checked before calling this function
+  /* istanbul ignore next */
   return undefined;
 };

@@ -4,12 +4,13 @@
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   // Configurations from https://github.com/microsoft/vscode-recipes/tree/master/debugging-jest-tests
   "version": "0.2.0",
-  "configurations": [{
+  "configurations": [
+    {
       "type": "node",
       "request": "launch",
-      "name": "Jest All",
+      "name": "Jest Current File",
       "program": "${workspaceFolder}/node_modules/.bin/jest",
-      "args": ["--runInBand"],
+      "args": ["${fileBasenameNoExtension}", "--config", "jest.config.js"],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "disableOptimisticBPs": true,
@@ -20,9 +21,9 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Jest Current File",
+      "name": "Jest All",
       "program": "${workspaceFolder}/node_modules/.bin/jest",
-      "args": ["${fileBasenameNoExtension}", "--config", "jest.config.js"],
+      "args": ["--runInBand"],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "disableOptimisticBPs": true,
