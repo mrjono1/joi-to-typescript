@@ -99,13 +99,13 @@ function typeContentToTsHelper(
 
   const children = parsedSchema.children;
   if (doExport && !parsedSchema.name) {
-    throw `Type ${JSON.stringify(parsedSchema)} needs a name to be exported`;
+    throw new Error(`Type ${JSON.stringify(parsedSchema)} needs a name to be exported`);
   }
   switch (parsedSchema.joinOperation) {
     case 'list': {
       const childrenContent = children.map(child => typeContentToTsHelper(commentEverything, child));
       if (childrenContent.length > 1) {
-        throw 'Multiple array item types not supported';
+        throw new Error('Multiple array item types not supported');
       }
       let content = childrenContent[0].tsContent;
       if (content.includes('|')) {
@@ -127,22 +127,29 @@ function typeContentToTsHelper(
       return { tsContent: unionStr, description: parsedSchema.description };
     }
     case 'object': {
-      if (!children.length && !doExport) return { tsContent: 'object', description: parsedSchema.description };
-      const childrenContent = children.map(child => {
-        const childInfo = typeContentToTsHelper(commentEverything, child, false, indentLevel + 1);
-        // TODO: configure indent length
-        // forcing name to be defined here, might need a runtime check but it should be set if we are here
-        const descriptionStr = getDescriptionStr(
-          commentEverything,
-          child.name as string,
-          childInfo.description,
-          indentLevel + 1
-        );
-        const optionalStr = child.required ? '' : '?';
-        return `${descriptionStr}  ${getIndentStr(indentLevel)}${child.name}${optionalStr}: ${childInfo.tsContent};`;
-      });
+      if (!children.length && !doExport) {
+        return { tsContent: 'object', description: parsedSchema.description };
+      }
 
-      const objectStr = `{\n${childrenContent.join('\n')}\n${getIndentStr(indentLevel)}}`;
+      // interface can have no properties {} if the joi object has none defined
+      let objectStr = '{}';
+
+      if (children.length !== 0) {
+        const childrenContent = children.map(child => {
+          const childInfo = typeContentToTsHelper(commentEverything, child, false, indentLevel + 1);
+          // TODO: configure indent length
+          // forcing name to be defined here, might need a runtime check but it should be set if we are here
+          const descriptionStr = getDescriptionStr(
+            commentEverything,
+            child.name as string,
+            childInfo.description,
+            indentLevel + 1
+          );
+          const optionalStr = child.required ? '' : '?';
+          return `${descriptionStr}  ${getIndentStr(indentLevel)}${child.name}${optionalStr}: ${childInfo.tsContent};`;
+        });
+        objectStr = `{\n${childrenContent.join('\n')}\n${getIndentStr(indentLevel)}}`;
+      }
       if (doExport) {
         return {
           tsContent: `export interface ${parsedSchema.name} ${objectStr}`,
@@ -152,7 +159,7 @@ function typeContentToTsHelper(
       return { tsContent: objectStr, description: parsedSchema.description };
     }
     default:
-      throw `Unsupported join operation ${parsedSchema.joinOperation}`;
+      throw new Error(`Unsupported join operation ${parsedSchema.joinOperation}`);
   }
 }
 
@@ -281,7 +288,10 @@ function parseAlternatives(details: AlternativesDescribe, settings: Settings): T
   const children = filterMap(details.matches, match => {
     return parseSchema(match.schema, settings, true, ignoreLabels);
   });
+  // This is an check that cannot be tested as Joi throws an error before this package
+  // can be called, there is test for it in alternatives
   if (children.length === 0) {
+    /* istanbul ignore next */
     return undefined;
   }
 
@@ -291,7 +301,10 @@ function parseAlternatives(details: AlternativesDescribe, settings: Settings): T
 function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent | undefined {
   let children = filterMap(Object.entries(details.keys || {}), ([key, value]) => {
     const parsedSchema = parseSchema(value, settings);
+    // The only type that could return this is alternatives
+    // see parseAlternatives for why this is ignored
     if (!parsedSchema) {
+      /* istanbul ignore next */
       return undefined;
     }
     parsedSchema.name = /^[$A-Z_][0-9A-Z_$]*$/i.test(key || '') ? key : `'${key}'`;
@@ -315,6 +328,9 @@ function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent 
       } else if (a.name < b.name) {
         return -1;
       }
+      // this next line can never happen as the object is totally invalid as the object is invalid
+      // the code would not build so ignoring this
+      /* istanbul ignore next */
       return 0;
     });
   }

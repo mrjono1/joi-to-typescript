@@ -102,4 +102,26 @@ export interface ArrayObject {
   'x.y'?: string;
 }`);
   });
+
+  test('Uppercase and lowercase property', () => {
+    const schema = Joi.object({
+      a: Joi.string(),
+      A: Joi.string()
+    }).label('TestSchema');
+
+    const result = convertSchema(({} as unknown) as Settings, schema);
+    expect(result).not.toBeUndefined;
+    expect(result?.content).toBe(`export interface TestSchema {
+  a?: string;
+  A?: string;
+}`);
+  });
+
+  test('no properties on a schema', () => {
+    const schema = Joi.object({}).label('TestSchema');
+
+    const result = convertSchema(({ sortPropertiesByName: true } as unknown) as Settings, schema);
+    expect(result).not.toBeUndefined;
+    expect(result?.content).toBe(`export interface TestSchema {}`);
+  });
 });

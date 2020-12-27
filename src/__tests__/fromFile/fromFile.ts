@@ -74,4 +74,22 @@ export interface Foo {
 }
 `);
   });
+
+  test('input directory that does not exits', async () => {
+    await expect(
+      convertFromDirectory({
+        schemaDirectory: './src/__tests__/doesnotexist',
+        typeOutputDirectory
+      })
+    ).rejects.toThrowError();
+  });
+
+  test('output directory that does not exits', async () => {
+    await expect(
+      convertFromDirectory({
+        schemaDirectory: './src/__tests__/fromFile/schemas',
+        typeOutputDirectory: './src/__tests__/fromFile/fake/fake'
+      })
+    ).rejects.toThrowError();
+  });
 });

@@ -16,13 +16,13 @@ export const convertFilesInDirectory = async (
   // Check and resolve directories
   appSettings.schemaDirectory = Path.resolve(appSettings.schemaDirectory);
   if (!fs.existsSync(appSettings.schemaDirectory)) {
-    throw `schemaDirectory "${appSettings.schemaDirectory}" does not exist`;
+    throw new Error(`schemaDirectory "${appSettings.schemaDirectory}" does not exist`);
   }
   appSettings.typeOutputDirectory = Path.resolve(appSettings.typeOutputDirectory);
   if (!fs.existsSync(appSettings.typeOutputDirectory)) {
     fs.mkdirSync(appSettings.typeOutputDirectory);
     if (!fs.existsSync(appSettings.typeOutputDirectory)) {
-      throw `typeOutputDirectory "${appSettings.typeOutputDirectory}" does not exist`;
+      throw new Error(`typeOutputDirectory "${appSettings.typeOutputDirectory}" does not exist`);
     }
   }
 

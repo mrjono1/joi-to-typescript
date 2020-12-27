@@ -7,3 +7,7 @@ export const TestSchema = Joi.object({
 })
   .label('TestSchema')
   .description('a test schema definition');
+
+export const purple = (): void => {
+  console.log('this is not a schema');
+};
