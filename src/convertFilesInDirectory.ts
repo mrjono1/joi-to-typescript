@@ -33,11 +33,13 @@ export const convertFilesInDirectory = async (
   const files = fs.readdirSync(appSettings.schemaDirectory);
   for (const schemaFileName of files) {
     const subDirectoryPath = Path.join(appSettings.schemaDirectory, schemaFileName);
-    if (
-      !appSettings.rootDirectoryOnly &&
-      !appSettings.rootDirectoryOnly &&
-      fs.lstatSync(subDirectoryPath).isDirectory()
-    ) {
+    if (!appSettings.rootDirectoryOnly && fs.lstatSync(subDirectoryPath).isDirectory()) {
+      if (appSettings.ignoreFiles.includes(`${schemaFileName}/`)) {
+        if (appSettings.debug) {
+          console.log(`Skipping ${subDirectoryPath} because it's in your ignore files list`);
+        }
+        continue;
+      }
       const typeOutputDirectory = appSettings.flattenTree
         ? appSettings.typeOutputDirectory
         : Path.join(appSettings.typeOutputDirectory, schemaFileName);
@@ -56,6 +58,12 @@ export const convertFilesInDirectory = async (
         fileNamesToExport = fileNamesToExport.concat(thisDirsFileNamesToExport.typeFileNames);
       }
     } else {
+      if (appSettings.ignoreFiles.includes(schemaFileName)) {
+        if (appSettings.debug) {
+          console.log(`Skipping ${schemaFileName} because it's in your ignore files list`);
+        }
+        continue;
+      }
       const exportType = await generateTypeFiles(appSettings, schemaFileName);
       if (exportType) {
         let dirTypeFileName = exportType.typeFileName;

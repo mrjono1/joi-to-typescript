@@ -7,7 +7,7 @@ describe('subDirectories', () => {
   const typeOutputDirectory = './src/__tests__/subDirectories/models';
   const schemaDirectory = './src/__tests__/subDirectories/schemas';
 
-  beforeAll(() => {
+  beforeEach(() => {
     rmdirSync(typeOutputDirectory, { recursive: true });
   });
 
