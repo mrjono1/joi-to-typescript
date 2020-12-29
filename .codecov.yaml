@@ -3,3 +3,4 @@ coverage:
     patch:
       default:
         enabled: no
+  range: '95...100'
