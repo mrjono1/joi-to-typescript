@@ -1,13 +1,14 @@
 {
   "name": "joi-to-typescript",
   "description": "Convert Joi Schemas to TypeScript interfaces",
-  "version": "1.9.1",
+  "version": "1.10.0",
   "author": "Jono Clarnette",
   "keywords": [
     "joi",
     "ts",
     "typescript",
-    "hapi"
+    "hapi",
+    "interface"
   ],
   "license": "MIT",
   "repository": {
