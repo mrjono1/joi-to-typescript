@@ -58,7 +58,7 @@ describe('ignore Files', () => {
 
     expect(result).toBe(true);
 
-    expect(existsSync(`${typeOutputDirectory}/index.ts`)).toBeTruthy();
+    expect(existsSync(`${typeOutputDirectory}/index.ts`)).toBeFalsy();
     expect(existsSync(`${typeOutputDirectory}/One.ts`)).toBeFalsy();
     expect(existsSync(`${typeOutputDirectory}/subDir/index.ts`)).toBeTruthy();
     expect(existsSync(`${typeOutputDirectory}/subDir/Person.ts`)).toBeTruthy();
