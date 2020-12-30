@@ -4,7 +4,7 @@ import { convertFromDirectory } from '../../index';
 describe('empty schema directory', () => {
   const typeOutputDirectory = './src/__tests__/none/models';
 
-  beforeAll(() => {
+  beforeEach(() => {
     rmdirSync(typeOutputDirectory, { recursive: true });
   });
 
