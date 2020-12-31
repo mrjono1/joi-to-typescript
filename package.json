@@ -25,7 +25,7 @@
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "eslint 'src/**'",
     "test": "jest --config jest.config.js",
-    "coverage": "yarn test --coverage",
+    "coverage": "yarn test --coverage --silent",
     "pub": "tsc && yarn publish"
   },
   "dependencies": {

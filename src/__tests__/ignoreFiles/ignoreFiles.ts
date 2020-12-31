@@ -49,11 +49,13 @@ describe('ignore Files', () => {
   });
 
   test('Ignores a file and folder in an ignore list', async () => {
+    const consoleSpy = jest.spyOn(console, 'debug');
     const ignoreFiles = ['subDir2/', 'OneSchema.ts'];
     const result = await convertFromDirectory({
       schemaDirectory,
       typeOutputDirectory,
-      ignoreFiles
+      ignoreFiles,
+      debug: true
     });
 
     expect(result).toBe(true);
@@ -65,5 +67,8 @@ describe('ignore Files', () => {
     expect(existsSync(`${typeOutputDirectory}/subDir/Address.ts`)).toBeTruthy();
     expect(existsSync(`${typeOutputDirectory}/subDir2/index.ts`)).toBeFalsy();
     expect(existsSync(`${typeOutputDirectory}/subDir2/Employee.ts`)).toBeFalsy();
+
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringMatching(/subDir2 because it's in your ignore files list$/));
+    expect(consoleSpy).toHaveBeenCalledWith("Skipping OneSchema.ts because it's in your ignore files list");
   });
 });

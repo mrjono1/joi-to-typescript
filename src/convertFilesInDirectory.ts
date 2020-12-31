@@ -1,5 +1,5 @@
 import Path from 'path';
-import fs from 'fs';
+import { existsSync, lstatSync, mkdirSync, readdirSync } from 'fs';
 import { Settings, GenerateTypeFile, GenerateTypesDir } from './types';
 import { getTypeFileNameFromSchema, writeIndexFile } from './index';
 import { analyseSchemaFile } from './analyseSchemaFile';
@@ -15,28 +15,25 @@ export const convertFilesInDirectory = async (
 ): Promise<GenerateTypesDir> => {
   // Check and resolve directories
   appSettings.schemaDirectory = Path.resolve(appSettings.schemaDirectory);
-  if (!fs.existsSync(appSettings.schemaDirectory)) {
+  if (!existsSync(appSettings.schemaDirectory)) {
     throw new Error(`schemaDirectory "${appSettings.schemaDirectory}" does not exist`);
   }
   appSettings.typeOutputDirectory = Path.resolve(appSettings.typeOutputDirectory);
-  if (!fs.existsSync(appSettings.typeOutputDirectory)) {
-    fs.mkdirSync(appSettings.typeOutputDirectory);
-    if (!fs.existsSync(appSettings.typeOutputDirectory)) {
-      throw new Error(`typeOutputDirectory "${appSettings.typeOutputDirectory}" does not exist`);
-    }
+  if (!existsSync(appSettings.typeOutputDirectory)) {
+    mkdirSync(appSettings.typeOutputDirectory, { recursive: true });
   }
 
   let fileNamesToExport: string[] = [];
   const currentDirFileTypesToExport: GenerateTypeFile[] = fileTypesToExport;
 
   // Load files and get all types
-  const files = fs.readdirSync(appSettings.schemaDirectory);
+  const files = readdirSync(appSettings.schemaDirectory);
   for (const schemaFileName of files) {
     const subDirectoryPath = Path.join(appSettings.schemaDirectory, schemaFileName);
-    if (!appSettings.rootDirectoryOnly && fs.lstatSync(subDirectoryPath).isDirectory()) {
+    if (!appSettings.rootDirectoryOnly && lstatSync(subDirectoryPath).isDirectory()) {
       if (appSettings.ignoreFiles.includes(`${schemaFileName}/`)) {
         if (appSettings.debug) {
-          console.log(`Skipping ${subDirectoryPath} because it's in your ignore files list`);
+          console.debug(`Skipping ${subDirectoryPath} because it's in your ignore files list`);
         }
         continue;
       }
@@ -60,7 +57,7 @@ export const convertFilesInDirectory = async (
     } else {
       if (appSettings.ignoreFiles.includes(schemaFileName)) {
         if (appSettings.debug) {
-          console.log(`Skipping ${schemaFileName} because it's in your ignore files list`);
+          console.debug(`Skipping ${schemaFileName} because it's in your ignore files list`);
         }
         continue;
       }

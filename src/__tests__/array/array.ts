@@ -1,10 +1,15 @@
-import { readFileSync } from 'fs';
+import { readFileSync, rmdirSync } from 'fs';
 
 import { convertFromDirectory } from '../../index';
 
-describe('test array types', () => {
+describe('Array types', () => {
+  const typeOutputDirectory = './src/__tests__/array/interfaces';
+
+  beforeAll(() => {
+    rmdirSync(typeOutputDirectory, { recursive: true });
+  });
+
   test('array variations from file', async () => {
-    const typeOutputDirectory = './src/__tests__/array/interfaces';
     const result = await convertFromDirectory({
       schemaDirectory: './src/__tests__/array/schemas',
       typeOutputDirectory

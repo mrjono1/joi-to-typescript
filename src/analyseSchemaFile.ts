@@ -38,13 +38,13 @@ export const analyseSchemaFile = async (
 
   if (allConvertedTypes.length === 0) {
     if (settings.debug) {
-      console.log(`${schemaFile} - Skipped - no Joi Schemas found`);
+      console.debug(`${schemaFileName} - Skipped - no Joi Schemas found`);
     }
     return;
   }
 
   if (settings.debug) {
-    console.log(`${schemaFileName} - Processing`);
+    console.debug(`${schemaFileName} - Processing`);
   }
 
   // Clean up type list

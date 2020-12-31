@@ -1,9 +1,14 @@
-import { readFileSync } from 'fs';
+import { existsSync, readFileSync, rmdirSync } from 'fs';
 
 import { convertFromDirectory } from '../../index';
 
-describe('test reading schemas from files', () => {
-  const typeOutputDirectory = './src/__tests__/fromFile/interfaces';
+const typeOutputDirectory = './src/__tests__/fromFile/interfaces';
+
+describe('Create interfaces from schema files', () => {
+  beforeAll(() => {
+    rmdirSync(typeOutputDirectory, { recursive: true });
+  });
+
   test('does reading form files work', async () => {
     const result = await convertFromDirectory({
       schemaDirectory: './src/__tests__/fromFile/schemas',
@@ -74,6 +79,12 @@ export interface Foo {
 }
 `);
   });
+});
+
+describe('Create interfaces from schema files edge cases', () => {
+  beforeEach(() => {
+    rmdirSync(typeOutputDirectory, { recursive: true });
+  });
 
   test('input directory that does not exits', async () => {
     await expect(
@@ -84,12 +95,28 @@ export interface Foo {
     ).rejects.toThrowError();
   });
 
-  test('output directory that does not exits', async () => {
-    await expect(
-      convertFromDirectory({
-        schemaDirectory: './src/__tests__/fromFile/schemas',
-        typeOutputDirectory: './src/__tests__/fromFile/fake/fake'
-      })
-    ).rejects.toThrowError();
+  test('create deep output directory that does not exits', async () => {
+    const deepDirectory = './src/__tests__/fromFile/interfaces/fake1/fake2';
+    const result = await convertFromDirectory({
+      schemaDirectory: './src/__tests__/fromFile/schemas',
+      typeOutputDirectory: deepDirectory
+    });
+
+    expect(result).toBe(true);
+    expect(existsSync(deepDirectory)).toBe(true);
+  });
+
+  test('debugging on', async () => {
+    const consoleSpy = jest.spyOn(console, 'debug');
+    const result = await convertFromDirectory({
+      schemaDirectory: './src/__tests__/fromFile/schemas',
+      typeOutputDirectory,
+      debug: true
+    });
+
+    expect(result).toBe(true);
+    expect(consoleSpy).toHaveBeenCalledWith('FooBarSchema.ts - Processing');
+    expect(consoleSpy).toHaveBeenCalledWith('OneSchema.ts - Processing');
+    expect(consoleSpy).toHaveBeenCalledWith('notASchema.ts - Skipped - no Joi Schemas found');
   });
 });
