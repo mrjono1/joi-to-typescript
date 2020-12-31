@@ -9,7 +9,7 @@
 
 Convert [Joi](https://github.com/sideway/joi) Schemas to TypeScript interfaces
 
-This will allow you to reuse a Joi Schema that validates your [Hapi](https://github.com/hapijs/hapi) API to generate TypeScript interfaces saving you time.
+This will allow you to reuse a Joi Schema that validates your [Hapi](https://github.com/hapijs/hapi) API to generate TypeScript interfaces so you don't have to manually create the same structure again saving you time.
 
 ## Important
 
@@ -87,7 +87,7 @@ export interface Person {
 ##### Points of Interest
 
 - `export const PersonSchema` schema must be exported
-- `export const PersonSchema` schema includes a suffix of Schema
+- `export const PersonSchema` includes a suffix of Schema so the schema and interface are not confused when using `import` statements (recommended not requried)
 - `.label('Person');` Sets `interface` name using TypeScript conventions (TitleCase Interface name, camlCase property name)
 
 #### Example Call
@@ -181,8 +181,17 @@ Joi Features not listed here will probably be ignored
 
 ## Contributing
 
-Recommended Editor is VS Code
-This project also many settings for this editor in the `./.vscode` directory
+- Raise or comment on an [Issue](https://github.com/mrjono1/joi-to-typescript/issues) with a bug or feature request
+- Contribute code via Raising a [Pull Request](https://github.com/mrjono1/joi-to-typescript/pulls)
+- Start a [Discussion](https://github.com/mrjono1/joi-to-typescript/discussions)
+
+### Recommended Development Environment
+
+Recommended Editor is VS Code, this project is setup with VSCode settings in the `./.vscode` directory to keep development consistant.
+
+Best developed on macOS, Linux, or on Windows via WSL
+
+Install [nodejs](https://nodejs.org/) via [nvm](https://github.com/nvm-sh/nvm) so you can have multiple versions installed
 
 ```bash
 nvm use # using NVM to select node version

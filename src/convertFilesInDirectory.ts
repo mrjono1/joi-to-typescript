@@ -2,7 +2,7 @@ import Path from 'path';
 import fs from 'fs';
 import { Settings, GenerateTypeFile, GenerateTypesDir } from './types';
 import { getTypeFileNameFromSchema, writeIndexFile } from './index';
-import { generateTypeFiles } from './generateTypeFiles';
+import { analyseSchemaFile } from './analyseSchemaFile';
 
 /**
  * Create types from schemas from a directory
@@ -64,7 +64,7 @@ export const convertFilesInDirectory = async (
         }
         continue;
       }
-      const exportType = await generateTypeFiles(appSettings, schemaFileName);
+      const exportType = await analyseSchemaFile(appSettings, schemaFileName);
       if (exportType) {
         let dirTypeFileName = exportType.typeFileName;
         if (appSettings.indexAllToRoot) {
