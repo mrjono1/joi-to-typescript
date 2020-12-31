@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs';
+import { readFileSync, rmdirSync } from 'fs';
 import Joi from 'joi';
 
 import { convertFromDirectory, convertSchema, Settings } from '../../index';
@@ -8,8 +8,13 @@ import { convertFromDirectory, convertSchema, Settings } from '../../index';
 // but this feature is great to get things working and reduce the barrier of using this package
 
 describe('test `useExportedVarName` setting', () => {
+  const typeOutputDirectory = './src/__tests__/useExportedVarName/interfaces';
+
+  beforeAll(() => {
+    rmdirSync(typeOutputDirectory, { recursive: true });
+  });
+
   test('create a type even if there is no `.label()`', async () => {
-    const typeOutputDirectory = './src/__tests__/useExportedVarName/interfaces';
     const result = await convertFromDirectory({
       schemaDirectory: './src/__tests__/useExportedVarName/schemas',
       typeOutputDirectory

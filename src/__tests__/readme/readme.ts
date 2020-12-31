@@ -1,11 +1,14 @@
-import { readFileSync } from 'fs';
+import { readFileSync, rmdirSync } from 'fs';
 
 import { convertFromDirectory } from '../../index';
 
 describe('this is the example on the readme', () => {
-  test('a good example schema', async () => {
-    const typeOutputDirectory = './src/__tests__/readme/interfaces';
+  const typeOutputDirectory = './src/__tests__/readme/interfaces';
+  beforeEach(() => {
+    rmdirSync(typeOutputDirectory, { recursive: true });
+  });
 
+  test('a good example schema', async () => {
     const result = await convertFromDirectory({
       schemaDirectory: './src/__tests__/readme/schemas',
       typeOutputDirectory

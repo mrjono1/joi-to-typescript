@@ -1,11 +1,15 @@
-import { readFileSync } from 'fs';
+import { readFileSync, rmdirSync } from 'fs';
 
 import { convertFromDirectory } from '../../index';
 
-describe('can files reference interfaces between schema files', () => {
-  test('multipleFiles', async () => {
-    const typeOutputDirectory = './src/__tests__/multipleFiles/interfaces';
+const typeOutputDirectory = './src/__tests__/multipleFiles/interfaces';
 
+describe('can files reference interfaces between schema files', () => {
+  beforeEach(() => {
+    rmdirSync(typeOutputDirectory, { recursive: true });
+  });
+
+  test('multipleFiles', async () => {
     const result = await convertFromDirectory({
       schemaDirectory: './src/__tests__/multipleFiles/schemas',
       typeOutputDirectory

@@ -1,5 +1,5 @@
 import Path from 'path';
-import fs from 'fs';
+import { writeFileSync } from 'fs';
 
 import { Settings, GenerateTypeFile } from './types';
 
@@ -74,7 +74,7 @@ export const writeInterfaceFile = async (
     }
 
     const fileContent = `${settings.fileHeader}\n\n${typeImports}${generatedFile.fileContent}`;
-    fs.writeFileSync(
+    writeFileSync(
       `${Path.join(
         settings.flattenTree ? settings.typeOutputDirectory : generatedFile.typeFileLocation,
         typeFileName

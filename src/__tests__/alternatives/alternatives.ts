@@ -1,11 +1,16 @@
-import { readFileSync } from 'fs';
+import { readFileSync, rmdirSync } from 'fs';
 import Joi from 'joi';
 
 import { convertFromDirectory, convertSchema, Settings } from '../../index';
 
 describe('alternative types', () => {
+  const typeOutputDirectory = './src/__tests__/alternatives/interfaces';
+
+  beforeAll(() => {
+    rmdirSync(typeOutputDirectory, { recursive: true });
+  });
+
   test('vaiations of alternatives from file', async () => {
-    const typeOutputDirectory = './src/__tests__/alternatives/interfaces';
     const result = await convertFromDirectory({
       schemaDirectory: './src/__tests__/alternatives/schemas',
       typeOutputDirectory,

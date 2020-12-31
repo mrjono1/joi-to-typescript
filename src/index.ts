@@ -1,6 +1,6 @@
 import { AnySchema } from 'joi';
 import Path from 'path';
-import fs from 'fs';
+import { writeFileSync } from 'fs';
 
 import { Describe, parseSchema, getAllCustomTypes, typeContentToTs } from './parse';
 import { Settings, ConvertedType } from './types';
@@ -88,7 +88,7 @@ export const writeIndexFile = (settings: Settings, fileNamesToExport: string[]):
   }
   const exportLines = fileNamesToExport.map(fileName => `export * from './${fileName.replace(/\\/g, '/')}';`);
   const fileContent = `${settings.fileHeader}\n\n${exportLines.join('\n').concat('\n')}`;
-  fs.writeFileSync(Path.join(settings.typeOutputDirectory, 'index.ts'), fileContent);
+  writeFileSync(Path.join(settings.typeOutputDirectory, 'index.ts'), fileContent);
 };
 
 /**
