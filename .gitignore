@@ -103,8 +103,8 @@ dist
 # TernJS port file
 .tern-port
 
-# Dont save test models
-**/__tests__/**/models
+# Dont save test interfaces
+**/__tests__/**/interfaces
 
 
 

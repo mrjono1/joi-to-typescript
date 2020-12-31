@@ -3,7 +3,7 @@ import { rmdirSync, existsSync } from 'fs';
 import { convertFromDirectory } from '../../index';
 
 describe('ignore Files', () => {
-  const typeOutputDirectory = './src/__tests__/ignoreFiles/models';
+  const typeOutputDirectory = './src/__tests__/ignoreFiles/interfaces';
   const schemaDirectory = './src/__tests__/ignoreFiles/schemas';
 
   beforeEach(() => {

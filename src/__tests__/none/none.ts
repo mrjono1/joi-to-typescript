@@ -2,7 +2,7 @@ import { existsSync, rmdirSync } from 'fs';
 import { convertFromDirectory } from '../../index';
 
 describe('empty schema directory', () => {
-  const typeOutputDirectory = './src/__tests__/none/models';
+  const typeOutputDirectory = './src/__tests__/none/interfaces';
 
   beforeAll(() => {
     rmdirSync(typeOutputDirectory, { recursive: true });

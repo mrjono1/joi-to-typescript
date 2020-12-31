@@ -4,7 +4,7 @@ import { convertFromDirectory } from '../../index';
 
 describe('can files reference interfaces between schema files', () => {
   test('multipleFiles', async () => {
-    const typeOutputDirectory = './src/__tests__/multipleFiles/models';
+    const typeOutputDirectory = './src/__tests__/multipleFiles/interfaces';
 
     const result = await convertFromDirectory({
       schemaDirectory: './src/__tests__/multipleFiles/schemas',
