@@ -1,14 +1,15 @@
 import Joi from 'joi';
 import Path from 'path';
+
 import { Settings, ConvertedType, GenerateTypeFile } from './types';
 import { convertSchema, getTypeFileNameFromSchema } from './index';
 
 /**
  * Analyse a schema file
  *
- * @param {Setting} settings - Settings
- * @param {string} schemaFileName - Schema File Name
- * @returns {Promise<undefined | GenerateTypeFile>} Schema analysis results
+ * @param settings - Settings
+ * @param schemaFileName - Schema File Name
+ * @returns Schema analysis results
  */
 export const analyseSchemaFile = async (
   settings: Settings,
