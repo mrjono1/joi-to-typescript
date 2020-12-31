@@ -3,7 +3,7 @@ import { readFileSync } from 'fs';
 import { convertFromDirectory } from '../../index';
 
 describe('test reading schemas from files', () => {
-  const typeOutputDirectory = './src/__tests__/fromFile/models';
+  const typeOutputDirectory = './src/__tests__/fromFile/interfaces';
   test('does reading form files work', async () => {
     const result = await convertFromDirectory({
       schemaDirectory: './src/__tests__/fromFile/schemas',

@@ -4,7 +4,7 @@ import { convertFromDirectory } from '../../index';
 import { AssertionCriteria } from './AssertionCriteria';
 
 describe('subDirectories', () => {
-  const typeOutputDirectory = './src/__tests__/subDirectories/models';
+  const typeOutputDirectory = './src/__tests__/subDirectories/interfaces';
   const schemaDirectory = './src/__tests__/subDirectories/schemas';
 
   beforeEach(() => {

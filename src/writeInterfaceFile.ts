@@ -4,11 +4,13 @@ import fs from 'fs';
 import { Settings, GenerateTypeFile } from './types';
 
 /**
- * Write type file
+ * Write interface file
+ *
  * @param settings Settings
  * @param schemaFileName Schema File Name
+ * @returns The written file name
  */
-export const writeTypeFile = async (
+export const writeInterfaceFile = async (
   settings: Settings,
   typeFileName: string,
   generatedTypes: GenerateTypeFile[]

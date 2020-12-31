@@ -9,7 +9,7 @@ import { convertFromDirectory, convertSchema, Settings } from '../../index';
 
 describe('test `useExportedVarName` setting', () => {
   test('create a type even if there is no `.label()`', async () => {
-    const typeOutputDirectory = './src/__tests__/useExportedVarName/models';
+    const typeOutputDirectory = './src/__tests__/useExportedVarName/interfaces';
     const result = await convertFromDirectory({
       schemaDirectory: './src/__tests__/useExportedVarName/schemas',
       typeOutputDirectory

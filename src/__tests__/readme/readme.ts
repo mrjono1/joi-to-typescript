@@ -4,7 +4,7 @@ import { convertFromDirectory } from '../../index';
 
 describe('this is the example on the readme', () => {
   test('a good example schema', async () => {
-    const typeOutputDirectory = './src/__tests__/readme/models';
+    const typeOutputDirectory = './src/__tests__/readme/interfaces';
 
     const result = await convertFromDirectory({
       schemaDirectory: './src/__tests__/readme/schemas',

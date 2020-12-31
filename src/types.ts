@@ -14,16 +14,18 @@ export interface Settings {
   typeOutputDirectory: string;
   /**
    * Should interface properties be defaulted to optional or required
+   * @default false
    */
   defaultToRequired: boolean;
   /**
    * What schema file name suffix will be removed when creating the interface file name
-   * Defaults to `Schema`
+   * @default "Schema"
    * This ensures that an interface and Schema with the file name are not confused
    */
   schemaFileSuffix: string;
   /**
    * If `true` the console will include more information
+   * @default false
    */
   debug: boolean;
   /**
@@ -32,7 +34,7 @@ export interface Settings {
   fileHeader: string;
   /**
    * If true will sort properties on interface by name
-   * Defaults to `true`
+   * @default true
    */
   sortPropertiesByName: boolean;
   /**
@@ -49,12 +51,13 @@ export interface Settings {
   indexAllToRoot: boolean;
   /**
    * Comment every interface and property even with just a duplicate of the interface and property name
-   * Defaults to `false`
+   * @default false
    */
   commentEverything: boolean;
   /**
    * List of files or folders that should be ignored from conversion. These can either be
    * filenames (AddressSchema.ts) or filepaths postfixed with a / (addressSchemas/)
+   * @default []
    */
   ignoreFiles: string[];
 }

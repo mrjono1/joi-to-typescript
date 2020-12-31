@@ -4,7 +4,7 @@ import { convertFromDirectory } from '../../index';
 
 describe('test array types', () => {
   test('array variations from file', async () => {
-    const typeOutputDirectory = './src/__tests__/array/models';
+    const typeOutputDirectory = './src/__tests__/array/interfaces';
     const result = await convertFromDirectory({
       schemaDirectory: './src/__tests__/array/schemas',
       typeOutputDirectory
