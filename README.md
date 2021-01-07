@@ -11,7 +11,15 @@ Convert [Joi](https://github.com/sideway/joi) Schemas to TypeScript interfaces
 
 This will allow you to reuse a Joi Schema that validates your [Hapi](https://github.com/hapijs/hapi) API to generate TypeScript interfaces so you don't have to manually create the same structure again saving you time.
 
-## Important
+## Installation Notes
+
+This package is intended as a development time tool so is installed in the `devDependencies`
+
+```bash
+yarn add joi-to-typescript --dev
+# or
+npm install joi-to-typescript --save-dev
+```
 
 - This has been built for `"joi": "^17.2.1"` and will probaly not work for older versions, mainly due to package name changes
 - Minimum node version 12 as Joi requries node 12
@@ -23,12 +31,13 @@ This will allow you to reuse a Joi Schema that validates your [Hapi](https://git
 1. Create Joi Schemas in the Schemas folder with a file name suffix of Schemas eg. `AddressSchema.ts`
    - The file name suffix ensures that type file and schema file imports are not confusing
 
-[Example Project](https://github.com/mrjono1/joi-to-typescript/tree/master/example)
-The example project allows the use of `yarn types` or `npm run types` to run this package
+## Example
 
-## Example Usage
+#### Example Project
 
-#### Example Schema in src/schemas
+Explore the [Example Project](https://github.com/mrjono1/joi-to-typescript/tree/master/example) for recommended setup, it allows the use of `yarn types` or `npm run types` to run this package
+
+#### Example Schema
 
 This example can be found in `src/__tests__/readme`
 
