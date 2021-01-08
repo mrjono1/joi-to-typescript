@@ -15,7 +15,7 @@ export { Settings };
  * @param settings Partial Setting object
  * @returns Complete Settings object
  */
-const defaultSettings = (settings: Partial<Settings>): Settings => {
+function defaultSettings(settings: Partial<Settings>): Settings {
   const appSettings = Object.assign(
     {
       defaultToRequired: false,
@@ -33,9 +33,9 @@ const defaultSettings = (settings: Partial<Settings>): Settings => {
   ) as Settings;
 
   return appSettings;
-};
+}
 
-export const convertSchema = (settings: Settings, joi: AnySchema, exportedName?: string): ConvertedType | undefined => {
+export function convertSchema(settings: Settings, joi: AnySchema, exportedName?: string): ConvertedType | undefined {
   const details = joi.describe() as Describe;
   const name = details?.flags?.label || exportedName;
 
@@ -67,13 +67,13 @@ export const convertSchema = (settings: Settings, joi: AnySchema, exportedName?:
   // see parseAlternatives for why this is ignored
   /* istanbul ignore next */
   return undefined;
-};
+}
 
-export const getTypeFileNameFromSchema = (schemaFileName: string, settings: Settings): string => {
+export function getTypeFileNameFromSchema(schemaFileName: string, settings: Settings): string {
   return schemaFileName.endsWith(`${settings.schemaFileSuffix}.ts`)
     ? schemaFileName.substring(0, schemaFileName.length - `${settings.schemaFileSuffix}.ts`.length)
     : schemaFileName.replace('.ts', '');
-};
+}
 
 /**
  * Write index.ts file
@@ -81,7 +81,7 @@ export const getTypeFileNameFromSchema = (schemaFileName: string, settings: Sett
  * @param settings - Settings Object
  * @param fileNamesToExport - List of file names that will be added to the index.ts file
  */
-export const writeIndexFile = (settings: Settings, fileNamesToExport: string[]): void => {
+export function writeIndexFile(settings: Settings, fileNamesToExport: string[]): void {
   if (fileNamesToExport.length === 0) {
     // Don't write an index file if its going to export nothing
     return;
@@ -89,7 +89,7 @@ export const writeIndexFile = (settings: Settings, fileNamesToExport: string[]):
   const exportLines = fileNamesToExport.map(fileName => `export * from './${fileName.replace(/\\/g, '/')}';`);
   const fileContent = `${settings.fileHeader}\n\n${exportLines.join('\n').concat('\n')}`;
   writeFileSync(Path.join(settings.typeOutputDirectory, 'index.ts'), fileContent);
-};
+}
 
 /**
  * Create types from schemas from a directory
@@ -97,7 +97,7 @@ export const writeIndexFile = (settings: Settings, fileNamesToExport: string[]):
  * @param settings - Configuration settings
  * @returns The success or failure of this operation
  */
-export const convertFromDirectory = async (settings: Partial<Settings>): Promise<boolean> => {
+export async function convertFromDirectory(settings: Partial<Settings>): Promise<boolean> {
   const appSettings = defaultSettings(settings);
   const filesInDirectory = await convertFilesInDirectory(appSettings, Path.resolve(appSettings.typeOutputDirectory));
 
@@ -115,4 +115,4 @@ export const convertFromDirectory = async (settings: Partial<Settings>): Promise
   }
 
   return true;
-};
+}

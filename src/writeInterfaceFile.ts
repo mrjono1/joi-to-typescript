@@ -10,11 +10,11 @@ import { Settings, GenerateTypeFile } from './types';
  * @param schemaFileName Schema File Name
  * @returns The written file name
  */
-export const writeInterfaceFile = async (
+export async function writeInterfaceFile(
   settings: Settings,
   typeFileName: string,
   generatedTypes: GenerateTypeFile[]
-): Promise<undefined | string> => {
+): Promise<undefined | string> {
   const generatedFile = generatedTypes.find(x => x.typeFileName === typeFileName);
   if (generatedFile && generatedFile.fileContent && generatedFile.typeFileName) {
     let typeImports = '';
@@ -88,4 +88,4 @@ export const writeInterfaceFile = async (
   // data is checked before calling this function
   /* istanbul ignore next */
   return undefined;
-};
+}

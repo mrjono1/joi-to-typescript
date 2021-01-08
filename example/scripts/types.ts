@@ -1,6 +1,6 @@
 import { convertFromDirectory } from 'joi-to-typescript';
 
-const types = async (): Promise<void> => {
+async function types(): Promise<void> {
   console.log('Running joi-to-typescript...');
 
   // Configure your settings here
@@ -14,6 +14,6 @@ const types = async (): Promise<void> => {
   } else {
     console.log('Failed to run joi-to-typescrip');
   }
-};
+}
 
 types();

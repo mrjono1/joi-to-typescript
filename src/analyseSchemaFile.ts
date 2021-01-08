@@ -11,10 +11,10 @@ import { convertSchema, getTypeFileNameFromSchema } from './index';
  * @param schemaFileName - Schema File Name
  * @returns Schema analysis results
  */
-export const analyseSchemaFile = async (
+export async function analyseSchemaFile(
   settings: Settings,
   schemaFileName: string
-): Promise<undefined | GenerateTypeFile> => {
+): Promise<undefined | GenerateTypeFile> {
   const allConvertedTypes: ConvertedType[] = [];
 
   const fullFilePath = Path.join(settings.schemaDirectory, schemaFileName);
@@ -77,4 +77,4 @@ export const analyseSchemaFile = async (
     typeFileName,
     typeFileLocation: settings.typeOutputDirectory
   };
-};
+}

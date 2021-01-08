@@ -8,28 +8,28 @@ import { analyseSchemaFile } from './analyseSchemaFile';
  * Create types from schemas from a directory
  * @param settings Settings
  */
-export const convertFilesInDirectory = async (
+export async function convertFilesInDirectory(
   appSettings: Settings,
   ogTypeOutputDir: string,
   fileTypesToExport: GenerateTypeFile[] = []
-): Promise<GenerateTypesDir> => {
+): Promise<GenerateTypesDir> {
   // Check and resolve directories
-  appSettings.schemaDirectory = Path.resolve(appSettings.schemaDirectory);
-  if (!existsSync(appSettings.schemaDirectory)) {
-    throw new Error(`schemaDirectory "${appSettings.schemaDirectory}" does not exist`);
+  const resolvedSchemaDirectory = Path.resolve(appSettings.schemaDirectory);
+  if (!existsSync(resolvedSchemaDirectory)) {
+    throw new Error(`schemaDirectory "${resolvedSchemaDirectory}" does not exist`);
   }
-  appSettings.typeOutputDirectory = Path.resolve(appSettings.typeOutputDirectory);
-  if (!existsSync(appSettings.typeOutputDirectory)) {
-    mkdirSync(appSettings.typeOutputDirectory, { recursive: true });
+  const resolvedTypeOutputDirectory = Path.resolve(appSettings.typeOutputDirectory);
+  if (!existsSync(resolvedTypeOutputDirectory)) {
+    mkdirSync(resolvedTypeOutputDirectory, { recursive: true });
   }
 
   let fileNamesToExport: string[] = [];
   const currentDirFileTypesToExport: GenerateTypeFile[] = fileTypesToExport;
 
   // Load files and get all types
-  const files = readdirSync(appSettings.schemaDirectory);
+  const files = readdirSync(resolvedSchemaDirectory);
   for (const schemaFileName of files) {
-    const subDirectoryPath = Path.join(appSettings.schemaDirectory, schemaFileName);
+    const subDirectoryPath = Path.join(resolvedSchemaDirectory, schemaFileName);
     if (!appSettings.rootDirectoryOnly && lstatSync(subDirectoryPath).isDirectory()) {
       if (appSettings.ignoreFiles.includes(`${schemaFileName}/`)) {
         if (appSettings.debug) {
@@ -38,8 +38,8 @@ export const convertFilesInDirectory = async (
         continue;
       }
       const typeOutputDirectory = appSettings.flattenTree
-        ? appSettings.typeOutputDirectory
-        : Path.join(appSettings.typeOutputDirectory, schemaFileName);
+        ? resolvedTypeOutputDirectory
+        : Path.join(resolvedTypeOutputDirectory, schemaFileName);
 
       const thisDirsFileNamesToExport = await convertFilesInDirectory(
         {
@@ -65,10 +65,9 @@ export const convertFilesInDirectory = async (
       if (exportType) {
         let dirTypeFileName = exportType.typeFileName;
         if (appSettings.indexAllToRoot) {
-          const findIndexEnd =
-            Path.resolve(appSettings.typeOutputDirectory).indexOf(ogTypeOutputDir) + ogTypeOutputDir.length + 1;
+          const findIndexEnd = resolvedTypeOutputDirectory.indexOf(ogTypeOutputDir) + ogTypeOutputDir.length + 1;
           dirTypeFileName = Path.join(
-            appSettings.typeOutputDirectory.substring(findIndexEnd),
+            resolvedTypeOutputDirectory.substring(findIndexEnd),
             getTypeFileNameFromSchema(schemaFileName, appSettings)
           );
         }
@@ -84,4 +83,4 @@ export const convertFilesInDirectory = async (
   }
 
   return { typeFileNames: fileNamesToExport, types: currentDirFileTypesToExport };
-};
+}
