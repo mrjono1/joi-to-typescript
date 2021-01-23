@@ -29,7 +29,7 @@
     "pub": "tsc && yarn publish"
   },
   "dependencies": {
-    "joi": "^17.2.1"
+    "joi": "^17.3.0"
   },
   "devDependencies": {
     "@types/jest": "^26.0.19",
