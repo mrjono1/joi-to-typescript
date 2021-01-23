@@ -5,15 +5,16 @@
 
 version: 2
 updates:
-
   # Maintain dependencies for GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "monthly"
-      
+
   # Maintain dependencies for npm
   - package-ecosystem: "npm"
     directory: "/" # Location of package manifests
     schedule:
       interval: "monthly"
+    ignore:
+      - dependency-name: "@types/node" # Do this manually as currenly supporting node 12 which is not the latest version
