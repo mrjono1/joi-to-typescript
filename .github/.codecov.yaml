@@ -6,4 +6,4 @@ coverage:
     patch:
       default:
         enabled: no
-  range: '95...100'
+  range: "95...100"
