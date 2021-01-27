@@ -17,7 +17,7 @@ export async function analyseSchemaFile(
 ): Promise<undefined | GenerateTypeFile> {
   const allConvertedTypes: ConvertedType[] = [];
 
-  const fullFilePath = Path.join(settings.schemaDirectory, schemaFileName);
+  const fullFilePath = Path.resolve(Path.join(settings.schemaDirectory, schemaFileName));
   const schemaFile = await require(fullFilePath);
 
   // Create Type File Name
