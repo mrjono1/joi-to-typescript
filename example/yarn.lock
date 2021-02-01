@@ -56,10 +56,10 @@ diff@^4.0.1:
   resolved "https://registry.yarnpkg.com/diff/-/diff-4.0.2.tgz#60f3aecb89d5fae520c11aa19efc2bb982aade7d"
   integrity sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==
 
-joi-to-typescript@^1.9.0:
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/joi-to-typescript/-/joi-to-typescript-1.9.0.tgz#10500abea09f34f63db6f4370640369732bdfec9"
-  integrity sha512-EzpKhmj5dAbKGSMjtLVBPKtla168DIh13K0fsUpM1eLjo/CKaZNY/0gTD3ufQ3ckA73gMQppiXRCcM1YsR9zkA==
+joi-to-typescript@^1.10.3:
+  version "1.10.3"
+  resolved "https://registry.yarnpkg.com/joi-to-typescript/-/joi-to-typescript-1.10.3.tgz#0a9aa9bdb6470161e2d771f2c3ebca3679f65ff6"
+  integrity sha512-WfvYovDQoei8ZGz+XOsl6s9G8zRp1hVyfg3WejrdRYMWOG2UcRMsIZiTxeRHtf1qVF/RvZcv1BcJl4kwnuKEkA==
   dependencies:
     joi "^17.2.1"
 
