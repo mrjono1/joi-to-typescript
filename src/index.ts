@@ -43,6 +43,15 @@ export function convertSchema(settings: Settings, joi: AnySchema, exportedName?:
     throw new Error(`At least one "object" does not have a .label(). Details: ${JSON.stringify(details)}`);
   }
 
+  if (settings.debug && name.toLowerCase().endsWith('schema')) {
+    console.debug(
+      `It is recommended you update the Joi Schema '${name}' similar to: ${name} = Joi.object().label('${name.replace(
+        'Schema',
+        ''
+      )}')`
+    );
+  }
+
   // Set the label from the exportedName if missing
   if (!details.flags) {
     details.flags = { label: name };
