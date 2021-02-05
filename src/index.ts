@@ -64,7 +64,7 @@ export function convertSchema(settings: Settings, joi: AnySchema, exportedName?:
   const parsedSchema = parseSchema(details, settings, false);
   if (parsedSchema) {
     const customTypes = getAllCustomTypes(parsedSchema);
-    const content = typeContentToTs(settings.commentEverything, parsedSchema, true);
+    const content = typeContentToTs(settings, parsedSchema, true);
     return {
       name,
       customTypes,
