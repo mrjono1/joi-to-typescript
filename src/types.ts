@@ -78,7 +78,7 @@ export interface BaseTypeContent {
   /**
    * will add this to the jsDoc output
    */
-  description?: string;
+  jsDoc?: JsDoc;
 
   /**
    * If this is an object property is it required
@@ -124,7 +124,7 @@ export function makeTypeContentChild({
   customTypes,
   required,
   name,
-  description
+  jsDoc
 }: Omit<TypeContentChild, '__isRoot'>): TypeContentChild {
   return {
     __isRoot: false,
@@ -132,7 +132,7 @@ export function makeTypeContentChild({
     customTypes,
     required,
     name,
-    description
+    jsDoc
   };
 }
 
@@ -141,7 +141,7 @@ export function makeTypeContentRoot({
   name,
   children,
   required,
-  description
+  jsDoc
 }: Omit<TypeContentRoot, '__isRoot'>): TypeContentRoot {
   return {
     __isRoot: true,
@@ -149,7 +149,7 @@ export function makeTypeContentRoot({
     name,
     children,
     required,
-    description
+    jsDoc
   };
 }
 
@@ -216,4 +216,15 @@ export interface GenerateTypesDir {
    * FileNames of files exported.
    */
   typeFileNames: string[];
+}
+
+export interface JsDoc {
+  /**
+   * description value
+   */
+  description?: string;
+  /**
+   * @example example value
+   */
+  example?: string;
 }
