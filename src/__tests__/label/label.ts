@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from 'fs';
-import { convertFromDirectory } from '../..';
+import Joi from 'joi';
+import { convertFromDirectory, convertSchema, Settings } from '../..';
 
 describe('test the use of .label()', () => {
   const typeOutputDirectory = './src/__tests__/label/interfaces';
@@ -10,14 +11,20 @@ describe('test the use of .label()', () => {
   // });
 
   test('generate label interfaces', async () => {
+    const consoleSpy = jest.spyOn(console, 'debug');
     const result = await convertFromDirectory({
       schemaDirectory,
-      typeOutputDirectory
+      typeOutputDirectory,
+      debug: true
     });
 
     expect(result).toBe(true);
 
     expect(existsSync(`${typeOutputDirectory}/index.ts`)).toBeTruthy();
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      "It is recommended you update the Joi Schema 'nolabelSchema' similar to: nolabelSchema = Joi.object().label('nolabel')"
+    );
   });
 
   test('no label', () => {
@@ -36,7 +43,9 @@ export interface nolabeltest {
     );
   });
 
-  test('no label but schame name', () => {
+  // it would be nice to auto remove this schema suffix but that could break the Joi, the safest is to warn the user about
+  // how they could do it better
+  test('no label with schema as suffix', () => {
     const oneContent = readFileSync(`${typeOutputDirectory}/NoLabel.ts`).toString();
 
     expect(oneContent).toBe(
@@ -45,7 +54,7 @@ export interface nolabeltest {
  * Do not modify this file manually
  */
 
-export interface nolabel {
+export interface nolabelSchema {
   name?: string;
 }
 `
@@ -66,5 +75,16 @@ export interface Frank {
 }
 `
     );
+  });
+
+  test('no label() and no property name', () => {
+    expect(() => {
+      convertSchema(
+        ({} as unknown) as Settings,
+        Joi.object({
+          name: Joi.string().optional()
+        })
+      );
+    }).toThrowError();
   });
 });
