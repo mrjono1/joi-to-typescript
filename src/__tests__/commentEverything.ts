@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-import { convertSchema, Settings } from '../index';
+import { convertSchema } from '../index';
 
 describe('test the `commentEverything` setting', () => {
   test('commentEverything = true', () => {
@@ -16,7 +16,7 @@ describe('test the `commentEverything` setting', () => {
       .label('TestSchema')
       .description('a test schema definition');
 
-    const result = convertSchema(({ commentEverything: true } as unknown) as Settings, schema);
+    const result = convertSchema({ commentEverything: true, sortPropertiesByName: false }, schema);
     expect(result).not.toBeUndefined;
     expect(result?.content).toBe(`/**
  * a test schema definition
@@ -56,7 +56,7 @@ export interface TestSchema {
       .label('ArrayObject')
       .description('an Array test schema definition');
 
-    const arrayResult = convertSchema(({ commentEverything: true } as unknown) as Settings, schemaArray);
+    const arrayResult = convertSchema({ commentEverything: true, sortPropertiesByName: false }, schemaArray);
     expect(arrayResult).not.toBeUndefined;
 
     expect(arrayResult?.content).toBe(`/**

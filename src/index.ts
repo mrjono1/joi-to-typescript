@@ -2,10 +2,10 @@ import { AnySchema } from 'joi';
 import Path from 'path';
 import { writeFileSync } from 'fs';
 
-import { Describe, parseSchema, getAllCustomTypes, typeContentToTs } from './parse';
 import { Settings, ConvertedType } from './types';
 import { convertFilesInDirectory } from './convertFilesInDirectory';
 import { writeInterfaceFile } from './writeInterfaceFile';
+import { convertSchemaInternal } from 'analyseSchemaFile';
 
 export { Settings };
 
@@ -27,7 +27,8 @@ function defaultSettings(settings: Partial<Settings>): Settings {
  */`,
       sortPropertiesByName: true,
       commentEverything: false,
-      ignoreFiles: []
+      ignoreFiles: [],
+      indentationChacters: '  '
     },
     settings
   ) as Settings;
@@ -35,47 +36,13 @@ function defaultSettings(settings: Partial<Settings>): Settings {
   return appSettings;
 }
 
-export function convertSchema(settings: Settings, joi: AnySchema, exportedName?: string): ConvertedType | undefined {
-  const details = joi.describe() as Describe;
-  const name = details?.flags?.label || exportedName;
-
-  if (!name) {
-    throw new Error(`At least one "object" does not have a .label(). Details: ${JSON.stringify(details)}`);
-  }
-
-  if (settings.debug && name.toLowerCase().endsWith('schema')) {
-    console.debug(
-      `It is recommended you update the Joi Schema '${name}' similar to: ${name} = Joi.object().label('${name.replace(
-        'Schema',
-        ''
-      )}')`
-    );
-  }
-
-  // Set the label from the exportedName if missing
-  if (!details.flags) {
-    details.flags = { label: name };
-  } else if (!details.flags.label) {
-    // Unable to build any test cases for this line but will keep it if joi.describe() changes
-    /* istanbul ignore next */
-    details.flags.label = name;
-  }
-
-  const parsedSchema = parseSchema(details, settings, false);
-  if (parsedSchema) {
-    const customTypes = getAllCustomTypes(parsedSchema);
-    const content = typeContentToTs(settings, parsedSchema, true);
-    return {
-      name,
-      customTypes,
-      content
-    };
-  }
-
-  // The only type that could return this is alternatives
-  // see parseAlternatives for why this is ignored
-  /* istanbul ignore next */
-  return undefined;
+export function convertSchema(
+  settings: Partial<Settings>,
+  joi: AnySchema,
+  exportedName?: string
+): ConvertedType | undefined {
+  const appSettings = defaultSettings(settings);
+  return convertSchemaInternal(appSettings, joi, exportedName);
 }
 
 export function getTypeFileNameFromSchema(schemaFileName: string, settings: Settings): string {

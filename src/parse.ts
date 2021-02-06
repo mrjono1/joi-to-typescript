@@ -68,10 +68,8 @@ export function getAllCustomTypes(parsedSchema: TypeContent): string[] {
   }
 }
 
-function getIndentStr(indentLevel: number): string {
-  // TODO: configure size of a single level of indent
-  // right now using 2 spaces
-  return '  '.repeat(indentLevel);
+function getIndentStr(settings: Settings, indentLevel: number): string {
+  return settings.indentationChacters.repeat(indentLevel);
 }
 
 /**
@@ -93,14 +91,14 @@ function getDescriptionStr(settings: Settings, name: string, jsDoc?: JsDoc, inde
   }
 
   lines.push(' */');
-  return lines.map(line => `${getIndentStr(indentLevel)}${line}`).join('\n') + '\n';
+  return lines.map(line => `${getIndentStr(settings, indentLevel)}${line}`).join('\n') + '\n';
 }
 
 function typeContentToTsHelper(
   settings: Settings,
   parsedSchema: TypeContent,
-  doExport = false,
-  indentLevel = 0
+  indentLevel: number,
+  doExport = false
 ): { tsContent: string; jsDoc?: JsDoc } {
   if (!parsedSchema.__isRoot) {
     return {
@@ -115,7 +113,7 @@ function typeContentToTsHelper(
   }
   switch (parsedSchema.joinOperation) {
     case 'list': {
-      const childrenContent = children.map(child => typeContentToTsHelper(settings, child));
+      const childrenContent = children.map(child => typeContentToTsHelper(settings, child, indentLevel));
       if (childrenContent.length > 1) {
         throw new Error('Multiple array item types not supported');
       }
@@ -134,7 +132,7 @@ function typeContentToTsHelper(
       return { tsContent: arrayStr, jsDoc: parsedSchema.jsDoc };
     }
     case 'union': {
-      const childrenContent = children.map(child => typeContentToTsHelper(settings, child).tsContent);
+      const childrenContent = children.map(child => typeContentToTsHelper(settings, child, indentLevel).tsContent);
       const unionStr = childrenContent.join(' | ');
       if (doExport) {
         return { tsContent: `export type ${parsedSchema.name} = ${unionStr};`, jsDoc: parsedSchema.jsDoc };
@@ -151,14 +149,15 @@ function typeContentToTsHelper(
 
       if (children.length !== 0) {
         const childrenContent = children.map(child => {
-          const childInfo = typeContentToTsHelper(settings, child, false, indentLevel + 1);
-          // TODO: configure indent length
+          const childInfo = typeContentToTsHelper(settings, child, indentLevel + 1, false);
+
           // forcing name to be defined here, might need a runtime check but it should be set if we are here
-          const descriptionStr = getDescriptionStr(settings, child.name as string, childInfo.jsDoc, indentLevel + 1);
+          const descriptionStr = getDescriptionStr(settings, child.name as string, childInfo.jsDoc, indentLevel);
           const optionalStr = child.required ? '' : '?';
-          return `${descriptionStr}  ${getIndentStr(indentLevel)}${child.name}${optionalStr}: ${childInfo.tsContent};`;
+          const indentString = getIndentStr(settings, indentLevel);
+          return `${descriptionStr}${indentString}${child.name}${optionalStr}: ${childInfo.tsContent};`;
         });
-        objectStr = `{\n${childrenContent.join('\n')}\n${getIndentStr(indentLevel)}}`;
+        objectStr = `{\n${childrenContent.join('\n')}\n${getIndentStr(settings, indentLevel - 1)}}`;
       }
       if (doExport) {
         return {
@@ -174,7 +173,7 @@ function typeContentToTsHelper(
 }
 
 export function typeContentToTs(settings: Settings, parsedSchema: TypeContent, doExport = false): string {
-  const { tsContent, jsDoc } = typeContentToTsHelper(settings, parsedSchema, doExport);
+  const { tsContent, jsDoc } = typeContentToTsHelper(settings, parsedSchema, 1, doExport);
   // forcing name to be defined here, might need a runtime check but it should be set if we are here
   const descriptionStr = getDescriptionStr(settings, parsedSchema.name as string, jsDoc);
   return `${descriptionStr}${tsContent}`;

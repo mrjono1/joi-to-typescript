@@ -60,6 +60,11 @@ export interface Settings {
    * @default []
    */
   readonly ignoreFiles: string[];
+  /**
+   * The indentation characters
+   * @default '  ' (two spaces)
+   */
+  readonly indentationChacters: string;
 }
 
 export interface ConvertedType {

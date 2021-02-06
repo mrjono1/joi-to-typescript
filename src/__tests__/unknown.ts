@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-import { convertSchema, Settings } from '../index';
+import { convertSchema } from '../index';
 
 describe('test `Joi.unknown()`', () => {
   test('`unknown(true)`', () => {
@@ -11,7 +11,7 @@ describe('test `Joi.unknown()`', () => {
       .description('a test schema definition')
       .unknown(true);
 
-    const result = convertSchema(({} as unknown) as Settings, schema);
+    const result = convertSchema({ sortPropertiesByName: false }, schema);
     expect(result).not.toBeUndefined;
     expect(result?.content).toBe(`/**
  * a test schema definition
@@ -33,7 +33,7 @@ export interface TestSchema {
       .description('a test schema definition')
       .unknown(false);
 
-    const result2 = convertSchema(({} as unknown) as Settings, schema2);
+    const result2 = convertSchema({}, schema2);
     expect(result2).not.toBeUndefined;
     expect(result2?.content).toBe(`/**
  * a test schema definition
