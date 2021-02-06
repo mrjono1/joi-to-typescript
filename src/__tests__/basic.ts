@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-import { convertSchema, Settings } from '../index';
+import { convertSchema } from '../index';
 
 describe('some basic tests', () => {
   test('test the base types', () => {
@@ -17,7 +17,7 @@ describe('some basic tests', () => {
       .label('TestSchema')
       .description('a test schema definition');
 
-    const result = convertSchema(({ sortPropertiesByName: true } as unknown) as Settings, schema);
+    const result = convertSchema({ sortPropertiesByName: true }, schema);
     expect(result).not.toBeUndefined;
     expect(result?.content).toBe(`/**
  * a test schema definition
@@ -50,7 +50,7 @@ export interface TestSchema {
       .label('ArrayObject')
       .description('an Array test schema definition');
 
-    const arrayResult = convertSchema(({ sortPropertiesByName: true } as unknown) as Settings, schemaArray);
+    const arrayResult = convertSchema({ sortPropertiesByName: true }, schemaArray);
     expect(arrayResult).not.toBeUndefined;
 
     expect(arrayResult?.content).toBe(`/**
@@ -77,7 +77,7 @@ export interface ArrayObject {
       'x.y': Joi.string()
     }).label('TestSchema');
 
-    const result = convertSchema(({} as unknown) as Settings, schema);
+    const result = convertSchema({ sortPropertiesByName: false }, schema);
     expect(result).not.toBeUndefined;
     expect(result?.content).toBe(`export interface TestSchema {
   nested?: {
@@ -109,7 +109,7 @@ export interface ArrayObject {
       A: Joi.string()
     }).label('TestSchema');
 
-    const result = convertSchema(({} as unknown) as Settings, schema);
+    const result = convertSchema({ sortPropertiesByName: false }, schema);
     expect(result).not.toBeUndefined;
     expect(result?.content).toBe(`export interface TestSchema {
   a?: string;
@@ -120,7 +120,7 @@ export interface ArrayObject {
   test('no properties on a schema', () => {
     const schema = Joi.object({}).label('TestSchema');
 
-    const result = convertSchema(({ sortPropertiesByName: true } as unknown) as Settings, schema);
+    const result = convertSchema({ sortPropertiesByName: true }, schema);
     expect(result).not.toBeUndefined;
     expect(result?.content).toBe(`export interface TestSchema {}`);
   });

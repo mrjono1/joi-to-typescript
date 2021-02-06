@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-import { convertSchema, Settings } from '../index';
+import { convertSchema } from '../index';
 
 describe('union types using allow()', () => {
   test('many variations of `allow()`', () => {
@@ -34,7 +34,7 @@ describe('union types using allow()', () => {
       .label('TestSchema')
       .description('a test schema definition');
 
-    const result = convertSchema(({} as unknown) as Settings, schema);
+    const result = convertSchema({ sortPropertiesByName: false }, schema);
     expect(result).not.toBeUndefined;
     expect(result?.content).toBe(`/**
  * a test schema definition
@@ -73,7 +73,7 @@ export interface TestSchema {
         .label('TestSchema')
         .description('a test schema definition');
 
-      const invalidResult = convertSchema(({} as unknown) as Settings, invalidSchema);
+      const invalidResult = convertSchema({}, invalidSchema);
       console.log(invalidResult);
     }).toThrow();
   });

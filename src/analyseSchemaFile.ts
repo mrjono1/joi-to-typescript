@@ -1,9 +1,56 @@
-import Joi from 'joi';
+import Joi, { AnySchema } from 'joi';
 import Path from 'path';
 
 import { Settings, ConvertedType, GenerateTypeFile } from './types';
-import { convertSchema, getTypeFileNameFromSchema } from './index';
+import { getTypeFileNameFromSchema } from './index';
+import { Describe, getAllCustomTypes, parseSchema, typeContentToTs } from 'parse';
 
+export function convertSchemaInternal(
+  settings: Settings,
+  joi: AnySchema,
+  exportedName?: string
+): ConvertedType | undefined {
+  const details = joi.describe() as Describe;
+  const name = details?.flags?.label || exportedName;
+
+  if (!name) {
+    throw new Error(`At least one "object" does not have a .label(). Details: ${JSON.stringify(details)}`);
+  }
+
+  if (settings.debug && name.toLowerCase().endsWith('schema')) {
+    console.debug(
+      `It is recommended you update the Joi Schema '${name}' similar to: ${name} = Joi.object().label('${name.replace(
+        'Schema',
+        ''
+      )}')`
+    );
+  }
+
+  // Set the label from the exportedName if missing
+  if (!details.flags) {
+    details.flags = { label: name };
+  } else if (!details.flags.label) {
+    // Unable to build any test cases for this line but will keep it if joi.describe() changes
+    /* istanbul ignore next */
+    details.flags.label = name;
+  }
+
+  const parsedSchema = parseSchema(details, settings, false);
+  if (parsedSchema) {
+    const customTypes = getAllCustomTypes(parsedSchema);
+    const content = typeContentToTs(settings, parsedSchema, true);
+    return {
+      name,
+      customTypes,
+      content
+    };
+  }
+
+  // The only type that could return this is alternatives
+  // see parseAlternatives for why this is ignored
+  /* istanbul ignore next */
+  return undefined;
+}
 /**
  * Analyse a schema file
  *
@@ -30,7 +77,7 @@ export async function analyseSchemaFile(
     if (!Joi.isSchema(joiSchema)) {
       continue;
     }
-    const convertedType = convertSchema(settings, joiSchema, exportedName);
+    const convertedType = convertSchemaInternal(settings, joiSchema, exportedName);
     if (convertedType) {
       allConvertedTypes.push({ ...convertedType, location: fullOutputFilePath });
     }

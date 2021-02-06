@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-import { convertSchema, Settings } from '../index';
+import { convertSchema } from '../index';
 
 describe('enums tests', () => {
   test('enums using valid()', () => {
@@ -15,7 +15,7 @@ describe('enums tests', () => {
       .label('TestSchema')
       .description('a test schema definition');
 
-    const result = convertSchema(({ defaultToRequired: true } as unknown) as Settings, schema);
+    const result = convertSchema({ sortPropertiesByName: false }, schema);
     expect(result).not.toBeUndefined;
     expect(result?.content).toBe(`/**
  * a test schema definition
@@ -33,7 +33,7 @@ export interface TestSchema {
       .label('TestSchema')
       .description('a test schema definition');
 
-    const result = convertSchema(({ defaultToRequired: true } as unknown) as Settings, schema);
+    const result = convertSchema({ defaultToRequired: true }, schema);
     expect(result).not.toBeUndefined;
     expect(result?.content).toBe(`/**
  * a test schema definition

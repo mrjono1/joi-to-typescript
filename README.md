@@ -109,6 +109,11 @@ convertFromDirectory({
   typeOutputDirectory: './src/interfaces',
   debug: true
 });
+
+// or to get an interface as a string. Please note that this method is limited
+import { convertSchema } from 'joi-to-typescript';
+const resultingInterface = convertSchema({}, JobSchema);
+resultingInterface?.content = // the interface as a string
 ```
 
 ## Settings
@@ -170,6 +175,11 @@ export interface Settings {
    * filenames (AddressSchema.ts) or filepaths postfixed with a / (addressSchemas/)
    */
   ignoreFiles: string[];
+  /**
+   * The indentation characters
+   * @default '  ' (two spaces)
+   */
+  indentationChacters: string;
 }
 ```
 
