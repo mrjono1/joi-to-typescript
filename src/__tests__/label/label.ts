@@ -87,4 +87,18 @@ export interface Frank {
       );
     }).toThrowError();
   });
+
+  test('Joi.id() instead of Joi.label()', () => {
+    const schema = Joi.object({
+      name: Joi.string()
+    }).id('Test');
+    try {
+      convertSchema({ debug: true }, schema);
+      expect(true).toBe(false);
+    } catch (error) {
+      expect(error.message).toBe(
+        'At least one "object" does not have a .label(). Details: {"type":"object","flags":{"id":"Test"},"keys":{"name":{"type":"string"}}}'
+      );
+    }
+  });
 });
