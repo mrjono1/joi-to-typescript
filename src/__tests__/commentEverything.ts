@@ -6,9 +6,7 @@ describe('test the `commentEverything` setting', () => {
   test('commentEverything = true', () => {
     const schema = Joi.object({
       // basic types
-      name: Joi.string()
-        .optional()
-        .description('Test Schema Name'),
+      name: Joi.string().optional().description('Test Schema Name'),
       propertyName1: Joi.boolean().required(),
       dateCreated: Joi.date(),
       count: Joi.number()
@@ -44,12 +42,8 @@ export interface TestSchema {
   test('commentEverything = false', () => {
     const schemaArray = Joi.object({
       // basic types
-      name: Joi.array()
-        .items(Joi.string())
-        .optional(),
-      propertyName1: Joi.array()
-        .items(Joi.boolean())
-        .required(),
+      name: Joi.array().items(Joi.string()).optional(),
+      propertyName1: Joi.array().items(Joi.boolean()).required(),
       dateCreated: Joi.array().items(Joi.date()),
       count: Joi.array().items(Joi.number())
     })

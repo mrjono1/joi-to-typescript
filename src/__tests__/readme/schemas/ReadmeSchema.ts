@@ -9,14 +9,8 @@ export const JobSchema = Joi.object({
 
 export const PersonSchema = Joi.object({
   firstName: Joi.string().required(),
-  lastName: Joi.string()
-    .required()
-    .description('Last Name'),
+  lastName: Joi.string().required().description('Last Name'),
   job: JobSchema
 }).label('Person');
 
-export const PeopleSchema = Joi.array()
-  .items(PersonSchema)
-  .required()
-  .label('People')
-  .description('A list of People');
+export const PeopleSchema = Joi.array().items(PersonSchema).required().label('People').description('A list of People');

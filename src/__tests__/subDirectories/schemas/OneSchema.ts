@@ -11,11 +11,7 @@ export const ItemSchema = Joi.object({
   femaleZebra: ZebraSchema.description('Female Zebra')
 }).label('Item');
 
-export const PeopleSchema = Joi.array()
-  .items(PersonSchema)
-  .required()
-  .label('People')
-  .description('A list of People');
+export const PeopleSchema = Joi.array().items(PersonSchema).required().label('People').description('A list of People');
 
 export const TestSchema = Joi.object({
   name: Joi.string().optional(),

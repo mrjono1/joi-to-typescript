@@ -4,10 +4,11 @@
   "editor.formatOnSave": true,
   "eslint.workingDirectories": ["./src"],
   "[javascript]": {
-    "editor.formatOnSave": true
+    "editor.formatOnSave": false
   },
   "[typescript]": {
-    "editor.formatOnSave": true
+    "editor.formatOnSave": false,
+    "editor.defaultFormatter": null
   },
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true

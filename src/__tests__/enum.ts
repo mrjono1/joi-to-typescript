@@ -5,12 +5,8 @@ import { convertSchema } from '../index';
 describe('enums tests', () => {
   test('enums using valid()', () => {
     const schema = Joi.object({
-      topColour: Joi.string()
-        .valid('red', 'green', 'orange', 'blue')
-        .required(),
-      bottomColour: Joi.string()
-        .valid('red', 'green', 'orange', 'blue')
-        .required()
+      topColour: Joi.string().valid('red', 'green', 'orange', 'blue').required(),
+      bottomColour: Joi.string().valid('red', 'green', 'orange', 'blue').required()
     })
       .label('TestSchema')
       .description('a test schema definition');

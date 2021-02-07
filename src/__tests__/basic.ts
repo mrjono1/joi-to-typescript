@@ -6,9 +6,7 @@ describe('some basic tests', () => {
   test('test the base types', () => {
     const schema = Joi.object({
       // basic types
-      name: Joi.string()
-        .optional()
-        .description('Test Schema Name'),
+      name: Joi.string().optional().description('Test Schema Name'),
       propertyName1: Joi.boolean().required(),
       dateCreated: Joi.date(),
       count: Joi.number(),
@@ -37,12 +35,8 @@ export interface TestSchema {
   test('array tests', () => {
     const schemaArray = Joi.object({
       // basic types
-      name: Joi.array()
-        .items(Joi.string())
-        .optional(),
-      propertyName1: Joi.array()
-        .items(Joi.boolean())
-        .required(),
+      name: Joi.array().items(Joi.string()).optional(),
+      propertyName1: Joi.array().items(Joi.boolean()).required(),
       dateCreated: Joi.array().items(Joi.date()),
       count: Joi.array().items(Joi.number()),
       arr: Joi.array()
@@ -70,9 +64,7 @@ export interface ArrayObject {
       nested: Joi.object({ a: Joi.object({ b: Joi.string() }) }),
       nestedComments: Joi.object({ a: Joi.object({ b: Joi.string().description('nested comment') }) }),
       nestedObject: Joi.object({
-        aType: Joi.object()
-          .label('Blue')
-          .description('A blue object property')
+        aType: Joi.object().label('Blue').description('A blue object property')
       }),
       'x.y': Joi.string()
     }).label('TestSchema');
