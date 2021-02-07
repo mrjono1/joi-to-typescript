@@ -2,8 +2,8 @@ import Joi from 'joi';
 import { filterMap } from './utils';
 import { TypeContent, makeTypeContentRoot, makeTypeContentChild, Settings, JsDoc } from './types';
 
+// see __tests__/joiTypes.ts for more information
 export const supportedJoiTypes = ['array', 'object', 'alternatives', 'any', 'boolean', 'date', 'number', 'string'];
-// unsupported: 'link'| 'binary' | 'symbol'
 
 export interface BaseDescribe extends Joi.Description {
   flags?: {
@@ -25,6 +25,7 @@ export interface ObjectDescribe extends BaseDescribe {
 }
 
 export interface AlternativesDescribe extends BaseDescribe {
+  // Joi.alt and Joi.alternatives both output as 'alternatives'
   type: 'alternatives';
   matches: { schema: Describe }[];
 }
@@ -35,6 +36,7 @@ export interface StringDescribe extends BaseDescribe {
 }
 
 export interface BasicDescribe extends BaseDescribe {
+  // Joi.bool an Joi.boolean both output as 'boolean'
   type: 'any' | 'boolean' | 'date' | 'number';
 }
 
@@ -68,6 +70,11 @@ export function getAllCustomTypes(parsedSchema: TypeContent): string[] {
   }
 }
 
+/**
+ * Get all indent characters for this indent level
+ * @param settings includes what the indent characters are
+ * @param indentLevel how many indent levels
+ */
 function getIndentStr(settings: Settings, indentLevel: number): string {
   return settings.indentationChacters.repeat(indentLevel);
 }
@@ -215,10 +222,8 @@ export function parseSchema(
     // TODO: do we want to use the labels description if we reference it?
     return makeTypeContentChild({ content: label, customTypes: [label], jsDoc, required });
   }
-  if (!supportedJoiTypes.includes(details.type)) {
-    // TODO: debug/better error logging
-    // TODO: maybe just make it any?
-    console.log(`unsupported type: ${details.type}`);
+  if (settings.debug && !supportedJoiTypes.includes(details.type)) {
+    console.debug(`unsupported type: ${details.type}`);
     return undefined;
   }
   const parsedSchema = parseHelper();
@@ -313,7 +318,6 @@ function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent 
     // The only type that could return this is alternatives
     // see parseAlternatives for why this is ignored
     if (!parsedSchema) {
-      /* istanbul ignore next */
       return undefined;
     }
     parsedSchema.name = /^[$A-Z_][0-9A-Z_$]*$/i.test(key || '') ? key : `'${key}'`;

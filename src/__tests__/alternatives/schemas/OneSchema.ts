@@ -22,7 +22,7 @@ export const TestSchema = Joi.object({
   .description('a test schema definition');
 
 export const TestListOfAltsSchema = Joi.array()
-  .items(Joi.alternatives().try(Joi.bool(), Joi.string()))
+  .items(Joi.alt().try(Joi.bool(), Joi.string()))
   .required()
   .label('TestList')
   .description('A list of Test object');
