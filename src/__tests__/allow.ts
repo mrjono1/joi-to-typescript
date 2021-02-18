@@ -9,6 +9,7 @@ describe('union types using allow()', () => {
       name: Joi.string().optional().description('Test Schema Name').allow(''),
       nullName: Joi.string().optional().description('nullable').allow(null),
       blankNull: Joi.string().optional().allow(null, ''),
+      blank: Joi.string().allow(''),
       normalList: Joi.string().allow('red', 'green', 'blue'),
       normalRequiredList: Joi.string().allow('red', 'green', 'blue').required(),
       numbers: Joi.number().optional().allow(1, 2, 3, 4, 5),
@@ -33,6 +34,7 @@ export interface TestSchema {
    */
   nullName?: string | null;
   blankNull?: string | null | '';
+  blank?: string;
   normalList?: 'red' | 'green' | 'blue';
   normalRequiredList: 'red' | 'green' | 'blue';
   numbers?: 1 | 2 | 3 | 4 | 5;
