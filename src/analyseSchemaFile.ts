@@ -3,7 +3,7 @@ import Path from 'path';
 
 import { Settings, ConvertedType, GenerateTypeFile } from './types';
 import { getTypeFileNameFromSchema } from './index';
-import { Describe, getAllCustomTypes, parseSchema, typeContentToTs } from 'parse';
+import { Describe, getAllCustomTypes, parseSchema, typeContentToTs } from './parse';
 
 export function convertSchemaInternal(
   settings: Settings,

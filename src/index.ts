@@ -5,7 +5,7 @@ import { writeFileSync } from 'fs';
 import { Settings, ConvertedType } from './types';
 import { convertFilesInDirectory } from './convertFilesInDirectory';
 import { writeInterfaceFile } from './writeInterfaceFile';
-import { convertSchemaInternal } from 'analyseSchemaFile';
+import { convertSchemaInternal } from './analyseSchemaFile';
 
 export { Settings };
 
