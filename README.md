@@ -180,6 +180,16 @@ export interface Settings {
    * @default '  ' (two spaces)
    */
   indentationChacters: string;
+  /**
+   * Can be used to customize the name of the generated file.
+   * @default (fileName: string) => fileName
+   */
+  readonly mapTypeFileName: (fileName: string) => string;
+  /**
+   * Can be used to customize resulting type name.
+   * @default (name: string) => name
+   */
+  readonly mapTypeName: (name: string) => string;
 }
 ```
 

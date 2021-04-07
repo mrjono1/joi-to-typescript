@@ -11,10 +11,15 @@ export function convertSchemaInternal(
   exportedName?: string
 ): ConvertedType | undefined {
   const details = joi.describe() as Describe;
-  const name = details?.flags?.label || exportedName;
+  const defaultName = details?.flags?.label || exportedName;
 
-  if (!name) {
+  if (!defaultName) {
     throw new Error(`At least one "object" does not have a .label(). Details: ${JSON.stringify(details)}`);
+  }
+
+  const name = settings.mapTypeName(defaultName);
+  if (!name) {
+    throw new Error(`Resulting type name cannot be empty. Default name was: ${defaultName}`);
   }
 
   if (settings.debug && name.toLowerCase().endsWith('schema')) {
