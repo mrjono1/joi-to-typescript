@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { filterMap } from './utils';
+import { filterMap, toStringLiteral } from './utils';
 import { TypeContent, makeTypeContentRoot, makeTypeContentChild, Settings, JsDoc } from './types';
 
 // see __tests__/joiTypes.ts for more information
@@ -249,7 +249,7 @@ function parseBasicSchema(details: BasicDescribe, settings: Settings): TypeConte
   // at least one value
   if (values && values.length !== 0) {
     const allowedValues = values.map((value: unknown) =>
-      makeTypeContentChild({ content: typeof value === 'string' ? `'${value}'` : `${value}` })
+      makeTypeContentChild({ content: typeof value === 'string' ? toStringLiteral(value) : `${value}` })
     );
 
     if (values[0] === null) {
@@ -274,7 +274,7 @@ function parseStringSchema(details: StringDescribe, settings: Settings): TypeCon
       const allowedValues = values.map(value =>
         stringAllowValues.includes(value) && value !== ''
           ? makeTypeContentChild({ content: `${value}` })
-          : makeTypeContentChild({ content: `'${value}'` })
+          : makeTypeContentChild({ content: toStringLiteral(value) })
       );
 
       if (values.filter(value => stringAllowValues.includes(value)).length == values.length) {
