@@ -59,4 +59,23 @@ export interface TestSchema {
       console.log(invalidResult);
     }).toThrow();
   });
+
+  test('null `allow()`', () => {
+    const schema = Joi.object({
+      obj: Joi.object().allow(null),
+      arr: Joi.array().items(Joi.string()).allow(null),
+      // then some tests for things you can do but probably shouldnt
+      sillyProperty: Joi.object().allow(null, 'joe'),
+      sillyArray: Joi.array().items(Joi.string()).allow(null, 'fred')
+    }).label('TestSchema');
+
+    const result = convertSchema({ sortPropertiesByName: false }, schema);
+    expect(result).not.toBeUndefined;
+    expect(result?.content).toBe(`export interface TestSchema {
+  obj?: object | null;
+  arr?: string[] | null;
+  sillyProperty?: object | null | 'joe';
+  sillyArray?: string[] | null | 'fred';
+}`);
+  });
 });

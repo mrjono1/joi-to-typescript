@@ -293,7 +293,24 @@ function parseArray(details: ArrayDescribe, settings: Settings): TypeContent | u
   const { label: name, jsDoc } = getCommonDetails(details, settings);
 
   const child = parseSchema(item, settings);
-  return child ? makeTypeContentRoot({ joinOperation: 'list', children: [child], name, jsDoc }) : undefined;
+  if (!child) {
+    return undefined;
+  }
+
+  const values = details.allow;
+
+  // at least one value
+  if (values && values.length !== 0) {
+    const allowedValues = values.map((value: unknown) =>
+      makeTypeContentChild({ content: typeof value === 'string' ? `'${value}'` : `${value}` })
+    );
+
+    allowedValues.unshift(makeTypeContentRoot({ joinOperation: 'list', children: [child], name, jsDoc }));
+
+    return makeTypeContentRoot({ joinOperation: 'union', children: allowedValues, name, jsDoc });
+  }
+
+  return makeTypeContentRoot({ joinOperation: 'list', children: [child], name, jsDoc });
 }
 
 function parseAlternatives(details: AlternativesDescribe, settings: Settings): TypeContent | undefined {
@@ -347,6 +364,22 @@ function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent 
       return 0;
     });
   }
+
   const { label: name, jsDoc } = getCommonDetails(details, settings);
+
+  const values = details.allow;
+
+  // at least one value
+  if (values && values.length !== 0) {
+    const allowedValues = values.map((value: unknown) =>
+      makeTypeContentChild({ content: typeof value === 'string' ? `'${value}'` : `${value}` })
+    );
+
+    allowedValues.unshift(makeTypeContentChild({ content: 'object' }));
+    allowedValues.push(...children);
+
+    return makeTypeContentRoot({ joinOperation: 'union', children: allowedValues, name, jsDoc });
+  }
+
   return makeTypeContentRoot({ joinOperation: 'object', children, name, jsDoc });
 }
