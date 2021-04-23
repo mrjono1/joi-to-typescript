@@ -1,4 +1,4 @@
-import { readFileSync, rmdirSync } from 'fs';
+import { existsSync, readFileSync, rmdirSync } from 'fs';
 import Joi from 'joi';
 
 import { convertFromDirectory, convertSchema, Settings } from '../../index';
@@ -7,7 +7,9 @@ describe('alternative types', () => {
   const typeOutputDirectory = './src/__tests__/alternatives/interfaces';
 
   beforeAll(() => {
-    rmdirSync(typeOutputDirectory, { recursive: true });
+    if (existsSync(typeOutputDirectory)) {
+      rmdirSync(typeOutputDirectory, { recursive: true });
+    }
   });
 
   test('vaiations of alternatives from file', async () => {

@@ -1,10 +1,12 @@
-import { readFileSync, rmdirSync } from 'fs';
+import { existsSync, readFileSync, rmdirSync } from 'fs';
 import { convertFromDirectory } from '../..';
 
 describe('indentation', () => {
   const typeOutputDirectory = './src/__tests__/indentation/interfaces';
   beforeEach(() => {
-    rmdirSync(typeOutputDirectory, { recursive: true });
+    if (existsSync(typeOutputDirectory)) {
+      rmdirSync(typeOutputDirectory, { recursive: true });
+    }
   });
 
   test('default indentation', async () => {
