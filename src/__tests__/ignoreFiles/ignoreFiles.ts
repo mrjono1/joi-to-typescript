@@ -7,7 +7,9 @@ describe('ignore Files', () => {
   const schemaDirectory = './src/__tests__/ignoreFiles/schemas';
 
   beforeEach(() => {
-    rmdirSync(typeOutputDirectory, { recursive: true });
+    if (existsSync(typeOutputDirectory)) {
+      rmdirSync(typeOutputDirectory, { recursive: true });
+    }
   });
 
   test('Ignores file names in ignoreList', async () => {

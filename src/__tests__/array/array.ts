@@ -1,4 +1,4 @@
-import { readFileSync, rmdirSync } from 'fs';
+import { existsSync, readFileSync, rmdirSync } from 'fs';
 
 import { convertFromDirectory } from '../../index';
 
@@ -6,7 +6,9 @@ describe('Array types', () => {
   const typeOutputDirectory = './src/__tests__/array/interfaces';
 
   beforeAll(() => {
-    rmdirSync(typeOutputDirectory, { recursive: true });
+    if (existsSync(typeOutputDirectory)) {
+      rmdirSync(typeOutputDirectory, { recursive: true });
+    }
   });
 
   test('array variations from file', async () => {

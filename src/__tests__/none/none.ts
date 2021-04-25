@@ -5,7 +5,9 @@ describe('no schemas in directory', () => {
   const typeOutputDirectory = './src/__tests__/none/interfaces';
 
   beforeEach(() => {
-    rmdirSync(typeOutputDirectory, { recursive: true });
+    if (existsSync(typeOutputDirectory)) {
+      rmdirSync(typeOutputDirectory, { recursive: true });
+    }
   });
 
   test('Throw and no index file', async () => {
