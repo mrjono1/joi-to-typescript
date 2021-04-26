@@ -220,7 +220,16 @@ export function parseSchema(
   if (label && useLabels && !ignoreLabels.includes(label)) {
     // skip parsing and just reference the label since we assumed we parsed the schema that the label references
     // TODO: do we want to use the labels description if we reference it?
-    return makeTypeContentChild({ content: label, customTypes: [label], jsDoc, required });
+
+    const child = makeTypeContentChild({ content: label, customTypes: [label], jsDoc, required });
+
+    const allowedValues = createAllowTypes(details);
+    if (allowedValues.length !== 0) {
+      allowedValues.unshift(child);
+
+      return makeTypeContentRoot({ joinOperation: 'union', name: '', children: allowedValues, jsDoc, required });
+    }
+    return child;
   }
   if (settings.debug && !supportedJoiTypes.includes(details.type)) {
     console.debug(`unsupported type: ${details.type}`);
@@ -248,9 +257,7 @@ function parseBasicSchema(details: BasicDescribe, settings: Settings): TypeConte
 
   // at least one value
   if (values && values.length !== 0) {
-    const allowedValues = values.map((value: unknown) =>
-      makeTypeContentChild({ content: typeof value === 'string' ? toStringLiteral(value) : `${value}` })
-    );
+    const allowedValues = createAllowTypes(details);
 
     if (values[0] === null) {
       allowedValues.unshift(makeTypeContentChild({ content }));
@@ -259,6 +266,20 @@ function parseBasicSchema(details: BasicDescribe, settings: Settings): TypeConte
   }
 
   return makeTypeContentChild({ content, name, jsDoc });
+}
+
+function createAllowTypes(details: BaseDescribe): TypeContent[] {
+  const values = details.allow;
+
+  // at least one value
+  if (values && values.length !== 0) {
+    const allowedValues = values.map((value: unknown) =>
+      makeTypeContentChild({ content: typeof value === 'string' ? toStringLiteral(value) : `${value}` })
+    );
+    return allowedValues;
+  }
+
+  return [];
 }
 
 function parseStringSchema(details: StringDescribe, settings: Settings): TypeContent | undefined {
@@ -297,14 +318,9 @@ function parseArray(details: ArrayDescribe, settings: Settings): TypeContent | u
     return undefined;
   }
 
-  const values = details.allow;
-
+  const allowedValues = createAllowTypes(details);
   // at least one value
-  if (values && values.length !== 0) {
-    const allowedValues = values.map((value: unknown) =>
-      makeTypeContentChild({ content: typeof value === 'string' ? `'${value}'` : `${value}` })
-    );
-
+  if (allowedValues.length !== 0) {
     allowedValues.unshift(makeTypeContentRoot({ joinOperation: 'list', children: [child], name, jsDoc }));
 
     return makeTypeContentRoot({ joinOperation: 'union', children: allowedValues, name, jsDoc });
@@ -367,16 +383,11 @@ function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent 
 
   const { label: name, jsDoc } = getCommonDetails(details, settings);
 
-  const values = details.allow;
+  const allowedValues = createAllowTypes(details);
 
   // at least one value
-  if (values && values.length !== 0) {
-    const allowedValues = values.map((value: unknown) =>
-      makeTypeContentChild({ content: typeof value === 'string' ? `'${value}'` : `${value}` })
-    );
-
-    allowedValues.unshift(makeTypeContentChild({ content: 'object' }));
-    allowedValues.push(...children);
+  if (allowedValues.length !== 0) {
+    allowedValues.unshift(makeTypeContentRoot({ joinOperation: 'object', children, name, jsDoc }));
 
     return makeTypeContentRoot({ joinOperation: 'union', children: allowedValues, name, jsDoc });
   }
