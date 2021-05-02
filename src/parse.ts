@@ -1,46 +1,9 @@
-import Joi from 'joi';
 import { filterMap, toStringLiteral } from './utils';
 import { TypeContent, makeTypeContentRoot, makeTypeContentChild, Settings, JsDoc } from './types';
+import { AlternativesDescribe, ArrayDescribe, BaseDescribe, BasicDescribe, Describe, ObjectDescribe, StringDescribe } from 'joiDescribeTypes';
 
 // see __tests__/joiTypes.ts for more information
 export const supportedJoiTypes = ['array', 'object', 'alternatives', 'any', 'boolean', 'date', 'number', 'string'];
-
-export interface BaseDescribe extends Joi.Description {
-  flags?: {
-    label?: string;
-    description?: string;
-    presence?: 'optional' | 'required';
-    unknown?: boolean;
-  };
-}
-
-export interface ArrayDescribe extends BaseDescribe {
-  type: 'array';
-  items: Describe[];
-}
-
-export interface ObjectDescribe extends BaseDescribe {
-  type: 'object';
-  keys: Record<'string', Describe>;
-}
-
-export interface AlternativesDescribe extends BaseDescribe {
-  // Joi.alt and Joi.alternatives both output as 'alternatives'
-  type: 'alternatives';
-  matches: { schema: Describe }[];
-}
-
-export interface StringDescribe extends BaseDescribe {
-  type: 'string';
-  allow?: string[];
-}
-
-export interface BasicDescribe extends BaseDescribe {
-  // Joi.bool an Joi.boolean both output as 'boolean'
-  type: 'any' | 'boolean' | 'date' | 'number';
-}
-
-export type Describe = ArrayDescribe | BasicDescribe | ObjectDescribe | AlternativesDescribe | StringDescribe;
 
 // Sometimes we know the type content will have name set
 type TypeContentWithName = TypeContent & { name: string };
@@ -200,14 +163,15 @@ export function parseSchema(
   details: Describe,
   settings: Settings,
   useLabels = true,
-  ignoreLabels: string[] = []
+  ignoreLabels: string[] = [],
+  rootSchema?: boolean
 ): TypeContent | undefined {
   function parseHelper(): TypeContent | undefined {
     switch (details.type) {
       case 'array':
         return parseArray(details, settings);
       case 'string':
-        return parseStringSchema(details, settings);
+        return parseStringSchema(details, settings, rootSchema ?? false);
       case 'alternatives':
         return parseAlternatives(details, settings);
       case 'object':
@@ -282,10 +246,14 @@ function createAllowTypes(details: BaseDescribe): TypeContent[] {
   return [];
 }
 
-function parseStringSchema(details: StringDescribe, settings: Settings): TypeContent | undefined {
+/**
+ * `undefined` is not part of this list as that would make the field optional instead
+ */
+const stringAllowValues = [null, ''];
+
+function parseStringSchema(details: StringDescribe, settings: Settings, rootSchema: boolean): TypeContent | undefined {
   const { label: name, jsDoc } = getCommonDetails(details, settings);
   const values = details.allow;
-  const stringAllowValues = [null, ''];
 
   // at least one value
   if (values && values.length !== 0) {
@@ -305,7 +273,11 @@ function parseStringSchema(details: StringDescribe, settings: Settings): TypeCon
     }
   }
 
-  return makeTypeContentChild({ content: 'string', name, jsDoc });
+  if (rootSchema){
+    return makeTypeContentRoot({ joinOperation: 'union', children: [makeTypeContentChild({ content: 'string', name, jsDoc})], name, jsDoc});
+  } else {
+    return makeTypeContentChild({ content: 'string', name, jsDoc });
+  }
 }
 
 function parseArray(details: ArrayDescribe, settings: Settings): TypeContent | undefined {
