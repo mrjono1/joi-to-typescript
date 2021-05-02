@@ -1,4 +1,4 @@
-import { readFileSync, rmdirSync } from 'fs';
+import { existsSync, readFileSync, rmdirSync } from 'fs';
 import Joi from 'joi';
 
 import { convertFromDirectory, convertSchema, Settings } from '../../index';
@@ -7,7 +7,9 @@ describe('alternative types', () => {
   const typeOutputDirectory = './src/__tests__/alternatives/interfaces';
 
   beforeAll(() => {
-    rmdirSync(typeOutputDirectory, { recursive: true });
+    if (existsSync(typeOutputDirectory)) {
+      rmdirSync(typeOutputDirectory, { recursive: true });
+    }
   });
 
   test('vaiations of alternatives from file', async () => {
@@ -61,19 +63,13 @@ export interface Thing {
 
   test('blank alternative throws in joi', () => {
     expect(() => {
-      Joi.alternatives()
-        .try()
-        .label('Basic')
-        .description('a description for basic');
+      Joi.alternatives().try().label('Basic').description('a description for basic');
     }).toThrow();
   });
 
   test.skip('blank alternative thrown by joi but extra test if joi changes it', () => {
     expect(() => {
-      const invalidSchema = Joi.alternatives()
-        .try()
-        .label('Basic')
-        .description('a description for basic');
+      const invalidSchema = Joi.alternatives().try().label('Basic').description('a description for basic');
 
       // the next code will not run as already thrown
       convertSchema(({} as unknown) as Settings, invalidSchema);

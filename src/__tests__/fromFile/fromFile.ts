@@ -6,7 +6,9 @@ const typeOutputDirectory = './src/__tests__/fromFile/interfaces';
 
 describe('Create interfaces from schema files', () => {
   beforeAll(() => {
-    rmdirSync(typeOutputDirectory, { recursive: true });
+    if (existsSync(typeOutputDirectory)) {
+      rmdirSync(typeOutputDirectory, { recursive: true });
+    }
   });
 
   test('does reading form files work', async () => {
@@ -85,7 +87,9 @@ export interface Foo {
 
 describe('Create interfaces from schema files edge cases', () => {
   beforeEach(() => {
-    rmdirSync(typeOutputDirectory, { recursive: true });
+    if (existsSync(typeOutputDirectory)) {
+      rmdirSync(typeOutputDirectory, { recursive: true });
+    }
   });
 
   test('input directory that does not exits', async () => {

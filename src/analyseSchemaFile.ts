@@ -3,12 +3,14 @@ import Path from 'path';
 
 import { Settings, ConvertedType, GenerateTypeFile } from './types';
 import { getTypeFileNameFromSchema } from './index';
-import { Describe, getAllCustomTypes, parseSchema, typeContentToTs } from 'parse';
+import { getAllCustomTypes, parseSchema, typeContentToTs } from './parse';
+import { Describe } from 'joiDescribeTypes';
 
 export function convertSchemaInternal(
   settings: Settings,
   joi: AnySchema,
-  exportedName?: string
+  exportedName?: string,
+  rootSchema?: boolean
 ): ConvertedType | undefined {
   const details = joi.describe() as Describe;
   const name = details?.flags?.label || exportedName;
@@ -35,7 +37,7 @@ export function convertSchemaInternal(
     details.flags.label = name;
   }
 
-  const parsedSchema = parseSchema(details, settings, false);
+  const parsedSchema = parseSchema(details, settings, false, undefined, rootSchema);
   if (parsedSchema) {
     const customTypes = getAllCustomTypes(parsedSchema);
     const content = typeContentToTs(settings, parsedSchema, true);
@@ -77,7 +79,7 @@ export async function analyseSchemaFile(
     if (!Joi.isSchema(joiSchema)) {
       continue;
     }
-    const convertedType = convertSchemaInternal(settings, joiSchema, exportedName);
+    const convertedType = convertSchemaInternal(settings, joiSchema, exportedName, true);
     if (convertedType) {
       allConvertedTypes.push({ ...convertedType, location: fullOutputFilePath });
     }

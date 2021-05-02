@@ -1,11 +1,13 @@
-import { readFileSync, rmdirSync } from 'fs';
+import { existsSync, readFileSync, rmdirSync } from 'fs';
 
 import { convertFromDirectory } from '../../index';
 
 describe('this is the example on the readme', () => {
   const typeOutputDirectory = './src/__tests__/readme/interfaces';
   beforeEach(() => {
-    rmdirSync(typeOutputDirectory, { recursive: true });
+    if (existsSync(typeOutputDirectory)) {
+      rmdirSync(typeOutputDirectory, { recursive: true });
+    }
   });
 
   test('a good example schema', async () => {

@@ -6,10 +6,8 @@ export const ItemSchema = Joi.object({
 
 export const TestSchema = Joi.object({
   name: Joi.string().optional(),
-  propertyName1: Joi.boolean().required(),
-  items: Joi.array()
-    .items(ItemSchema)
-    .optional()
+  propertyName1: Joi.bool().required(),
+  items: Joi.array().items(ItemSchema).optional()
 })
   .label('Test')
   .description('a test schema definition');
