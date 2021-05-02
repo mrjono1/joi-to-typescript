@@ -1,4 +1,4 @@
-import Joi from "joi";
+import Joi from 'joi';
 
 /**
  * This file extends the TypeScript Types that are packaged as part of joi

@@ -1,6 +1,14 @@
 import { filterMap, toStringLiteral } from './utils';
 import { TypeContent, makeTypeContentRoot, makeTypeContentChild, Settings, JsDoc } from './types';
-import { AlternativesDescribe, ArrayDescribe, BaseDescribe, BasicDescribe, Describe, ObjectDescribe, StringDescribe } from 'joiDescribeTypes';
+import {
+  AlternativesDescribe,
+  ArrayDescribe,
+  BaseDescribe,
+  BasicDescribe,
+  Describe,
+  ObjectDescribe,
+  StringDescribe
+} from 'joiDescribeTypes';
 
 // see __tests__/joiTypes.ts for more information
 export const supportedJoiTypes = ['array', 'object', 'alternatives', 'any', 'boolean', 'date', 'number', 'string'];
@@ -177,7 +185,7 @@ export function parseSchema(
       case 'object':
         return parseObjects(details, settings);
       default:
-        return parseBasicSchema(details, settings);
+        return parseBasicSchema(details, settings, rootSchema ?? false);
     }
   }
   const { label, jsDoc, required } = getCommonDetails(details, settings);
@@ -209,7 +217,7 @@ export function parseSchema(
   return parsedSchema;
 }
 
-function parseBasicSchema(details: BasicDescribe, settings: Settings): TypeContent | undefined {
+function parseBasicSchema(details: BasicDescribe, settings: Settings, rootSchema: boolean): TypeContent | undefined {
   const { label: name, jsDoc } = getCommonDetails(details, settings);
 
   const joiType = details.type;
@@ -229,7 +237,16 @@ function parseBasicSchema(details: BasicDescribe, settings: Settings): TypeConte
     return makeTypeContentRoot({ joinOperation: 'union', children: allowedValues, name, jsDoc });
   }
 
-  return makeTypeContentChild({ content, name, jsDoc });
+  if (rootSchema) {
+    return makeTypeContentRoot({
+      joinOperation: 'union',
+      children: [makeTypeContentChild({ content, name, jsDoc })],
+      name,
+      jsDoc
+    });
+  } else {
+    return makeTypeContentChild({ content, name, jsDoc });
+  }
 }
 
 function createAllowTypes(details: BaseDescribe): TypeContent[] {
@@ -273,8 +290,13 @@ function parseStringSchema(details: StringDescribe, settings: Settings, rootSche
     }
   }
 
-  if (rootSchema){
-    return makeTypeContentRoot({ joinOperation: 'union', children: [makeTypeContentChild({ content: 'string', name, jsDoc})], name, jsDoc});
+  if (rootSchema) {
+    return makeTypeContentRoot({
+      joinOperation: 'union',
+      children: [makeTypeContentChild({ content: 'string', name, jsDoc })],
+      name,
+      jsDoc
+    });
   } else {
     return makeTypeContentChild({ content: 'string', name, jsDoc });
   }
