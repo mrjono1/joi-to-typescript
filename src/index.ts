@@ -28,7 +28,9 @@ function defaultSettings(settings: Partial<Settings>): Settings {
       sortPropertiesByName: true,
       commentEverything: false,
       ignoreFiles: [],
-      indentationChacters: '  '
+      indentationChacters: '  ',
+      mapTypeFileName: (fileName: string) => fileName,
+      mapTypeName: (name: string) => name
     },
     settings
   ) as Settings;
@@ -46,9 +48,11 @@ export function convertSchema(
 }
 
 export function getTypeFileNameFromSchema(schemaFileName: string, settings: Settings): string {
-  return schemaFileName.endsWith(`${settings.schemaFileSuffix}.ts`)
-    ? schemaFileName.substring(0, schemaFileName.length - `${settings.schemaFileSuffix}.ts`.length)
-    : schemaFileName.replace('.ts', '');
+  return settings.mapTypeFileName(
+    schemaFileName.endsWith(`${settings.schemaFileSuffix}.ts`)
+      ? schemaFileName.substring(0, schemaFileName.length - `${settings.schemaFileSuffix}.ts`.length)
+      : schemaFileName.replace('.ts', '')
+  );
 }
 
 /**
