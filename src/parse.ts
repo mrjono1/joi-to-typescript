@@ -17,7 +17,7 @@ export const supportedJoiTypes = ['array', 'object', 'alternatives', 'any', 'boo
 type TypeContentWithName = TypeContent & { name: string };
 
 function getCommonDetails(details: Describe, settings: Settings): { label?: string; jsDoc: JsDoc; required: boolean } {
-  const label = details.flags?.label;
+  const label = details.flags?.label?.replace(/\s/g, '');
   const description = details.flags?.description;
   const presence = details.flags?.presence;
   const example = details.examples?.[0];
@@ -189,12 +189,11 @@ export function parseSchema(
     }
   }
   const { label, jsDoc, required } = getCommonDetails(details, settings);
-  const cleanLabel = label?.replace(/\s/g, '');
-  if (cleanLabel && useLabels && !ignoreLabels.includes(cleanLabel)) {
+  if (label && useLabels && !ignoreLabels.includes(label)) {
     // skip parsing and just reference the label since we assumed we parsed the schema that the label references
     // TODO: do we want to use the labels description if we reference it?
 
-    const child = makeTypeContentChild({ content: cleanLabel, customTypes: [cleanLabel], jsDoc, required });
+    const child = makeTypeContentChild({ content: label, customTypes: [label], jsDoc, required });
 
     const allowedValues = createAllowTypes(details);
     if (allowedValues.length !== 0) {
@@ -212,7 +211,7 @@ export function parseSchema(
   if (!parsedSchema) {
     return undefined;
   }
-  parsedSchema.name = cleanLabel;
+  parsedSchema.name = label;
   parsedSchema.jsDoc = jsDoc;
   parsedSchema.required = required;
   return parsedSchema;

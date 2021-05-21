@@ -104,6 +104,8 @@ export interface label {
  * Do not modify this file manually
  */
 
+export type CustomerPhoneNumber = string;
+
 export type EmailAddress = string;
 
 export type Name = string;
@@ -111,6 +113,7 @@ export type Name = string;
 export interface spacedLabel {
   email?: EmailAddress;
   name?: Name;
+  phone?: CustomerPhoneNumber;
 }
 `
     );
