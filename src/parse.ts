@@ -189,11 +189,12 @@ export function parseSchema(
     }
   }
   const { label, jsDoc, required } = getCommonDetails(details, settings);
-  if (label && useLabels && !ignoreLabels.includes(label)) {
+  const cleanLabel = label?.replace(/\s/g, '');
+  if (cleanLabel && useLabels && !ignoreLabels.includes(cleanLabel)) {
     // skip parsing and just reference the label since we assumed we parsed the schema that the label references
     // TODO: do we want to use the labels description if we reference it?
 
-    const child = makeTypeContentChild({ content: label, customTypes: [label], jsDoc, required });
+    const child = makeTypeContentChild({ content: cleanLabel, customTypes: [cleanLabel], jsDoc, required });
 
     const allowedValues = createAllowTypes(details);
     if (allowedValues.length !== 0) {
@@ -211,7 +212,7 @@ export function parseSchema(
   if (!parsedSchema) {
     return undefined;
   }
-  parsedSchema.name = label;
+  parsedSchema.name = cleanLabel;
   parsedSchema.jsDoc = jsDoc;
   parsedSchema.required = required;
   return parsedSchema;
