@@ -13,7 +13,7 @@ export function convertSchemaInternal(
   rootSchema?: boolean
 ): ConvertedType | undefined {
   const details = joi.describe() as Describe;
-  const name = details?.flags?.label || exportedName;
+  const name = details?.flags?.label?.replace(/\s/g, '') || exportedName;
 
   if (!name) {
     throw new Error(`At least one "object" does not have a .label(). Details: ${JSON.stringify(details)}`);

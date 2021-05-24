@@ -17,7 +17,7 @@ export const supportedJoiTypes = ['array', 'object', 'alternatives', 'any', 'boo
 type TypeContentWithName = TypeContent & { name: string };
 
 function getCommonDetails(details: Describe, settings: Settings): { label?: string; jsDoc: JsDoc; required: boolean } {
-  const label = details.flags?.label;
+  const label = details.flags?.label?.replace(/\s/g, '');
   const description = details.flags?.description;
   const presence = details.flags?.presence;
   const example = details.examples?.[0];
