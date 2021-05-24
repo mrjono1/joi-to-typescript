@@ -14,3 +14,11 @@ export function filterMap<T, K>(list: T[], mapper: (t: T) => K | undefined): K[]
     return res;
   }, []);
 }
+
+/**
+ * Escape value so that it can be go into single quoted string literal.
+ * @param value
+ */
+export function toStringLiteral(value: string): string {
+  return `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
+}

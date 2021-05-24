@@ -173,10 +173,11 @@ export function makeTypeContentRoot({
  */
 export type TypeContent = TypeContentRoot | TypeContentChild;
 
-/**
- * Basic info on a joi schema
- */
-export interface BasicJoiType {
+export interface Property {
+  /**
+   * The object key this schema was stored under
+   */
+  name: string;
   /**
    * number, string literals, Joi.label, etc
    */
@@ -189,13 +190,6 @@ export interface BasicJoiType {
    * The typescript result
    */
   content: string;
-}
-
-export interface Property extends BasicJoiType {
-  /**
-   * The object key this schema was stored under
-   */
-  name: string;
 }
 
 export interface GenerateTypeFile {

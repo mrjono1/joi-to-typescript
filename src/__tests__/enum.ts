@@ -6,7 +6,8 @@ describe('enums tests', () => {
   test('enums using valid()', () => {
     const schema = Joi.object({
       topColour: Joi.string().valid('red', 'green', 'orange', 'blue').required(),
-      bottomColour: Joi.string().valid('red', 'green', 'orange', 'blue').required()
+      bottomColour: Joi.string().valid('red', 'green', 'orange', 'blue').required(),
+      escape: Joi.string().valid("a'b", 'c"d', "e'f'g", 'h"i"j', '\\\\').required()
     })
       .label('TestSchema')
       .description('a test schema definition');
@@ -19,6 +20,7 @@ describe('enums tests', () => {
 export interface TestSchema {
   topColour: 'red' | 'green' | 'orange' | 'blue';
   bottomColour: 'red' | 'green' | 'orange' | 'blue';
+  escape: 'a\\'b' | 'c"d' | 'e\\'f\\'g' | 'h"i"j' | '\\\\\\\\';
 }`);
   });
 
