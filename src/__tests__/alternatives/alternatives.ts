@@ -72,7 +72,7 @@ export interface Thing {
       const invalidSchema = Joi.alternatives().try().label('Basic').description('a description for basic');
 
       // the next code will not run as already thrown
-      convertSchema(({} as unknown) as Settings, invalidSchema);
+      convertSchema({} as Settings, invalidSchema);
     }).toThrow();
   });
 });

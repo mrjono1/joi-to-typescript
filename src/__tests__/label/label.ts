@@ -122,7 +122,7 @@ export interface spacedLabel {
   test('no label() and no property name', () => {
     expect(() => {
       convertSchema(
-        ({} as unknown) as Settings,
+        {} as Settings,
         Joi.object({
           name: Joi.string().optional()
         })
