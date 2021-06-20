@@ -8,8 +8,8 @@ import {
   Describe,
   ObjectDescribe,
   StringDescribe
-} from 'joiDescribeTypes';
-import { getInterfaceOrTypeName } from 'joiUtils';
+} from './joiDescribeTypes';
+import { getInterfaceOrTypeName } from './joiUtils';
 
 // see __tests__/joiTypes.ts for more information
 export const supportedJoiTypes = ['array', 'object', 'alternatives', 'any', 'boolean', 'date', 'number', 'string'];
