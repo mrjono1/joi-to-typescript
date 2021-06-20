@@ -5,6 +5,7 @@ import { Settings, ConvertedType, GenerateTypeFile } from './types';
 import { getTypeFileNameFromSchema } from './index';
 import { getAllCustomTypes, parseSchema, typeContentToTs } from './parse';
 import { Describe } from 'joiDescribeTypes';
+import { ensureInterfaceorTypeName, getInterfaceOrTypeName } from 'joiUtils';
 
 export function convertSchemaInternal(
   settings: Settings,
@@ -13,36 +14,43 @@ export function convertSchemaInternal(
   rootSchema?: boolean
 ): ConvertedType | undefined {
   const details = joi.describe() as Describe;
-  const name = details?.flags?.label?.replace(/\s/g, '') || exportedName;
 
-  if (!name) {
-    throw new Error(`At least one "object" does not have a .label(). Details: ${JSON.stringify(details)}`);
+  const interfaceOrTypeName = getInterfaceOrTypeName(settings, details) || exportedName;
+
+  if (!interfaceOrTypeName) {
+    if (settings.useLabelAsInterfaceName) {
+      throw new Error(`At least one "object" does not have .label(''). Details: ${JSON.stringify(details)}`);
+    } else {
+      throw new Error(`At least one "object" does not have .meta({className:''}). Details: ${JSON.stringify(details)}`);
+    }
   }
 
-  if (settings.debug && name.toLowerCase().endsWith('schema')) {
-    console.debug(
-      `It is recommended you update the Joi Schema '${name}' similar to: ${name} = Joi.object().label('${name.replace(
-        'Schema',
-        ''
-      )}')`
-    );
+  if (settings.debug && interfaceOrTypeName.toLowerCase().endsWith('schema')) {
+    if (settings.useLabelAsInterfaceName) {
+      console.debug(
+        `It is recommended you update the Joi Schema '${interfaceOrTypeName}' similar to: ${interfaceOrTypeName} = Joi.object().label('${interfaceOrTypeName.replace(
+          'Schema',
+          ''
+        )}')`
+      );
+    } else {
+      console.debug(
+        `It is recommended you update the Joi Schema '${interfaceOrTypeName}' similar to: ${interfaceOrTypeName} = Joi.object().meta({className:'${interfaceOrTypeName.replace(
+          'Schema',
+          ''
+        )}'})`
+      );
+    }
   }
 
-  // Set the label from the exportedName if missing
-  if (!details.flags) {
-    details.flags = { label: name };
-  } else if (!details.flags.label) {
-    // Unable to build any test cases for this line but will keep it if joi.describe() changes
-    /* istanbul ignore next */
-    details.flags.label = name;
-  }
+  ensureInterfaceorTypeName(settings, details, interfaceOrTypeName);
 
   const parsedSchema = parseSchema(details, settings, false, undefined, rootSchema);
   if (parsedSchema) {
     const customTypes = getAllCustomTypes(parsedSchema);
     const content = typeContentToTs(settings, parsedSchema, true);
     return {
-      name,
+      interfaceOrTypeName,
       customTypes,
       content
     };
@@ -99,7 +107,7 @@ export async function analyseSchemaFile(
   // Clean up type list
   // Sort Types
   const typesToBeWritten = allConvertedTypes.sort(
-    (interface1, interface2) => 0 - (interface1.name > interface2.name ? -1 : 1)
+    (interface1, interface2) => 0 - (interface1.interfaceOrTypeName > interface2.interfaceOrTypeName ? -1 : 1)
   );
 
   // Write types
@@ -107,7 +115,7 @@ export async function analyseSchemaFile(
 
   // Get imports for the current file
   const allExternalTypes: ConvertedType[] = [];
-  const allCurrentFileTypeNames = typesToBeWritten.map(typeToBeWritten => typeToBeWritten.name);
+  const allCurrentFileTypeNames = typesToBeWritten.map(typeToBeWritten => typeToBeWritten.interfaceOrTypeName);
 
   for (const typeToBeWritten of typesToBeWritten) {
     for (const customType of typeToBeWritten.customTypes) {

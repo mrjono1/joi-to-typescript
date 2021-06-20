@@ -5,12 +5,16 @@ import Joi from 'joi';
 export const JobSchema = Joi.object({
   businessName: Joi.string().required(),
   jobTitle: Joi.string().required()
-}).label('Job');
+}).meta({ className: 'Job' });
 
 export const PersonSchema = Joi.object({
   firstName: Joi.string().required(),
   lastName: Joi.string().required().description('Last Name'),
   job: JobSchema
-}).label('Person');
+}).meta({ className: 'Person' });
 
-export const PeopleSchema = Joi.array().items(PersonSchema).required().label('People').description('A list of People');
+export const PeopleSchema = Joi.array()
+  .items(PersonSchema)
+  .required()
+  .meta({ className: 'People' })
+  .description('A list of People');

@@ -16,4 +16,4 @@ export const nestedSchema = Joi.object({
       )
     })
   )
-}).label('Nested');
+}).meta({ className: 'Nested' });

@@ -25,7 +25,7 @@ describe('union types using allow()', () => {
       nullNumber: Joi.number().optional().allow(null),
       date: Joi.date().allow(null).description('This is date')
     })
-      .label('TestSchema')
+      .meta({ className: 'TestSchema' })
       .description('a test schema definition');
 
     const result = convertSchema({ sortPropertiesByName: false }, schema);
@@ -61,7 +61,7 @@ export interface TestSchema {
         blankNullUndefined: Joi.string().optional().allow(null, '', undefined),
         blankNullUndefinedRequired: Joi.string().required().allow(null, '', undefined)
       })
-        .label('TestSchema')
+        .meta({ className: 'TestSchema' })
         .description('a test schema definition');
 
       const invalidResult = convertSchema({}, invalidSchema);
@@ -76,7 +76,7 @@ export interface TestSchema {
       // then some tests for things you can do but probably shouldnt
       sillyProperty: Joi.object().allow(null, 'joe'),
       sillyArray: Joi.array().items(Joi.string()).allow(null, 'fred')
-    }).label('TestSchema');
+    }).meta({ className: 'TestSchema' });
 
     const result = convertSchema({ sortPropertiesByName: false }, schema);
     expect(result).not.toBeUndefined;

@@ -11,7 +11,7 @@ describe('test the `commentEverything` setting', () => {
       dateCreated: Joi.date(),
       count: Joi.number()
     })
-      .label('TestSchema')
+      .meta({ className: 'TestSchema' })
       .description('a test schema definition');
 
     const result = convertSchema({ commentEverything: true, sortPropertiesByName: false }, schema);
@@ -47,7 +47,7 @@ export interface TestSchema {
       dateCreated: Joi.array().items(Joi.date()),
       count: Joi.array().items(Joi.number())
     })
-      .label('ArrayObject')
+      .meta({ className: 'ArrayObject' })
       .description('an Array test schema definition');
 
     const arrayResult = convertSchema({ commentEverything: true, sortPropertiesByName: false }, schemaArray);

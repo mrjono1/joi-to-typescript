@@ -2,7 +2,7 @@ import Joi from 'joi';
 
 export const EmailSchema = Joi.string()
   .email({ tlds: { allow: false } })
-  .label('Email');
+  .meta({ className: 'Email' });
 
 export const CompanySchema = Joi.object({
   email: EmailSchema

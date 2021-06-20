@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-export const BooleanSchema = Joi.boolean().label('Boolean');
+export const BooleanSchema = Joi.boolean().meta({ className: 'Boolean' });
 
 export const CompanySchema = Joi.object({
   counter: BooleanSchema

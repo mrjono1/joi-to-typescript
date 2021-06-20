@@ -12,7 +12,7 @@ describe('some basic tests', () => {
       count: Joi.number(),
       obj: Joi.object()
     })
-      .label('TestSchema')
+      .meta({ className: 'TestSchema' })
       .description('a test schema definition');
 
     const result = convertSchema({ sortPropertiesByName: true }, schema);
@@ -41,7 +41,7 @@ export interface TestSchema {
       count: Joi.array().items(Joi.number()),
       arr: Joi.array()
     })
-      .label('ArrayObject')
+      .meta({ className: 'ArrayObject' })
       .description('an Array test schema definition');
 
     const arrayResult = convertSchema({ sortPropertiesByName: true }, schemaArray);
@@ -64,10 +64,10 @@ export interface ArrayObject {
       nested: Joi.object({ a: Joi.object({ b: Joi.string() }) }),
       nestedComments: Joi.object({ a: Joi.object({ b: Joi.string().description('nested comment') }) }),
       nestedObject: Joi.object({
-        aType: Joi.object().label('Blue').description('A blue object property')
+        aType: Joi.object().meta({ className: 'Blue' }).description('A blue object property')
       }),
       'x.y': Joi.string()
-    }).label('TestSchema');
+    }).meta({ className: 'TestSchema' });
 
     const result = convertSchema({ sortPropertiesByName: false }, schema);
     expect(result).not.toBeUndefined;
@@ -99,7 +99,7 @@ export interface ArrayObject {
     const schema = Joi.object({
       a: Joi.string(),
       A: Joi.string()
-    }).label('TestSchema');
+    }).meta({ className: 'TestSchema' });
 
     const result = convertSchema({ sortPropertiesByName: false }, schema);
     expect(result).not.toBeUndefined;
@@ -110,7 +110,7 @@ export interface ArrayObject {
   });
 
   test('no properties on a schema', () => {
-    const schema = Joi.object({}).label('TestSchema');
+    const schema = Joi.object({}).meta({ className: 'TestSchema' });
 
     const result = convertSchema({ sortPropertiesByName: true }, schema);
     expect(result).not.toBeUndefined;

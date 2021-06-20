@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-export const Name = Joi.string().optional().description('Test Schema Name').allow('').label('Name');
+export const Name = Joi.string().optional().description('Test Schema Name').allow('').meta({ className: 'Name' });
 export const NullName = Joi.string().optional().description('nullable').allow(null);
 export const BlankNull = Joi.string().optional().allow(null, '');
 export const Blank = Joi.string().allow('');

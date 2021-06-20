@@ -18,6 +18,7 @@ export { Settings };
 function defaultSettings(settings: Partial<Settings>): Settings {
   const appSettings = Object.assign(
     {
+      useLabelAsInterfaceName: false,
       defaultToRequired: false,
       schemaFileSuffix: 'Schema',
       debug: false,
