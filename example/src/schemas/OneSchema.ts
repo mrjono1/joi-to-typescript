@@ -3,18 +3,18 @@ import { PersonSchema } from './subDir/PersonSchema';
 
 export const ZebraSchema = Joi.object({
   name: Joi.string()
-}).label('Zebra');
+}).meta({ className: 'Zebra' });
 
 export const ItemSchema = Joi.object({
   name: Joi.string().required(),
   maleZebra: ZebraSchema.description('Male Zebra'),
   femaleZebra: ZebraSchema.description('Female Zebra')
-}).label('Item');
+}).meta({ className: 'Item' });
 
 export const PeopleSchema = Joi.array()
   .items(PersonSchema)
   .required()
-  .label('People')
+  .meta({ className: 'People' })
   .description('A list of People');
 
 export const TestSchema = Joi.object({
@@ -22,5 +22,5 @@ export const TestSchema = Joi.object({
   propertyName1: Joi.boolean().required(),
   people: PeopleSchema.optional()
 })
-  .label('Test')
+  .meta({ className: 'Test' })
   .description('a test schema definition');

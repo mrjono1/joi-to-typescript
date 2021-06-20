@@ -6,7 +6,8 @@ async function types(): Promise<void> {
   // Configure your settings here
   const result = await convertFromDirectory({
     schemaDirectory: './src/schemas',
-    typeOutputDirectory: './src/interfaces'
+    typeOutputDirectory: './src/interfaces',
+    debug: true
   });
 
   if (result) {
