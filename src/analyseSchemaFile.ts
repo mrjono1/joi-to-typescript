@@ -4,8 +4,8 @@ import Path from 'path';
 import { Settings, ConvertedType, GenerateTypeFile } from './types';
 import { getTypeFileNameFromSchema } from './index';
 import { getAllCustomTypes, parseSchema, typeContentToTs } from './parse';
-import { Describe } from 'joiDescribeTypes';
-import { ensureInterfaceorTypeName, getInterfaceOrTypeName } from 'joiUtils';
+import { Describe } from './joiDescribeTypes';
+import { ensureInterfaceorTypeName, getInterfaceOrTypeName } from './joiUtils';
 
 export function convertSchemaInternal(
   settings: Settings,

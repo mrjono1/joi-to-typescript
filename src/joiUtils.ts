@@ -1,5 +1,5 @@
-import { Settings } from 'index';
-import { Describe } from 'joiDescribeTypes';
+import { Settings } from '.';
+import { Describe } from './joiDescribeTypes';
 
 /**
  * Get the interface name from the Joi
