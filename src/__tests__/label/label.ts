@@ -7,7 +7,9 @@ describe('test the use of .label()', () => {
   const schemaDirectory = './src/__tests__/label/schemas';
 
   beforeAll(() => {
-    rmdirSync(typeOutputDirectory, { recursive: true });
+    if (existsSync(typeOutputDirectory)) {
+      rmdirSync(typeOutputDirectory, { recursive: true });
+    }
   });
 
   test('generate label interfaces', async () => {

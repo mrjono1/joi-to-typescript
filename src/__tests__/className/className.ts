@@ -7,7 +7,9 @@ describe('test the use of .meta({className: ""})', () => {
   const schemaDirectory = './src/__tests__/className/schemas';
 
   beforeAll(() => {
-    rmdirSync(typeOutputDirectory, { recursive: true });
+    if (existsSync(typeOutputDirectory)) {
+      rmdirSync(typeOutputDirectory, { recursive: true });
+    }
   });
 
   test('generate className interfaces', async () => {
