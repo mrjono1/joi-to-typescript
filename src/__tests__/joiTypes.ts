@@ -36,7 +36,7 @@ describe('`Joi.types()`', () => {
     const schema = Joi.object({
       doStuff: Joi.function(),
       moreThings: Joi.func()
-    }).label('Test');
+    }).meta({ className: 'Test' });
 
     const result = convertSchema({ debug: true }, schema);
     expect(result).not.toBeUndefined;
@@ -50,7 +50,7 @@ describe('`Joi.types()`', () => {
     const consoleSpy = jest.spyOn(console, 'debug');
     const schema = Joi.object({
       doStuff: Joi.link()
-    }).label('Test');
+    }).meta({ className: 'Test' });
 
     const result = convertSchema({ debug: true }, schema);
     expect(result).not.toBeUndefined;
@@ -62,7 +62,7 @@ describe('`Joi.types()`', () => {
     const consoleSpy = jest.spyOn(console, 'debug');
     const schema = Joi.object({
       doStuff: Joi.symbol()
-    }).label('Test');
+    }).meta({ className: 'Test' });
 
     const result = convertSchema({ debug: true }, schema);
     expect(result).not.toBeUndefined;
@@ -75,7 +75,7 @@ describe('`Joi.types()`', () => {
     const consoleSpy = jest.spyOn(console, 'debug');
     const schema = Joi.object({
       doStuff: Joi.binary()
-    }).label('Test');
+    }).meta({ className: 'Test' });
 
     const result = convertSchema({ debug: true }, schema);
     expect(result).not.toBeUndefined;

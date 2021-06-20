@@ -3,4 +3,4 @@ import Joi from 'joi';
 export const AddressSchema = Joi.object({
   addressLineNumber1: Joi.string().required(),
   Suburb: Joi.string().required()
-}).label('Address');
+}).meta({ className: 'Address' });

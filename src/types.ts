@@ -13,6 +13,10 @@ export interface Settings {
    */
   readonly typeOutputDirectory: string;
   /**
+   * Use .label('InterfaceName') instead of .meta({className:'InterfaceName'}) for interface names
+   */
+  readonly useLabelAsInterfaceName: boolean;
+  /**
    * Should interface properties be defaulted to optional or required
    * @default false
    */
@@ -68,7 +72,7 @@ export interface Settings {
 }
 
 export interface ConvertedType {
-  name: string;
+  interfaceOrTypeName: string;
   content: string;
   customTypes: string[];
   location?: string;
@@ -76,9 +80,9 @@ export interface ConvertedType {
 
 export interface BaseTypeContent {
   /**
-   * Interface, property, or type name (from label or key name)
+   * Interface name or type name (from id/label or key name)
    */
-  name?: string;
+  interfaceOrTypeName?: string;
 
   /**
    * will add this to the jsDoc output
@@ -128,7 +132,7 @@ export function makeTypeContentChild({
   content,
   customTypes,
   required,
-  name,
+  interfaceOrTypeName,
   jsDoc
 }: Omit<TypeContentChild, '__isRoot'>): TypeContentChild {
   return {
@@ -136,14 +140,14 @@ export function makeTypeContentChild({
     content,
     customTypes,
     required,
-    name,
+    interfaceOrTypeName,
     jsDoc
   };
 }
 
 export function makeTypeContentRoot({
   joinOperation,
-  name,
+  interfaceOrTypeName,
   children,
   required,
   jsDoc
@@ -151,7 +155,7 @@ export function makeTypeContentRoot({
   return {
     __isRoot: true,
     joinOperation,
-    name,
+    interfaceOrTypeName,
     children,
     required,
     jsDoc

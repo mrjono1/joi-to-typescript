@@ -11,6 +11,13 @@ Convert [Joi](https://github.com/sideway/joi) Schemas to TypeScript interfaces
 
 This will allow you to reuse a Joi Schema that validates your [Hapi](https://github.com/hapijs/hapi) API to generate TypeScript interfaces so you don't have to manually create the same structure again saving you time.
 
+For generating Open Api/Swagger this project works with
+
+- [hapi-swagger](https://github.com/glennjones/hapi-swagger) using `.label('')` this has been well tested and used in production
+- [joi-to-swagger](https://github.com/Twipped/joi-to-swagger) using `.meta({className:''})` limited testing but this is looking like a better approach
+
+Version 2, why the move to `.meta({className:'')` from `.label('')`? `Joi.label()` is intended to be used for meaningful error message, using it for another purpose makes the Joi loose a standard feature, this is especially noticeable for frontend usages of Joi. The choice of the property `className` is because this property is used by joi-to-swagger making this project work with other projects is important.
+
 ## Installation Notes
 
 This package is intended as a development time tool so is installed in the `devDependencies`
@@ -21,7 +28,7 @@ yarn add joi-to-typescript --dev
 npm install joi-to-typescript --save-dev
 ```
 
-- This has been built for `"joi": "^17.2.1"` and will probaly not work for older versions, mainly due to package name changes
+- This has been built for `"joi": "^17"` and will not work for older versions
 - Minimum node version 12 as Joi requries node 12
 
 ## Suggested Usage
@@ -48,20 +55,18 @@ import Joi from 'joi';
 export const JobSchema = Joi.object({
   businessName: Joi.string().required(),
   jobTitle: Joi.string().required()
-}).label('Job');
+}).meta({ className: 'Job' });
 
 export const PersonSchema = Joi.object({
   firstName: Joi.string().required(),
-  lastName: Joi.string()
-    .required()
-    .description('Last Name'),
+  lastName: Joi.string().required().description('Last Name'),
   job: JobSchema
-}).label('Person');
+}).meta({ className: 'Person' });
 
 export const PeopleSchema = Joi.array()
   .items(PersonSchema)
   .required()
-  .label('People')
+  .meta({ className: 'People' })
   .description('A list of People');
 
 // Output
@@ -97,7 +102,11 @@ export interface Person {
 
 - `export const PersonSchema` schema must be exported
 - `export const PersonSchema` includes a suffix of Schema so the schema and interface are not confused when using `import` statements (recommended not requried)
-- `.label('Person');` Sets `interface` name using TypeScript conventions (TitleCase Interface name, camlCase property name)
+- `.meta({className:'Person'});` Sets `interface` name using TypeScript conventions (TitleCase Interface name, camlCase property name)
+
+#### Upgrade Notice
+
+- Version 1 used `.label('Person')` as the way to define the `interface` name, to use this option set `{ useLabelAsInterfaceName: true }`
 
 #### Example Call
 
@@ -131,17 +140,23 @@ export interface Settings {
    */
   typeOutputDirectory: string;
   /**
+   * Use .label('InterfaceName') instead of .meta({className:'InterfaceName'}) for interface names
+   */
+  useLabelAsInterfaceName: boolean;
+  /**
    * Should interface properties be defaulted to optional or required
+   * @default false
    */
   defaultToRequired: boolean;
   /**
    * What schema file name suffix will be removed when creating the interface file name
-   * Defaults to `Schema`
+   * @default "Schema"
    * This ensures that an interface and Schema with the file name are not confused
    */
   schemaFileSuffix: string;
   /**
    * If `true` the console will include more information
+   * @default false
    */
   debug: boolean;
   /**
@@ -150,7 +165,7 @@ export interface Settings {
   fileHeader: string;
   /**
    * If true will sort properties on interface by name
-   * Defaults to `true`
+   * @default true
    */
   sortPropertiesByName: boolean;
   /**
@@ -167,12 +182,13 @@ export interface Settings {
   indexAllToRoot: boolean;
   /**
    * Comment every interface and property even with just a duplicate of the interface and property name
-   * Defaults to `false`
+   * @default false
    */
   commentEverything: boolean;
   /**
    * List of files or folders that should be ignored from conversion. These can either be
    * filenames (AddressSchema.ts) or filepaths postfixed with a / (addressSchemas/)
+   * @default []
    */
   ignoreFiles: string[];
   /**
@@ -185,7 +201,7 @@ export interface Settings {
 
 ## Joi Features Supported
 
-- .label('InterfaceName') - interface Name and in jsDoc
+- .meta({className:'InterfaceName'}) - interface Name and in jsDoc
 - .description('What this interface is for') - jsdoc
 - .valid(['red', 'green', 'blue']) - enumerations
 - .optional() - optional properties `?`

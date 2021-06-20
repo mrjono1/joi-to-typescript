@@ -2,9 +2,9 @@ import { existsSync, readFileSync, rmdirSync } from 'fs';
 import Joi from 'joi';
 import { convertFromDirectory, convertSchema } from '../..';
 
-describe('test the use of .label()', () => {
-  const typeOutputDirectory = './src/__tests__/label/interfaces';
-  const schemaDirectory = './src/__tests__/label/schemas';
+describe('test the use of .meta({className: ""})', () => {
+  const typeOutputDirectory = './src/__tests__/className/interfaces';
+  const schemaDirectory = './src/__tests__/className/schemas';
 
   beforeAll(() => {
     if (existsSync(typeOutputDirectory)) {
@@ -12,13 +12,12 @@ describe('test the use of .label()', () => {
     }
   });
 
-  test('generate label interfaces', async () => {
+  test('generate className interfaces', async () => {
     const consoleSpy = jest.spyOn(console, 'debug');
     const result = await convertFromDirectory({
       schemaDirectory,
       typeOutputDirectory,
-      debug: true,
-      useLabelAsInterfaceName: true
+      debug: true
     });
 
     expect(result).toBe(true);
@@ -26,12 +25,12 @@ describe('test the use of .label()', () => {
     expect(existsSync(`${typeOutputDirectory}/index.ts`)).toBeTruthy();
 
     expect(consoleSpy).toHaveBeenCalledWith(
-      "It is recommended you update the Joi Schema 'nolabelSchema' similar to: nolabelSchema = Joi.object().label('nolabel')"
+      "It is recommended you update the Joi Schema 'noClassNameSchema' similar to: noClassNameSchema = Joi.object().meta({className:'noClassName'})"
     );
   });
 
-  test('no label', () => {
-    const oneContent = readFileSync(`${typeOutputDirectory}/NoLabelTest.ts`).toString();
+  test('no className', () => {
+    const oneContent = readFileSync(`${typeOutputDirectory}/NoClassNameTest.ts`).toString();
 
     expect(oneContent).toBe(
       `/**
@@ -39,7 +38,7 @@ describe('test the use of .label()', () => {
  * Do not modify this file manually
  */
 
-export interface nolabeltest {
+export interface noClassNametest {
   name?: string;
 }
 `
@@ -48,8 +47,8 @@ export interface nolabeltest {
 
   // it would be nice to auto remove this schema suffix but that could break the Joi, the safest is to warn the user about
   // how they could do it better
-  test('no label with schema as suffix', () => {
-    const oneContent = readFileSync(`${typeOutputDirectory}/NoLabel.ts`).toString();
+  test('no className with schema as suffix', () => {
+    const oneContent = readFileSync(`${typeOutputDirectory}/NoClassName.ts`).toString();
 
     expect(oneContent).toBe(
       `/**
@@ -57,15 +56,15 @@ export interface nolabeltest {
  * Do not modify this file manually
  */
 
-export interface nolabelSchema {
+export interface noClassNameSchema {
   name?: string;
 }
 `
     );
   });
 
-  test('label', () => {
-    const oneContent = readFileSync(`${typeOutputDirectory}/Label.ts`).toString();
+  test('className', () => {
+    const oneContent = readFileSync(`${typeOutputDirectory}/ClassName.ts`).toString();
 
     expect(oneContent).toBe(
       `/**
@@ -80,8 +79,8 @@ export interface Frank {
     );
   });
 
-  test('labeled property names', () => {
-    const oneContent = readFileSync(`${typeOutputDirectory}/LabelProperty.ts`).toString();
+  test('className property names', () => {
+    const oneContent = readFileSync(`${typeOutputDirectory}/ClassNameProperty.ts`).toString();
 
     expect(oneContent).toBe(
       `/**
@@ -91,15 +90,15 @@ export interface Frank {
 
 export type Name = string;
 
-export interface label {
+export interface className {
   name?: Name;
 }
 `
     );
   });
 
-  test('labeled property names with spaces', () => {
-    const oneContent = readFileSync(`${typeOutputDirectory}/LabelPropertySpaced.ts`).toString();
+  test('className property names with spaces', () => {
+    const oneContent = readFileSync(`${typeOutputDirectory}/ClassNamePropertySpaced.ts`).toString();
 
     expect(oneContent).toBe(
       `/**
@@ -113,7 +112,7 @@ export type EmailAddress = string;
 
 export type Name = string;
 
-export interface spacedLabel {
+export interface spacedClassName {
   email?: EmailAddress;
   name?: Name;
   phone?: CustomerPhoneNumber;
@@ -122,28 +121,14 @@ export interface spacedLabel {
     );
   });
 
-  test('no label() and no property name', () => {
+  test('no meta({className:""}) and no property name', () => {
     expect(() => {
       convertSchema(
-        { useLabelAsInterfaceName: true },
+        {},
         Joi.object({
           name: Joi.string().optional()
         })
       );
     }).toThrowError();
-  });
-
-  test('Joi.id() instead of Joi.label()', () => {
-    const schema = Joi.object({
-      name: Joi.string()
-    }).id('Test');
-    try {
-      convertSchema({ debug: true, useLabelAsInterfaceName: true }, schema);
-      expect(true).toBe(false);
-    } catch (error) {
-      expect(error.message).toBe(
-        'At least one "object" does not have .label(\'\'). Details: {"type":"object","flags":{"id":"Test"},"keys":{"name":{"type":"string"}}}'
-      );
-    }
   });
 });

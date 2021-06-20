@@ -9,7 +9,7 @@ describe('enums tests', () => {
       bottomColour: Joi.string().valid('red', 'green', 'orange', 'blue').required(),
       escape: Joi.string().valid("a'b", 'c"d', "e'f'g", 'h"i"j', '\\\\').required()
     })
-      .label('TestSchema')
+      .meta({ className: 'TestSchema' })
       .description('a test schema definition');
 
     const result = convertSchema({ sortPropertiesByName: false }, schema);
@@ -28,7 +28,7 @@ export interface TestSchema {
     const schema = Joi.object({
       bit: Joi.boolean().allow(0, 1, '0', '1', null)
     })
-      .label('TestSchema')
+      .meta({ className: 'TestSchema' })
       .description('a test schema definition');
 
     const result = convertSchema({ defaultToRequired: true }, schema);

@@ -44,7 +44,7 @@ export async function writeInterfaceFile(
             .map(x => x.internalTypes)
             .flat()
             .filter((value, index, self) => {
-              return value.name === externalCustomType && self.indexOf(value) === index;
+              return value.interfaceOrTypeName === externalCustomType && self.indexOf(value) === index;
             })) {
             if (generatedInternalType && generatedInternalType.location) {
               if (!customTypeLocationDict[Path.dirname(generatedInternalType.location)]) {

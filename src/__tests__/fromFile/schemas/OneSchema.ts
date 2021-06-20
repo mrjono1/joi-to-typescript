@@ -5,7 +5,7 @@ export const TestSchema = Joi.object({
   propertyName1: Joi.boolean().required(),
   'yellow.flower': Joi.string()
 })
-  .label('TestSchema')
+  .meta({ className: 'TestSchema' })
   .description('a test schema definition');
 
 export const purple = (): void => {

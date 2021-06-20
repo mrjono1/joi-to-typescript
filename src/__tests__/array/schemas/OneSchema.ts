@@ -2,18 +2,18 @@ import Joi from 'joi';
 
 export const ItemSchema = Joi.object({
   name: Joi.string().required()
-}).label('Item');
+}).meta({ className: 'Item' });
 
 export const TestSchema = Joi.object({
   name: Joi.string().optional(),
   propertyName1: Joi.bool().required(),
   items: Joi.array().items(ItemSchema).optional()
 })
-  .label('Test')
+  .meta({ className: 'Test' })
   .description('a test schema definition');
 
 export const TestListSchema = Joi.array()
   .items(TestSchema)
   .required()
-  .label('TestList')
+  .meta({ className: 'TestList' })
   .description('A list of Test object');
