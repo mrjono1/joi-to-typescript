@@ -101,7 +101,7 @@ export interface Person {
 ##### Points of Interest
 
 - `export const PersonSchema` schema must be exported
-- `export const PersonSchema` includes a suffix of Schema so the schema and interface are not confused when using `import` statements (recommended not requried)
+- `export const PersonSchema` includes a suffix of Schema so the schema and interface are not confused when using `import` statements (recommended not required)
 - `.meta({className:'Person'});` Sets `interface` name using TypeScript conventions (TitleCase Interface name, camlCase property name)
 
 #### Upgrade Notice
@@ -205,7 +205,7 @@ export interface Settings {
 - .description('What this interface is for') - jsdoc
 - .valid(['red', 'green', 'blue']) - enumerations
 - .optional() - optional properties `?`
-- .requried() - required properties
+- .required() - required properties
 - .array(), .object(), .string(), .number(), .boolean() - standard Joi schemas
 - .alternatives()
 - .allow('') - will be ignored on a string
