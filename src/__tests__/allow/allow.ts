@@ -114,4 +114,22 @@ export interface Parent {
 `
     );
   });
+
+  test('Enum `allow()`', () => {
+    enum Test {
+      Option1 = 0,
+      Option2  = 1,
+      Option3  = 2
+    }
+
+    const schema = Joi.object({
+      enumeration: Joi.allow(...Object.values(Test))
+    }).meta({ className: 'TestSchema' });
+
+    const result = convertSchema({ sortPropertiesByName: false }, schema);
+    expect(result).not.toBeUndefined;
+    expect(result?.content).toBe(`export interface TestSchema {
+  enumeration?: 'Option1' | 'Option2' | 'Option3' | 0 | 1 | 2;
+}`);
+  });
 });

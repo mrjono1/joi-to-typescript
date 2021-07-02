@@ -10,8 +10,13 @@ export function getInterfaceOrTypeName(settings: Settings, details: Describe): s
     return details?.flags?.label?.replace(/\s/g, '');
   } else {
     if (details?.metas && details.metas.length > 0) {
-      const className = details.metas.find(meta => meta.className)?.className;
-      return className?.replace(/\s/g, '');
+      const classNames = details.metas.filter(meta => meta.className);
+      if (classNames.length !== 0){
+        // If Joi.concat() has been used then there may be multiple
+        // get the last one as that should be the correct one
+        const className = classNames[classNames.length - 1].className;
+        return className?.replace(/\s/g, '');
+      }
     }
     return undefined;
   }
