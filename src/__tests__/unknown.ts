@@ -21,7 +21,7 @@ export interface TestSchema {
   /**
    * Unknown Property
    */
-  [x: string]: any;
+  [x: string]: unknown;
 }`);
   });
 

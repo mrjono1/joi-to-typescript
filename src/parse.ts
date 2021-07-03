@@ -375,7 +375,7 @@ function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent 
 
   if (details?.flags?.unknown === true) {
     const unknownProperty = {
-      content: 'any',
+      content: 'unknown',
       interfaceOrTypeName: '[x: string]',
       required: true,
       jsDoc: { description: 'Unknown Property' }
