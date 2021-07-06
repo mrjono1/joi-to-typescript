@@ -65,6 +65,11 @@ export interface Settings {
    */
   readonly ignoreFiles: string[];
   /**
+   * If true will ignore `index.ts` files in the input/schema directory.
+   * @default false
+   */
+  readonly ignoreIndexFiles: boolean;
+  /**
    * The indentation characters
    * @default '  ' (two spaces)
    */
