@@ -9,7 +9,7 @@ import {
   ObjectDescribe,
   StringDescribe
 } from './joiDescribeTypes';
-import { getInterfaceOrTypeName } from './joiUtils';
+import { getInterfaceOrTypeName, getMetadataFromDetails } from './joiUtils';
 
 // see __tests__/joiTypes.ts for more information
 export const supportedJoiTypes = ['array', 'object', 'alternatives', 'any', 'boolean', 'date', 'number', 'string'];
@@ -223,9 +223,42 @@ export function parseSchema(
     }
     return child;
   }
-  if (settings.debug && !supportedJoiTypes.includes(details.type)) {
-    console.debug(`unsupported type: ${details.type}`);
-    return undefined;
+  if (!supportedJoiTypes.includes(details.type)) {
+    // See if we can find a base type for this type in the details.
+    let typeToUse;
+    const baseTypes: string[] = getMetadataFromDetails('baseType', details);
+    if (baseTypes.length > 0) {
+      // If there are multiple base types then the deepest one will be at the
+      // end of the list which is most likely the one to use.
+      typeToUse = baseTypes.pop() as string;
+    }
+
+    // If we could not get the base type from the metadata then see if we can
+    // map it to something sensible. If not, then set it to 'unknown'.
+    if (typeToUse === undefined) {
+      switch (details.type as string) {
+        case 'function':
+          typeToUse = '(...args: any[]) => any';
+          break;
+
+        case 'symbol':
+          typeToUse = 'symbol';
+          break;
+
+        case 'binary':
+          typeToUse = 'Buffer';
+          break;
+
+        default:
+          typeToUse = 'unknown';
+          break;
+      }
+    }
+
+    if (settings.debug) {
+      console.debug(`Using '${typeToUse}' for unsupported type '${details.type}'`);
+    }
+    return makeTypeContentChild({ content: typeToUse, interfaceOrTypeName, jsDoc });
   }
   const parsedSchema = parseHelper();
   if (!parsedSchema) {
