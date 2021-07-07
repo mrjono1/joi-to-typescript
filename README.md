@@ -13,8 +13,8 @@ This will allow you to reuse a Joi Schema that validates your [Hapi](https://git
 
 For generating Open Api/Swagger this project works with
 
+- [joi-to-swagger](https://github.com/Twipped/joi-to-swagger) using `.meta({className:''})` looking like a better approach
 - [hapi-swagger](https://github.com/glennjones/hapi-swagger) using `.label('')` this has been well tested and used in production
-- [joi-to-swagger](https://github.com/Twipped/joi-to-swagger) using `.meta({className:''})` limited testing but this is looking like a better approach
 
 Version 2, why the move to `.meta({className:'')` from `.label('')`? `Joi.label()` is intended to be used for meaningful error message, using it for another purpose makes the Joi loose a standard feature, this is especially noticeable for frontend usages of Joi. The choice of the property `className` is because this property is used by joi-to-swagger making this project work with other projects is important.
 
@@ -210,10 +210,9 @@ export interface Settings {
 - .alternatives()
 - .allow('') - will be ignored on a string
 - .allow(null) - will add as an optional type eg `string | null`
-- .unknown(true) - will add a property `[x: string]: any;`
+- .unknown(true) - will add a property `[x: string]: unknown;`
 - .example() - jsdoc
-
-Joi Features not listed here will probably be ignored
+  Any many others
 
 ## Contributing
 
