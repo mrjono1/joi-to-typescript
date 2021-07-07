@@ -32,7 +32,6 @@ describe('`Joi.types()`', () => {
   });
 
   test('Joi.function()', () => {
-    const consoleSpy = jest.spyOn(console, 'debug');
     const schema = Joi.object({
       doStuff: Joi.function(),
       moreThings: Joi.func()
@@ -40,46 +39,67 @@ describe('`Joi.types()`', () => {
 
     const result = convertSchema({ debug: true }, schema);
     expect(result).not.toBeUndefined;
-    expect(result?.content).toBe(`export interface Test {}`);
-    expect(consoleSpy).toHaveBeenCalledWith('unsupported type: function');
+    expect(result?.content).toBe(
+      [
+        'export interface Test {',
+        '  doStuff?: (...args: any[]) => any;',
+        '  moreThings?: (...args: any[]) => any;',
+        '}'
+      ].join('\n')
+    );
   });
 
   // TODO: It might be possible to support link
   // I guess this would find the referenced schema and get its type
   test('Joi.link()', () => {
-    const consoleSpy = jest.spyOn(console, 'debug');
     const schema = Joi.object({
       doStuff: Joi.link()
     }).meta({ className: 'Test' });
 
     const result = convertSchema({ debug: true }, schema);
     expect(result).not.toBeUndefined;
-    expect(result?.content).toBe(`export interface Test {}`);
-    expect(consoleSpy).toHaveBeenCalledWith('unsupported type: link');
+    // prettier-ignore
+    expect(result?.content).toBe(
+      [
+        'export interface Test {',
+        '  doStuff?: unknown;',
+        '}'
+      ].join('\n')
+    );
   });
 
   test('Joi.symbol()', () => {
-    const consoleSpy = jest.spyOn(console, 'debug');
     const schema = Joi.object({
       doStuff: Joi.symbol()
     }).meta({ className: 'Test' });
 
     const result = convertSchema({ debug: true }, schema);
     expect(result).not.toBeUndefined;
-    expect(result?.content).toBe(`export interface Test {}`);
-    expect(consoleSpy).toHaveBeenCalledWith('unsupported type: symbol');
+    // prettier-ignore
+    expect(result?.content).toBe(
+      [
+        'export interface Test {',
+        '  doStuff?: symbol;',
+        '}'
+      ].join('\n')
+    );
   });
 
   // TODO: Support Binary
   test('Joi.binary()', () => {
-    const consoleSpy = jest.spyOn(console, 'debug');
     const schema = Joi.object({
       doStuff: Joi.binary()
     }).meta({ className: 'Test' });
 
     const result = convertSchema({ debug: true }, schema);
     expect(result).not.toBeUndefined;
-    expect(result?.content).toBe(`export interface Test {}`);
-    expect(consoleSpy).toHaveBeenCalledWith('unsupported type: binary');
+    // prettier-ignore
+    expect(result?.content).toBe(
+      [
+        'export interface Test {',
+        '  doStuff?: Buffer;',
+        '}'
+      ].join('\n')
+    );
   });
 });
