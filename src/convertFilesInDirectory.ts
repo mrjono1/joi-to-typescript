@@ -29,11 +29,11 @@ export async function convertFilesInDirectory(
   // Load files and get all types
   const files = readdirSync(resolvedSchemaDirectory);
   for (const schemaFileName of files) {
-    const subDirectoryPath = Path.join(resolvedSchemaDirectory, schemaFileName);
-    if (!appSettings.rootDirectoryOnly && lstatSync(subDirectoryPath).isDirectory()) {
+    const fullPath = Path.join(resolvedSchemaDirectory, schemaFileName);
+    if (!appSettings.rootDirectoryOnly && lstatSync(fullPath).isDirectory()) {
       if (appSettings.ignoreFiles.includes(`${schemaFileName}/`)) {
         if (appSettings.debug) {
-          console.debug(`Skipping ${subDirectoryPath} because it's in your ignore files list`);
+          console.debug(`Skipping ${fullPath} because it's in your ignore files list`);
         }
         continue;
       }
@@ -44,7 +44,7 @@ export async function convertFilesInDirectory(
       const thisDirsFileNamesToExport = await convertFilesInDirectory(
         {
           ...appSettings,
-          schemaDirectory: subDirectoryPath,
+          schemaDirectory: fullPath,
           typeOutputDirectory
         },
         ogTypeOutputDir,
@@ -58,6 +58,12 @@ export async function convertFilesInDirectory(
       if (appSettings.ignoreFiles.includes(schemaFileName)) {
         if (appSettings.debug) {
           console.debug(`Skipping ${schemaFileName} because it's in your ignore files list`);
+        }
+        continue;
+      }
+      if (appSettings.ignoreIndexFiles && schemaFileName === 'index.ts') {
+        if (appSettings.debug) {
+          console.debug(`Skipping index file ${fullPath}`);
         }
         continue;
       }
