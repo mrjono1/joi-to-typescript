@@ -10,7 +10,9 @@ import { Describe } from './joiDescribeTypes';
  * @param details - the schema details
  * @returns the values for the given field
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getMetadataFromDetails(field: string, details: Describe): any[] {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const metas: any[] = details?.metas ?? [];
   return metas.filter(entry => entry[field]).map(entry => entry[field]);
 }
