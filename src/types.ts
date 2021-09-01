@@ -69,6 +69,13 @@ export interface Settings {
    * @default '  ' (two spaces)
    */
   readonly indentationChacters: string;
+  /**
+   * List of types the user wants to be converted if Joi validator invokes cast
+   * Example: Joi.number().cast('string') should yield interface with property string)
+   * NOTE: Currently only string and number types are supported
+   * @default []
+   */
+  readonly honorCastTo: ('string' | 'number')[];
 }
 
 export interface ConvertedType {
