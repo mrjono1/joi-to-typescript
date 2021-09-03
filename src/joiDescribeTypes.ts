@@ -32,7 +32,7 @@ export interface BaseDescribe extends Joi.Description {
     /**
      * https://joi.dev/api/?v=17.4.2#anycastto
      */
-    cast?: string
+    cast?: 'string' | 'number' | 'map' | 'set';
   };
   metas?: Meta[];
 }

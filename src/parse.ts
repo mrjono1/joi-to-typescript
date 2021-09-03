@@ -184,9 +184,8 @@ export function parseSchema(
   rootSchema?: boolean
 ): TypeContent | undefined {
   function parseHelper(): TypeContent | undefined {
-    // @ts-ignore: Need to be able to check if honorCastTo contains any string
-    // and typescript is requiring the arg to only be 'number' or 'string'
-    if (settings.honorCastTo.includes(details.flags?.cast)) {
+    // Convert type if a valid cast type is present
+    if (details.flags?.cast && settings.honorCastTo.includes(details.flags?.cast as ('number' | 'string'))) {
       // @NOTE - if additional values are added beyond 'string' and 'number' further transformation will
       // be needed on the details object to support those types
       details.type = details.flags?.cast as ('string' | 'number')
