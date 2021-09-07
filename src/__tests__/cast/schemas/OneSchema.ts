@@ -8,3 +8,7 @@ export const NumberSchema = Joi.object({
 export const StringSchema = Joi.object({
   num: Joi.number().cast('string').required()
 }).meta({ className: 'Strings' })
+
+export const StringType = Joi.number().cast('string')
+
+export const NumberType = Joi.boolean().cast('number')
