@@ -212,6 +212,7 @@ export interface Settings {
 - .allow(null) - will add as an optional type eg `string | null`
 - .unknown(true) - will add a property `[x: string]: unknown;`
 - .example() - jsdoc
+- .cast() - currently will honor casting to string and number types, map and set to be added later
   Any many others
 
 ## Contributing
