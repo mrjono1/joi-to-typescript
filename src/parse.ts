@@ -14,6 +14,10 @@ import { getInterfaceOrTypeName, getMetadataFromDetails } from './joiUtils';
 // see __tests__/joiTypes.ts for more information
 export const supportedJoiTypes = ['array', 'object', 'alternatives', 'any', 'boolean', 'date', 'number', 'string'];
 
+// @TODO - Temporarily used prevent 'map' and 'set' from being used by cast
+//         Remove once support for 'map' and 'set' is added
+const validCastTo = ['string', 'number'];
+
 function getCommonDetails(
   details: Describe,
   settings: Settings
@@ -184,6 +188,13 @@ export function parseSchema(
   rootSchema?: boolean
 ): TypeContent | undefined {
   function parseHelper(): TypeContent | undefined {
+    // Convert type if a valid cast type is present
+    if (details.flags?.cast && validCastTo.includes(details.flags?.cast as ('number' | 'string'))) {
+      // @NOTE - if additional values are added beyond 'string' and 'number' further transformation will
+      // be needed on the details object to support those types
+      details.type = details.flags?.cast as ('string' | 'number');
+    }
+
     switch (details.type) {
       case 'array':
         return parseArray(details, settings);

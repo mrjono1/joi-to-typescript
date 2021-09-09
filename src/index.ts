@@ -29,7 +29,8 @@ function defaultSettings(settings: Partial<Settings>): Settings {
       sortPropertiesByName: true,
       commentEverything: false,
       ignoreFiles: [],
-      indentationChacters: '  '
+      indentationChacters: '  ',
+      honorCastTo: [],
     },
     settings
   ) as Settings;
