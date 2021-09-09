@@ -41,10 +41,11 @@ function defaultSettings(settings: Partial<Settings>): Settings {
 export function convertSchema(
   settings: Partial<Settings>,
   joi: AnySchema,
-  exportedName?: string
+  exportedName?: string,
+  root?: boolean
 ): ConvertedType | undefined {
   const appSettings = defaultSettings(settings);
-  return convertSchemaInternal(appSettings, joi, exportedName);
+  return convertSchemaInternal(appSettings, joi, exportedName, root);
 }
 
 export function getTypeFileNameFromSchema(schemaFileName: string, settings: Settings): string {
