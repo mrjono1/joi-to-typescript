@@ -14,7 +14,7 @@ describe('`Joi.types()`', () => {
       'array', // Supported
       'boolean', // Supported
       'date', // Supported
-      'function', // Not Supported
+      'function', // Basic Support
       'link', // Not Supported - Might be possible
       'number', // Supported
       'object', // Supported
@@ -34,6 +34,7 @@ describe('`Joi.types()`', () => {
   test('Joi.function()', () => {
     const schema = Joi.object({
       doStuff: Joi.function(),
+      stuff: Joi.function().required(),
       moreThings: Joi.func()
     }).meta({ className: 'Test' });
 
@@ -44,6 +45,7 @@ describe('`Joi.types()`', () => {
         'export interface Test {',
         '  doStuff?: (...args: any[]) => any;',
         '  moreThings?: (...args: any[]) => any;',
+        '  stuff: (...args: any[]) => any;',
         '}'
       ].join('\n')
     );
