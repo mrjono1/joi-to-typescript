@@ -418,11 +418,18 @@ function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent 
   });
 
   if (details?.flags?.unknown === true) {
+    let unknownType = 'unknown';
+    const unknownTypes: string[] = getMetadataFromDetails('unknownType', details);
+    if (unknownTypes.length > 0) {
+      // If there are multiple base types then the deepest one will be at the
+      // end of the list which is most likely the one to use.
+      unknownType = unknownTypes.pop() as string;
+    }
     const unknownProperty = {
-      content: 'unknown',
+      content: unknownType,
       interfaceOrTypeName: '[x: string]',
       required: true,
-      jsDoc: { description: 'Unknown Property' }
+      jsDoc: { description: `${unknownType && unknownType[0].toUpperCase() + unknownType.slice(1)} Property` }
     } as TypeContent;
     children.push(unknownProperty);
   }
