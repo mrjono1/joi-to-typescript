@@ -1,7 +1,7 @@
 {
   "name": "joi-to-typescript",
   "description": "Convert Joi Schemas to TypeScript interfaces",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "author": "Jono Clarnette",
   "keywords": [
     "joi",
@@ -32,7 +32,7 @@
     "joi": "^17.4.0"
   },
   "devDependencies": {
-    "@types/jest": "^27.0.01",
+    "@types/jest": "^27.0.2",
     "@types/node": "^14.14.41",
     "@typescript-eslint/eslint-plugin": "^4.15.2",
     "@typescript-eslint/parser": "^4.22.0",

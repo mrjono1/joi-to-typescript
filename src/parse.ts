@@ -269,7 +269,7 @@ export function parseSchema(
     if (settings.debug) {
       console.debug(`Using '${typeToUse}' for unsupported type '${details.type}'`);
     }
-    return makeTypeContentChild({ content: typeToUse, interfaceOrTypeName, jsDoc });
+    return makeTypeContentChild({ content: typeToUse, interfaceOrTypeName, jsDoc, required });
   }
   const parsedSchema = parseHelper();
   if (!parsedSchema) {
