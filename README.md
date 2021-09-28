@@ -57,10 +57,18 @@ export const JobSchema = Joi.object({
   jobTitle: Joi.string().required()
 }).meta({ className: 'Job' });
 
+export const WalletSchema = Joi.object({
+  usd: Joi.number().required(),
+  eur: Joi.number().required()
+})
+  .unknown()
+  .meta({ className: 'Wallet', unknownType: 'number' });
+
 export const PersonSchema = Joi.object({
   firstName: Joi.string().required(),
   lastName: Joi.string().required().description('Last Name'),
-  job: JobSchema
+  job: JobSchema,
+  wallet: WalletSchema
 }).meta({ className: 'Person' });
 
 export const PeopleSchema = Joi.array()
@@ -85,9 +93,6 @@ export interface Job {
  */
 export type People = Person[];
 
-/**
- * Person
- */
 export interface Person {
   firstName: string;
   job?: Job;
@@ -95,6 +100,16 @@ export interface Person {
    * Last Name
    */
   lastName: string;
+  wallet?: Wallet;
+}
+
+export interface Wallet {
+  /**
+   * Number Property
+   */
+  [x: string]: number;
+  eur: number;
+  usd: number;
 }
 ```
 
@@ -103,6 +118,7 @@ export interface Person {
 - `export const PersonSchema` schema must be exported
 - `export const PersonSchema` includes a suffix of Schema so the schema and interface are not confused when using `import` statements (recommended not required)
 - `.meta({className:'Person'});` Sets `interface` name using TypeScript conventions (TitleCase Interface name, camlCase property name)
+- `.meta({unknownType:'number'});` assert unknown type to `number`
 
 #### Upgrade Notice
 
@@ -210,7 +226,7 @@ export interface Settings {
 - .alternatives()
 - .allow('') - will be ignored on a string
 - .allow(null) - will add as an optional type eg `string | null`
-- .unknown(true) - will add a property `[x: string]: unknown;`
+- .unknown(true) - will add a property `[x: string]: unknown;`, assert `unknown` to some type with `.meta({ unknownType: 'some-type' })`
 - .example() - jsdoc
 - .cast() - currently will honor casting to string and number types, map and set to be added later
   Any many others
