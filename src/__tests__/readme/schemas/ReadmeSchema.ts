@@ -7,10 +7,18 @@ export const JobSchema = Joi.object({
   jobTitle: Joi.string().required()
 }).meta({ className: 'Job' });
 
+export const WalletSchema = Joi.object({
+  usd: Joi.number().required(),
+  eur: Joi.number().required()
+})
+  .unknown()
+  .meta({ className: 'Wallet', unknownType: 'number' });
+
 export const PersonSchema = Joi.object({
   firstName: Joi.string().required(),
   lastName: Joi.string().required().description('Last Name'),
-  job: JobSchema
+  job: JobSchema,
+  wallet: WalletSchema
 }).meta({ className: 'Person' });
 
 export const PeopleSchema = Joi.array()

@@ -42,6 +42,16 @@ export interface Person {
    * Last Name
    */
   lastName: string;
+  wallet?: Wallet;
+}
+
+export interface Wallet {
+  /**
+   * Number Property
+   */
+  [x: string]: number;
+  eur: number;
+  usd: number;
 }
 `);
   });
