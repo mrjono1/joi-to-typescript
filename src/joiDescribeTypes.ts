@@ -34,6 +34,13 @@ export interface BaseDescribe extends Joi.Description {
      */
     cast?: 'string' | 'number' | 'map' | 'set';
   };
+  /**
+   * https://joi.dev/api/#objectpatternpattern-schema-options
+   */
+  patterns?: {
+    schema: Describe;
+    rule: Describe;
+  }[];
   metas?: Meta[];
 }
 

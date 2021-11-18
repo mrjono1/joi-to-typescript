@@ -417,7 +417,7 @@ function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent 
     return parsedSchema;
   });
 
-  if (details?.flags?.unknown === true) {
+  if (details?.flags?.unknown === true||details.patterns!==undefined) {
     let unknownType = 'unknown';
     const unknownTypes: string[] = getMetadataFromDetails('unknownType', details);
     if (unknownTypes.length > 0) {
