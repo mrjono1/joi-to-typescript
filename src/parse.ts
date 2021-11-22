@@ -176,9 +176,10 @@ export function typeContentToTs(settings: Settings, parsedSchema: TypeContent, d
 /**
  * Parses a joi schema into a TypeContent
  * @param details: the joi schema
- * @param Settings: settings used for parsing
+ * @param settings: settings used for parsing
  * @param useLabels if true and if a schema has a label we won't parse it and instead just reference the label in the outputted type
  * @param ignoreLabels a list a label to ignore if found. Sometimes nested joi schemas will inherit the parents label so we want to ignore that
+ * @param rootSchema
  */
 export function parseSchema(
   details: Describe,
@@ -416,8 +417,8 @@ function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent 
     parsedSchema.interfaceOrTypeName = /^[$A-Z_][0-9A-Z_$]*$/i.test(key || '') ? key : `'${key}'`;
     return parsedSchema;
   });
-
-  if (details?.flags?.unknown === true) {
+  const isMap=details.patterns?.length===1&&details.patterns[0].schema.type==="string";
+  if (details?.flags?.unknown === true||isMap) {
     let unknownType = 'unknown';
     const unknownTypes: string[] = getMetadataFromDetails('unknownType', details);
     if (unknownTypes.length > 0) {

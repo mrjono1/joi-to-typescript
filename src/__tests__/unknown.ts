@@ -64,4 +64,26 @@ export interface TestSchema {
   name?: string;
 }`);
   });
+
+  test('`pattern(Joi.string(), Joi.number)`', () => {
+    const schema = Joi.object({
+      name: Joi.string()
+    })
+      .meta({ className: 'TestSchema', unknownType: 'number' })
+      .description('a test schema definition').
+      pattern(Joi.string(), Joi.number());
+
+    const result = convertSchema({ sortPropertiesByName: false }, schema);
+    expect(result).not.toBeUndefined;
+    expect(result?.content).toBe(`/**
+ * a test schema definition
+ */
+export interface TestSchema {
+  name?: string;
+  /**
+   * Number Property
+   */
+  [x: string]: number;
+}`);
+  });
 });
