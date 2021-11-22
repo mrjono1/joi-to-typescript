@@ -8,6 +8,4 @@ export const BarSchema = Joi.object({
   b: Joi.string()
 }).meta({ className: 'Bar' });
 
-export const FooBarSchema = FooSchema
-  .concat(BarSchema)
-  .meta({ className: 'FooBar' });
+export const FooBarSchema = FooSchema.concat(BarSchema).meta({ className: 'FooBar' });

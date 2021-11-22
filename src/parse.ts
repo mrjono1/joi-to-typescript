@@ -190,10 +190,10 @@ export function parseSchema(
 ): TypeContent | undefined {
   function parseHelper(): TypeContent | undefined {
     // Convert type if a valid cast type is present
-    if (details.flags?.cast && validCastTo.includes(details.flags?.cast as ('number' | 'string'))) {
+    if (details.flags?.cast && validCastTo.includes(details.flags?.cast as 'number' | 'string')) {
       // @NOTE - if additional values are added beyond 'string' and 'number' further transformation will
       // be needed on the details object to support those types
-      details.type = details.flags?.cast as ('string' | 'number');
+      details.type = details.flags?.cast as 'string' | 'number';
     }
 
     switch (details.type) {
@@ -417,8 +417,8 @@ function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent 
     parsedSchema.interfaceOrTypeName = /^[$A-Z_][0-9A-Z_$]*$/i.test(key || '') ? key : `'${key}'`;
     return parsedSchema;
   });
-  const isMap=details.patterns?.length===1&&details.patterns[0].schema.type==="string";
-  if (details?.flags?.unknown === true||isMap) {
+  const isMap = details.patterns?.length === 1 && details.patterns[0].schema.type === 'string';
+  if (details?.flags?.unknown === true || isMap) {
     let unknownType = 'unknown';
     const unknownTypes: string[] = getMetadataFromDetails('unknownType', details);
     if (unknownTypes.length > 0) {

@@ -118,8 +118,8 @@ export interface Parent {
   test('Enum `allow()`', () => {
     enum Test {
       Option1 = 0,
-      Option2  = 1,
-      Option3  = 2
+      Option2 = 1,
+      Option3 = 2
     }
 
     const schema = Joi.object({
