@@ -70,8 +70,8 @@ export interface TestSchema {
       name: Joi.string()
     })
       .meta({ className: 'TestSchema', unknownType: 'number' })
-      .description('a test schema definition').
-      pattern(Joi.string(), Joi.number());
+      .description('a test schema definition')
+      .pattern(Joi.string(), Joi.number());
 
     const result = convertSchema({ sortPropertiesByName: false }, schema);
     expect(result).not.toBeUndefined;

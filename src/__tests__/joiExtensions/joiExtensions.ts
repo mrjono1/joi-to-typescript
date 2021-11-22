@@ -8,7 +8,7 @@ const ExtendedJoi = Joi.extend(joi => {
     base: joi.string().meta({ baseType: 'string' })
   };
   return ext;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }).extend((joi: any) => {
   const ext: Joi.Extension = {
     type: 'dollars',
