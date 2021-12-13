@@ -1,3 +1,5 @@
+import { Describe } from 'joiDescribeTypes';
+
 /**
  * Applies the mapper over each element in the list.
  * If the mapper returns undefined it will not show up in the result
@@ -21,4 +23,16 @@ export function filterMap<T, K>(list: T[], mapper: (t: T) => K | undefined): K[]
  */
 export function toStringLiteral(value: string): string {
   return `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
+}
+
+export function isDescribe(x: unknown): x is Describe {
+  if (!x) {
+    return false
+  }
+
+  if ((x as Describe).type) {
+    return true
+  }
+
+  return false
 }

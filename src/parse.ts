@@ -1,4 +1,4 @@
-import { filterMap, toStringLiteral } from './utils';
+import { filterMap, isDescribe, toStringLiteral } from './utils';
 import { TypeContent, makeTypeContentRoot, makeTypeContentChild, Settings, JsDoc } from './types';
 import {
   AlternativesDescribe,
@@ -406,6 +406,42 @@ function parseAlternatives(details: AlternativesDescribe, settings: Settings): T
   return makeTypeContentRoot({ joinOperation: 'union', children, interfaceOrTypeName, jsDoc });
 }
 
+function buildUnknownTypeContent(unknownType = 'unknown'): TypeContent {
+  return {
+    __isRoot: false,
+    content: unknownType,
+    interfaceOrTypeName: '[x: string]',
+    required: true,
+    jsDoc: { description: `${unknownType && unknownType[0].toUpperCase() + unknownType.slice(1)} Property` }
+  };
+}
+
+function parseUnknown(details: ObjectDescribe, settings: Settings): TypeContent {
+  const unknownTypes = getMetadataFromDetails('unknownType', details);
+
+  const type = unknownTypes.pop();
+
+  if (typeof type === 'string') {
+    return buildUnknownTypeContent(type);
+  }
+
+  if (isDescribe(type)) {
+    const typeContent = parseSchema(type, settings);
+
+    if (!typeContent) {
+      return buildUnknownTypeContent();
+    }
+
+    return {
+      ...typeContent,
+      interfaceOrTypeName: '[x: string]',
+      required: true
+    };
+  }
+
+  return buildUnknownTypeContent();
+}
+
 function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent | undefined {
   let children = filterMap(Object.entries(details.keys || {}), ([key, value]) => {
     const parsedSchema = parseSchema(value, settings);
@@ -419,20 +455,7 @@ function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent 
   });
   const isMap = details.patterns?.length === 1 && details.patterns[0].schema.type === 'string';
   if (details?.flags?.unknown === true || isMap) {
-    let unknownType = 'unknown';
-    const unknownTypes: string[] = getMetadataFromDetails('unknownType', details);
-    if (unknownTypes.length > 0) {
-      // If there are multiple base types then the deepest one will be at the
-      // end of the list which is most likely the one to use.
-      unknownType = unknownTypes.pop() as string;
-    }
-    const unknownProperty = {
-      content: unknownType,
-      interfaceOrTypeName: '[x: string]',
-      required: true,
-      jsDoc: { description: `${unknownType && unknownType[0].toUpperCase() + unknownType.slice(1)} Property` }
-    } as TypeContent;
-    children.push(unknownProperty);
+    children.push(parseUnknown(details, settings));
   }
 
   if (settings.sortPropertiesByName) {
