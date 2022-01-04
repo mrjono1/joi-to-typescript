@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, rmdirSync } from 'fs';
+import Joi from 'joi';
 
-import { convertFromDirectory } from '../../index';
+import { convertFromDirectory, convertSchema } from '../../index';
 
 describe('Array types', () => {
   const typeOutputDirectory = './src/__tests__/array/interfaces';
@@ -46,5 +47,27 @@ export interface Test {
 export type TestList = Test[];
 `
     );
+  });
+
+  test('test to ensure second items() is ignored', () => {
+    // this tests this code
+    //const childrenContent = children.map(child => typeContentToTsHelper(settings, child, indentLevel));
+    //if (childrenContent.length > 1) {
+    //  /* istanbul ignore next */
+    //  throw new Error('Multiple array item types not supported');
+    //}
+    const schema = Joi.array()
+      .items(Joi.string().description('one'))
+      .items(Joi.number().description('two'))
+      .required()
+      .meta({ className: 'TestList' })
+      .description('A list of Test object');
+
+    const result = convertSchema({ sortPropertiesByName: true }, schema);
+    expect(result).not.toBeUndefined;
+    expect(result?.content).toBe(`/**
+ * A list of Test object
+ */
+export type TestList = string[];`);
   });
 });

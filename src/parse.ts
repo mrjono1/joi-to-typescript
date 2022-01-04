@@ -98,6 +98,7 @@ function typeContentToTsHelper(
     case 'list': {
       const childrenContent = children.map(child => typeContentToTsHelper(settings, child, indentLevel));
       if (childrenContent.length > 1) {
+        /* istanbul ignore next */
         throw new Error('Multiple array item types not supported');
       }
       let content = childrenContent[0].tsContent;
@@ -429,6 +430,8 @@ function parseUnknown(details: ObjectDescribe, settings: Settings): TypeContent 
     const typeContent = parseSchema(type, settings);
 
     if (!typeContent) {
+      // Can't think of a way to make this happen but want to keep this ready just in case
+      /* istanbul ignore next */
       return buildUnknownTypeContent();
     }
 
@@ -460,8 +463,9 @@ function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent 
 
   if (settings.sortPropertiesByName) {
     children = children.sort((a, b) => {
-      // interfaceOrTypeName should never be null at this point
       if (!a.interfaceOrTypeName || !b.interfaceOrTypeName) {
+        // interfaceOrTypeName should never be null at this point this is just in case
+        /* istanbul ignore next */
         return 0;
       } else if (a.interfaceOrTypeName > b.interfaceOrTypeName) {
         return 1;

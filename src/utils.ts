@@ -27,12 +27,12 @@ export function toStringLiteral(value: string): string {
 
 export function isDescribe(x: unknown): x is Describe {
   if (!x) {
-    return false
+    return false;
   }
 
   if ((x as Describe).type) {
-    return true
+    return true;
   }
 
-  return false
+  return false;
 }

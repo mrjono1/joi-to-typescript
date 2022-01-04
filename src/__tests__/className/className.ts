@@ -1,6 +1,8 @@
 import { existsSync, readFileSync, rmdirSync } from 'fs';
 import Joi from 'joi';
-import { convertFromDirectory, convertSchema } from '../..';
+import { convertFromDirectory, convertSchema, Settings } from '../..';
+import { Describe } from '../../joiDescribeTypes';
+import { ensureInterfaceorTypeName } from '../../joiUtils';
 
 describe('test the use of .meta({className: ""})', () => {
   const typeOutputDirectory = './src/__tests__/className/interfaces';
@@ -130,5 +132,11 @@ export interface spacedClassName {
         })
       );
     }).toThrowError();
+  });
+
+  test('no meta({}) and no property name', () => {
+    const details: Describe = { type: 'string', metas: [{ something: '' } as unknown] } as Describe;
+    ensureInterfaceorTypeName({} as Settings, details, 'Force Me');
+    expect(details.metas).toMatchObject([{ something: '' }, { className: 'Force Me' }]);
   });
 });

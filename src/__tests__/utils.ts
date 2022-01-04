@@ -1,4 +1,4 @@
-import { filterMap } from '../utils';
+import { filterMap, isDescribe } from '../utils';
 
 describe('test the utils', () => {
   test('ensure undefined is removed', () => {
@@ -28,5 +28,17 @@ describe('test the utils', () => {
     });
 
     expect(children).toMatchObject(['blue', { c: 'red', d: 'orange' }, 'purple']);
+  });
+
+  test('isDescribe undefined', () => {
+    expect(isDescribe(undefined)).toBe(false);
+  });
+
+  test('isDescribe valid with type', () => {
+    expect(isDescribe({ type: 'boo' })).toBe(true);
+  });
+
+  test('isDescribe invalid', () => {
+    expect(isDescribe({})).toBe(false);
   });
 });
