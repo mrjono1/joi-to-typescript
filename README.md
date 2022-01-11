@@ -29,7 +29,7 @@ npm install joi-to-typescript --save-dev
 ```
 
 - This has been built for `"joi": "^17"` and will not work for older versions
-- Minimum node version 12 as Joi requries node 12
+- Minimum node version 12 as Joi requires node 12
 
 ## Suggested Usage
 
@@ -117,8 +117,8 @@ export interface Wallet {
 
 - `export const PersonSchema` schema must be exported
 - `export const PersonSchema` includes a suffix of Schema so the schema and interface are not confused when using `import` statements (recommended not required)
-- `.meta({className:'Person'});` Sets `interface` name using TypeScript conventions (TitleCase Interface name, camlCase property name)
-- `.meta({unknownType:'number'});` assert unknown type to `number`
+- `.meta({ className: 'Person' });` Sets `interface` name using TypeScript conventions (TitleCase Interface name, camelCase property name)
+- `.meta({ unknownType: 'number' });` assert unknown type to `number`
 
 #### Upgrade Notice
 
@@ -217,19 +217,26 @@ export interface Settings {
 
 ## Joi Features Supported
 
-- .meta({className:'InterfaceName'}) - interface Name and in jsDoc
-- .description('What this interface is for') - jsdoc
-- .valid(['red', 'green', 'blue']) - enumerations
-- .optional() - optional properties `?`
-- .required() - required properties
-- .array(), .object(), .string(), .number(), .boolean() - standard Joi schemas
-- .alternatives()
-- .allow('') - will be ignored on a string
-- .allow(null) - will add as an optional type eg `string | null`
-- .unknown(true) - will add a property `[x: string]: unknown;`, assert `unknown` to some type with `.meta({ unknownType: 'some-type' })`
-- .example() - jsdoc
-- .cast() - currently will honor casting to string and number types, map and set to be added later
-  Any many others
+- `.meta({className:'InterfaceName'})` - interface Name and in jsDoc
+- `.description('What this interface is for')` - jsdoc
+- `.valid(['red', 'green', 'blue'])` - enumerations
+- `.optional()` - optional properties `?`
+- `.required()` - required properties
+- `.array()`, `.object()`, `.string()`, `.number()`, `.boolean()` - standard Joi schemas
+- `.alternatives()`
+- `.allow('')` - will be ignored on a string
+- `.allow(null)` - will add as an optional type eg `string | null`
+- `.unknown(true)` - will add a property `[x: string]: unknown;` to the interface
+  - Assert `unknown` to some type with a stringified type or a Joi schema, e.g.:
+  ```typescript
+    .meta({ unknownType: 'some-type' })
+  ```
+  ```typescript
+    .meta({ unknownType: Joi.object({ id: Joi.string() }) })`
+  ```
+- `.example()` - jsdoc
+- `.cast()` - currently will honor casting to string and number types, map and set to be added later
+- And many others
 
 ## Contributing
 
@@ -239,7 +246,7 @@ export interface Settings {
 
 ### Recommended Development Environment
 
-Recommended Editor is VS Code, this project is setup with VSCode settings in the `./.vscode` directory to keep development consistant.
+Recommended Editor is VS Code, this project is setup with VSCode settings in the `./.vscode` directory to keep development consistent.
 
 Best developed on macOS, Linux, or on Windows via WSL.
 Node 12, 14, or 16
