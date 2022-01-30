@@ -1,7 +1,7 @@
 {
   "name": "joi-to-typescript",
   "description": "Convert Joi Schemas to TypeScript interfaces",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "author": "Jono Clarnette",
   "type": "module",
   "keywords": [
@@ -35,7 +35,7 @@
     "lint": "eslint 'src/**'",
     "test": "jest --config jest.config.cjs",
     "coverage": "yarn test --coverage --silent",
-    "pub": "build && yarn publish"
+    "pub": "yarn build && yarn publish"
   },
   "devDependencies": {
     "@types/jest": "^27.4.0",
