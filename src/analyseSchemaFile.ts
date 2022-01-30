@@ -75,7 +75,7 @@ export async function analyseSchemaFile(
   const allConvertedTypes: ConvertedType[] = [];
 
   const fullFilePath = Path.resolve(Path.join(settings.schemaDirectory, schemaFileName));
-  const schemaFile = await require(fullFilePath);
+  const schemaFile = await import(fullFilePath);
 
   // Create Type File Name
   const typeFileName = getTypeFileNameFromSchema(schemaFileName, settings);
