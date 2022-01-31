@@ -6,5 +6,5 @@ module.exports = {
   testPathIgnorePatterns: ['/schemas/', '/interfaces/', 'AssertionCriteria'],
   moduleFileExtensions: ['ts', 'js'],
   modulePaths: ['<rootDir>', '<rootDir>/src'],
-  coveragePathIgnorePatterns: ['__tests__', 'example']
+  coveragePathIgnorePatterns: ['__tests__', 'examples']
 };
