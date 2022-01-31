@@ -113,3 +113,5 @@ dist
 shell.nix
 
 package-lock.json
+
+.idea/

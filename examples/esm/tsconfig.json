@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2019",
-    "module": "commonjs",
+    "module": "ESNext",
     "declaration": true,
     "outDir": "./dist",
     "declarationMap": true,
@@ -14,5 +14,7 @@
     "moduleResolution": "node"
   },
   "include": ["src"],
-  "exclude": ["node_modules", "**/__tests__/*", "examples"]
+  "exclude": ["node_modules", "**/__tests__/*",
+    "examples"
+  ]
 }

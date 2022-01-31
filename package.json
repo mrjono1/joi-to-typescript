@@ -3,7 +3,6 @@
   "description": "Convert Joi Schemas to TypeScript interfaces",
   "version": "3.0.2",
   "author": "Jono Clarnette",
-  "type": "module",
   "keywords": [
     "joi",
     "ts",
