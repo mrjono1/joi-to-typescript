@@ -1,20 +1,8 @@
 {
   "compilerOptions": {
-    "target": "ES2019",
     "module": "ESNext",
-    "declaration": true,
-    "outDir": "./dist",
-    "declarationMap": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
     "esModuleInterop": true,
-    "strict": true,
-    "baseUrl": "src",
     "moduleResolution": "node"
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "**/__tests__/*",
-    "examples"
-  ]
+  "include": ["src"]
 }

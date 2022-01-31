@@ -1,20 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2019",
-    "module": "commonjs",
-    "declaration": true,
-    "outDir": "./dist",
-    "declarationMap": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "esModuleInterop": true,
-    "strict": true,
-    "baseUrl": "src",
-    "moduleResolution": "node"
+    "esModuleInterop": true
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "**/__tests__/*",
-    "examples"
-  ]
+  "include": ["src"]
 }
