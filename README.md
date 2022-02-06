@@ -52,7 +52,7 @@ npm install joi
 
 #### Example Project
 
-Explore the [Example Projects](https://github.com/mrjono1/joi-to-typescript/tree/master/examples) for recommended setup, it allows the use of `yarn types` or `npm run types` to run this package.
+Explore the [Example Projects](https://github.com/mrjono1/joi-to-typescript/tree/master/examples) for recommended setup, execute `yarn types` to run each one.
 
 #### Example Schema
 
