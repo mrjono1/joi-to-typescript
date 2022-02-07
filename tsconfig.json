@@ -10,8 +10,9 @@
     "noUnusedLocals": true,
     "esModuleInterop": true,
     "strict": true,
-    "baseUrl": "src"
+    "baseUrl": "src",
+    "moduleResolution": "node"
   },
   "include": ["src"],
-  "exclude": ["node_modules", "**/__tests__/*", "example"]
+  "exclude": ["node_modules", "**/__tests__/*", "examples"]
 }

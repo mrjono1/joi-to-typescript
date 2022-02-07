@@ -9,23 +9,33 @@
 
 Convert [Joi](https://github.com/sideway/joi) Schemas to TypeScript interfaces
 
-This will allow you to reuse a Joi Schema that validates your [Hapi](https://github.com/hapijs/hapi) API to generate TypeScript interfaces so you don't have to manually create the same structure again saving you time.
+Now supporting ESM and CJS Modules
+
+This will allow you to use generate TypeScript interfaces from Joi Schemas that can be used to assign types to JavaScript objects or [Hapi](https://github.com/hapijs/hapi) API requests. You no longer have to manually create the same structure again, saving you time and reducing errors.
 
 For generating Open Api/Swagger this project works with
 
-- [joi-to-swagger](https://github.com/Twipped/joi-to-swagger) using `.meta({className:''})` looking like a better approach
-- [hapi-swagger](https://github.com/glennjones/hapi-swagger) using `.label('')` this has been well tested and used in production
+- [joi-to-swagger](https://github.com/Twipped/joi-to-swagger) using `.meta({className:''})`
+- [hapi-swagger](https://github.com/glennjones/hapi-swagger) using `.label('')`
 
-Version 2, why the move to `.meta({className:'')` from `.label('')`? `Joi.label()` is intended to be used for meaningful error message, using it for another purpose makes the Joi loose a standard feature, this is especially noticeable for frontend usages of Joi. The choice of the property `className` is because this property is used by joi-to-swagger making this project work with other projects is important.
+The use of `.meta({className:'')` is prefeerd over `.label('')`, because `Joi.label()` is intended to be used for meaningful error message, using it for another purpose makes Joi lose a standard feature, this is especially noticeable for frontend usages of Joi. The choice of the property `className` is because this property is used by joi-to-swagger making this project work with other projects.
 
 ## Installation Notes
 
-This package is intended as a development time tool so is installed in the `devDependencies`
+This package is intended as a development time tool, so it should be installed in the `devDependencies`
 
 ```bash
 yarn add joi-to-typescript --dev
 # or
 npm install joi-to-typescript --save-dev
+```
+
+You will also need to install `joi` in the `dependencies`
+
+```bash
+yarn add joi
+# or
+npm install joi
 ```
 
 - This has been built for `"joi": "^17"` and will not work for older versions
@@ -42,7 +52,7 @@ npm install joi-to-typescript --save-dev
 
 #### Example Project
 
-Explore the [Example Project](https://github.com/mrjono1/joi-to-typescript/tree/master/example) for recommended setup, it allows the use of `yarn types` or `npm run types` to run this package
+Explore the [Example Projects](https://github.com/mrjono1/joi-to-typescript/tree/master/examples) for recommended setup, execute `yarn types` to run each one.
 
 #### Example Schema
 
@@ -261,3 +271,7 @@ yarn test # run local tests
 yarn coverage # test coverage report
 yarn lint # lint the code
 ```
+
+### Change Log
+
+See [GitHub Releases](https://github.com/mrjono1/joi-to-typescript/releases)

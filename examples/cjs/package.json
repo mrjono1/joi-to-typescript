@@ -1,0 +1,19 @@
+{
+  "name": "example",
+  "license": "MIT",
+  "scripts": {
+    "types": "ts-node scripts/types.ts"
+  },
+  "dependencies": {
+    "joi": "^17.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.13",
+    "joi-to-typescript": "^3.0.2",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.5"
+  },
+  "resolutions": {
+    "joi-to-typescript": "file:../.."
+  }
+}
