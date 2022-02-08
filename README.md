@@ -34,10 +34,49 @@ npm install joi-to-typescript --save-dev
 ## Suggested Usage
 
 1. Create a Schemas Folder eg. `src/schemas`
-1. Create a interfaces Folder eg. `src/interfaces`
-1. Create Joi Schemas in the Schemas folder with a file name suffix of Schemas eg. `AddressSchema.ts`
+2. Create a interfaces Folder eg. `src/interfaces`
+3. Create Joi Schemas in the Schemas folder with a file name suffix of Schemas eg. `AddressSchema.ts`
    - The file name suffix ensures that type file and schema file imports are not confusing
+4. Call `joi-to-typescript` programmatically via a wrapper script or directly from CLI
 
+### Programmatic usage
+
+```
+import { convertFromDirectory } from 'joi-to-typescript';
+
+convertFromDirectory({
+  schemaDirectory: './src/schemas',
+  typeOutputDirectory: './src/interfaces',
+  debug: true
+});
+```
+
+### CLI usage
+
+The `joi-to-typescript` package defines a binary which can be called either using `npx` or by installing the package
+globally using `npm install -g joi-to-typescript`:
+
+```
+joi-to-typescript [options] <schema directory> <output directory>
+```
+
+Example:
+```
+$ npx joi-to-typescript --debug ./src/schemas ./src/interfaces
+```
+
+Supported options:
+
+```
+  --debug       Print debug information
+  --sort        Order of properties in generated interfaces. Allowed values: name. Default: properties are sorted in the order they appear in the schema.
+  --label       Use .label('InterfaceName') instead of .meta({className:'InterfaceName'}) for interface names. Default: false
+  --required    Make all interface properties required by default, even if the schema does not. Default: false
+  --suffix      Schema suffix to strip from interface names. Default: "schema"
+  --flatten     Will not output to subDirectories in output/interface directory. It will flatten the structure. Default: false
+  --rootOnly    Will only read the files in the root directory of the input/schema directory. Will not parse through sub-directories. Default: false
+  --indent      Indentation characters. Default: "  " (two spaces)
+```
 ## Example
 
 #### Example Project
@@ -124,7 +163,7 @@ export interface Wallet {
 
 - Version 1 used `.label('Person')` as the way to define the `interface` name, to use this option set `{ useLabelAsInterfaceName: true }`
 
-#### Example Call
+#### Example Call via wrapper script
 
 ```typescript
 import { convertFromDirectory } from 'joi-to-typescript';
@@ -141,6 +180,11 @@ const resultingInterface = convertSchema({}, JobSchema);
 resultingInterface?.content = // the interface as a string
 ```
 
+#### Example call via CLI
+
+```
+$ npx joi-to-typescript --debug ./src/schemas ./src/interfaces
+```
 ## Settings
 
 ```typescript
