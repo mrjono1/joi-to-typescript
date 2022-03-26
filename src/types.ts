@@ -69,6 +69,10 @@ export interface Settings {
    * @default '  ' (two spaces)
    */
   readonly indentationChacters: string;
+  /**
+   * If a field has a default and is optional, consider it as required
+   */
+  readonly treatDefaultedOptionalAsRequired: boolean;
 }
 
 export interface ConvertedType {

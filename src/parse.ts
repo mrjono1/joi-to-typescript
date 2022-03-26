@@ -28,10 +28,10 @@ function getCommonDetails(
   const example = details.examples?.[0];
 
   let required;
-  if (presence === 'optional') {
-    required = false;
-  } else if (presence === 'required') {
+  if (presence === 'required' || (settings.treatDefaultedOptionalAsRequired && value !== undefined)) {
     required = true;
+  } else if (presence === 'optional') {
+    required = false;
   } else {
     required = settings.defaultToRequired;
   }
