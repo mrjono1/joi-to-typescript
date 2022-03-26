@@ -31,7 +31,8 @@ function defaultSettings(settings: Partial<Settings>): Settings {
       ignoreFiles: [],
       indentationChacters: '  ',
       honorCastTo: [],
-      enforceDefaultsOnOptional: false
+      treatDefaultedOptionalAsRequired: false,
+      supplyDefaultsInType: false
     },
     settings
   ) as Settings;
