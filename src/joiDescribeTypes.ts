@@ -26,6 +26,10 @@ export interface BaseDescribe extends Joi.Description {
      */
     presence?: 'optional' | 'required';
     /**
+     * Default object value
+     */
+    default?: unknown;
+    /**
      * https://joi.dev/api/#objectunknownallow
      */
     unknown?: boolean;

@@ -102,6 +102,11 @@ export interface BaseTypeContent {
    * If this is an object property is it required
    */
   required?: boolean;
+
+  /**
+   * Default value
+   */
+  value?: unknown
 }
 
 /**
