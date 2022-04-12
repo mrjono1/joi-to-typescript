@@ -69,6 +69,15 @@ export interface Settings {
    * @default '  ' (two spaces)
    */
   readonly indentationChacters: string;
+  /**
+   * If a field has a default and is optional, consider it as required
+   */
+  readonly treatDefaultedOptionalAsRequired: boolean;
+  /**
+   * If a field has a default, modify the resulting field to equal
+   * `field: <default> | type` rather than `field: type`
+   */
+  readonly supplyDefaultsInType: boolean;
 }
 
 export interface ConvertedType {
@@ -93,6 +102,11 @@ export interface BaseTypeContent {
    * If this is an object property is it required
    */
   required?: boolean;
+
+  /**
+   * Default value
+   */
+  value?: unknown
 }
 
 /**

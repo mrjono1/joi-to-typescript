@@ -30,7 +30,9 @@ function defaultSettings(settings: Partial<Settings>): Settings {
       commentEverything: false,
       ignoreFiles: [],
       indentationChacters: '  ',
-      honorCastTo: []
+      honorCastTo: [],
+      treatDefaultedOptionalAsRequired: false,
+      supplyDefaultsInType: false
     },
     settings
   ) as Settings;

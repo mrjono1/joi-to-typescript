@@ -21,21 +21,22 @@ const validCastTo = ['string', 'number'];
 function getCommonDetails(
   details: Describe,
   settings: Settings
-): { interfaceOrTypeName?: string; jsDoc: JsDoc; required: boolean } {
+): { interfaceOrTypeName?: string; jsDoc: JsDoc; required: boolean, value?: unknown } {
   const interfaceOrTypeName = getInterfaceOrTypeName(settings, details);
   const description = details.flags?.description;
   const presence = details.flags?.presence;
+  const value = details.flags?.default;
   const example = details.examples?.[0];
 
   let required;
-  if (presence === 'optional') {
-    required = false;
-  } else if (presence === 'required') {
+  if (presence === 'required' || (settings.treatDefaultedOptionalAsRequired && value !== undefined)) {
     required = true;
+  } else if (presence === 'optional') {
+    required = false;
   } else {
     required = settings.defaultToRequired;
   }
-  return { interfaceOrTypeName, jsDoc: { description, example }, required };
+  return { interfaceOrTypeName, jsDoc: { description, example }, required, value };
 }
 
 export function getAllCustomTypes(parsedSchema: TypeContent): string[] {
@@ -77,6 +78,18 @@ function getDescriptionStr(settings: Settings, name: string, jsDoc?: JsDoc, inde
   return lines.map(line => `${getIndentStr(settings, indentLevel)}${line}`).join('\n') + '\n';
 }
 
+const wrapValue = (value: any): string | object | boolean | number => {
+  if (typeof value === 'string') {
+    return `"${value}"`
+  } else if (Array.isArray(value)) {
+    return `[${value.map((av) => wrapValue(av))}]`
+  } else if (typeof value === 'object') {
+    return JSON.stringify(value)
+  } else {
+    return value
+  }
+}
+
 function typeContentToTsHelper(
   settings: Settings,
   parsedSchema: TypeContent,
@@ -85,7 +98,11 @@ function typeContentToTsHelper(
 ): { tsContent: string; jsDoc?: JsDoc } {
   if (!parsedSchema.__isRoot) {
     return {
-      tsContent: parsedSchema.content,
+      tsContent: settings.supplyDefaultsInType
+        ? parsedSchema.value !== undefined
+          ? `${wrapValue(parsedSchema.value)} | ${parsedSchema.content}`
+          : parsedSchema.content
+        : parsedSchema.content,
       jsDoc: parsedSchema.jsDoc
     };
   }
@@ -106,7 +123,11 @@ function typeContentToTsHelper(
         // TODO: might need a better way to add the parens for union
         content = `(${content})`;
       }
-      const arrayStr = `${content}[]`;
+      const arrayStr = settings.supplyDefaultsInType
+        ? parsedSchema.value !== undefined
+          ? `${wrapValue(parsedSchema.value)} | ${content}`
+          : `${content}[]`
+        : `${content}[]`;
       if (doExport) {
         return {
           tsContent: `export type ${parsedSchema.interfaceOrTypeName} = ${arrayStr};`,
@@ -118,13 +139,18 @@ function typeContentToTsHelper(
     case 'union': {
       const childrenContent = children.map(child => typeContentToTsHelper(settings, child, indentLevel).tsContent);
       const unionStr = childrenContent.join(' | ');
+      const finalStr = settings.supplyDefaultsInType
+        ? parsedSchema.value !== undefined
+          ? `${wrapValue(parsedSchema.value)} | ${unionStr}`
+          : unionStr
+        : unionStr
       if (doExport) {
         return {
-          tsContent: `export type ${parsedSchema.interfaceOrTypeName} = ${unionStr};`,
+          tsContent: `export type ${parsedSchema.interfaceOrTypeName} = ${finalStr};`,
           jsDoc: parsedSchema.jsDoc
         };
       }
-      return { tsContent: unionStr, jsDoc: parsedSchema.jsDoc };
+      return { tsContent: finalStr, jsDoc: parsedSchema.jsDoc };
     }
     case 'object': {
       if (!children.length && !doExport) {
@@ -150,6 +176,10 @@ function typeContentToTsHelper(
           return `${descriptionStr}${indentString}${child.interfaceOrTypeName}${optionalStr}: ${childInfo.tsContent};`;
         });
         objectStr = `{\n${childrenContent.join('\n')}\n${getIndentStr(settings, indentLevel - 1)}}`;
+
+        if (parsedSchema.value !== undefined && settings.supplyDefaultsInType) {
+          objectStr = `${wrapValue(parsedSchema.value)} | ${objectStr}`
+        }
       }
       if (doExport) {
         return {
@@ -210,7 +240,7 @@ export function parseSchema(
         return parseBasicSchema(details, settings, rootSchema ?? false);
     }
   }
-  const { interfaceOrTypeName, jsDoc, required } = getCommonDetails(details, settings);
+  const { interfaceOrTypeName, jsDoc, required, value } = getCommonDetails(details, settings);
   if (interfaceOrTypeName && useLabels && !ignoreLabels.includes(interfaceOrTypeName)) {
     // skip parsing and just reference the label since we assumed we parsed the schema that the label references
     // TODO: do we want to use the labels description if we reference it?
@@ -280,6 +310,7 @@ export function parseSchema(
   parsedSchema.interfaceOrTypeName = interfaceOrTypeName;
   parsedSchema.jsDoc = jsDoc;
   parsedSchema.required = required;
+  parsedSchema.value = value;
   return parsedSchema;
 }
 
