@@ -71,11 +71,13 @@ export interface Settings {
   readonly indentationChacters: string;
   /**
    * If a field has a default and is optional, consider it as required
+   * @default false
    */
   readonly treatDefaultedOptionalAsRequired: boolean;
   /**
    * If a field has a default, modify the resulting field to equal
    * `field: <default> | type` rather than `field: type`
+   * @defatult false
    */
   readonly supplyDefaultsInType: boolean;
 }
@@ -106,7 +108,7 @@ export interface BaseTypeContent {
   /**
    * Default value
    */
-  value?: unknown
+  value?: unknown;
 }
 
 /**

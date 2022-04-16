@@ -1,8 +1,6 @@
-import Joi from 'joi'
+import Joi from 'joi';
 
-import {
-  convertSchema
-} from '../../index'
+import { convertSchema } from '../../index';
 
 describe('Test behaviour for optional fields with supplied defaults', function () {
   // A junk schema which tests a combination of values and defaults
@@ -18,12 +16,18 @@ describe('Test behaviour for optional fields with supplied defaults', function (
     }).default({
       val: 'Test'
     }),
-    alt2: Joi.alternatives().try(Joi.string(), Joi.number(), Joi.object({ val: Joi.boolean().default(true) })).default({ val: false })
-  })
+    alt2: Joi.alternatives()
+      .try(Joi.string(), Joi.number(), Joi.object({ val: Joi.boolean().default(true) }))
+      .default({ val: false })
+  });
 
   it('Test defaults as optional and excluded from types', function () {
-    const converted = convertSchema({ supplyDefaultsInType: false, treatDefaultedOptionalAsRequired: false }, schema, 'Test')
-    expect(converted).toBeDefined()
+    const converted = convertSchema(
+      { supplyDefaultsInType: false, treatDefaultedOptionalAsRequired: false },
+      schema,
+      'Test'
+    );
+    expect(converted).toBeDefined();
     expect(converted?.content).toEqual(`export interface Test {
   alt?: string | number;
   alt2?: string | number | {
@@ -37,13 +41,17 @@ describe('Test behaviour for optional fields with supplied defaults', function (
     val?: string;
   };
   str?: string;
-}`)
-  })
+}`);
+  });
   it('Test defaults as required and excluded from types', function () {
-    const converted = convertSchema({ supplyDefaultsInType: false, treatDefaultedOptionalAsRequired: true }, schema, 'Test')
+    const converted = convertSchema(
+      { supplyDefaultsInType: false, treatDefaultedOptionalAsRequired: true },
+      schema,
+      'Test'
+    );
 
     // Should be considered a valid schema
-    expect(converted).toBeDefined()
+    expect(converted).toBeDefined();
 
     expect(converted?.content).toEqual(`export interface Test {
   alt: string | number;
@@ -58,11 +66,15 @@ describe('Test behaviour for optional fields with supplied defaults', function (
     val?: string;
   };
   str: string;
-}`)
-  })
+}`);
+  });
   it('Test defaults as optional and included in types', function () {
-    const converted = convertSchema({ supplyDefaultsInType: true, treatDefaultedOptionalAsRequired: false }, schema, 'Test')
-    expect(converted).toBeDefined()
+    const converted = convertSchema(
+      { supplyDefaultsInType: true, treatDefaultedOptionalAsRequired: false },
+      schema,
+      'Test'
+    );
+    expect(converted).toBeDefined();
     expect(converted?.content).toEqual(`export interface Test {
   alt?: "Test" | string | number;
   alt2?: {"val":false} | string | number | {
@@ -76,11 +88,15 @@ describe('Test behaviour for optional fields with supplied defaults', function (
     val?: string;
   };
   str?: "Test" | string;
-}`)
-  })
+}`);
+  });
   it('Test defaults as required and included in types', function () {
-    const converted = convertSchema({ supplyDefaultsInType: true, treatDefaultedOptionalAsRequired: true }, schema, 'Test')
-    expect(converted).toBeDefined()
+    const converted = convertSchema(
+      { supplyDefaultsInType: true, treatDefaultedOptionalAsRequired: true },
+      schema,
+      'Test'
+    );
+    expect(converted).toBeDefined();
     expect(converted?.content).toEqual(`export interface Test {
   alt: "Test" | string | number;
   alt2: {"val":false} | string | number | {
@@ -94,6 +110,6 @@ describe('Test behaviour for optional fields with supplied defaults', function (
     val?: string;
   };
   str: "Test" | string;
-}`)
-  })
-})
+}`);
+  });
+});

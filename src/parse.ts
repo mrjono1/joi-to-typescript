@@ -21,7 +21,7 @@ const validCastTo = ['string', 'number'];
 function getCommonDetails(
   details: Describe,
   settings: Settings
-): { interfaceOrTypeName?: string; jsDoc: JsDoc; required: boolean, value?: unknown } {
+): { interfaceOrTypeName?: string; jsDoc: JsDoc; required: boolean; value?: unknown } {
   const interfaceOrTypeName = getInterfaceOrTypeName(settings, details);
   const description = details.flags?.description;
   const presence = details.flags?.presence;
@@ -78,17 +78,17 @@ function getDescriptionStr(settings: Settings, name: string, jsDoc?: JsDoc, inde
   return lines.map(line => `${getIndentStr(settings, indentLevel)}${line}`).join('\n') + '\n';
 }
 
-const wrapValue = (value: any): string | object | boolean | number => {
+const wrapValue = (value: unknown): string | object | boolean | number => {
   if (typeof value === 'string') {
-    return `"${value}"`
+    return `"${value}"`;
   } else if (Array.isArray(value)) {
-    return `[${value.map((av) => wrapValue(av))}]`
+    return `[${value.map(av => wrapValue(av))}]`;
   } else if (typeof value === 'object') {
-    return JSON.stringify(value)
+    return JSON.stringify(value);
   } else {
-    return value
+    return `${value}`;
   }
-}
+};
 
 function typeContentToTsHelper(
   settings: Settings,
@@ -143,7 +143,7 @@ function typeContentToTsHelper(
         ? parsedSchema.value !== undefined
           ? `${wrapValue(parsedSchema.value)} | ${unionStr}`
           : unionStr
-        : unionStr
+        : unionStr;
       if (doExport) {
         return {
           tsContent: `export type ${parsedSchema.interfaceOrTypeName} = ${finalStr};`,
@@ -178,7 +178,7 @@ function typeContentToTsHelper(
         objectStr = `{\n${childrenContent.join('\n')}\n${getIndentStr(settings, indentLevel - 1)}}`;
 
         if (parsedSchema.value !== undefined && settings.supplyDefaultsInType) {
-          objectStr = `${wrapValue(parsedSchema.value)} | ${objectStr}`
+          objectStr = `${wrapValue(parsedSchema.value)} | ${objectStr}`;
         }
       }
       if (doExport) {
