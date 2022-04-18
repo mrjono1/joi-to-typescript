@@ -24,7 +24,7 @@ export interface BaseDescribe extends Joi.Description {
     /**
      * https://joi.dev/api/#anypresencemode
      */
-    presence?: 'optional' | 'required';
+    presence?: 'optional' | 'required' | 'forbidden';
     /**
      * Default object value
      */
