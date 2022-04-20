@@ -5,7 +5,8 @@ import { convertSchema } from '../index';
 describe('forbidden tests', () => {
   test('enums using allow()', () => {
     const schema = Joi.object({
-      bit: Joi.boolean().forbidden()
+      bit: Joi.boolean().forbidden(),
+      customObject: Joi.object().meta({className: 'CustomObject'}).forbidden()
     })
       .meta({ className: 'TestSchema' })
       .description('a test schema definition');
@@ -17,6 +18,7 @@ describe('forbidden tests', () => {
  */
 export interface TestSchema {
   bit: undefined;
+  customObject: undefined;
 }`);
   });
 });
