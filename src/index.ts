@@ -2,7 +2,7 @@ import { AnySchema } from 'joi';
 import Path from 'path';
 import { writeFileSync } from 'fs';
 
-import { Settings, ConvertedType } from './types';
+import { Settings, ConvertedType, InputFileFilter } from './types';
 import { convertFilesInDirectory } from './convertFilesInDirectory';
 import { writeInterfaceFile } from './writeInterfaceFile';
 import { convertSchemaInternal } from './analyseSchemaFile';
@@ -32,7 +32,8 @@ function defaultSettings(settings: Partial<Settings>): Settings {
       indentationChacters: '  ',
       honorCastTo: [],
       treatDefaultedOptionalAsRequired: false,
-      supplyDefaultsInType: false
+      supplyDefaultsInType: false,
+      inputFileFilter: InputFileFilter.Default
     },
     settings
   ) as Settings;
