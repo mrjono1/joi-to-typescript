@@ -15,7 +15,8 @@ describe('empty schema directory', () => {
     const result = await convertFromDirectory({
       schemaDirectory: './src/__tests__/files/schemas',
       typeOutputDirectory,
-      inputFileFilter: InputFileFilter.ExcludeIndex
+      inputFileFilter: InputFileFilter.ExcludeIndex,
+      debug: true
     });
 
     expect(result).toBe(true);
