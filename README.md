@@ -233,6 +233,12 @@ export interface Settings {
    * @default false
    */
   supplyDefaultsInType: boolean;
+  /**
+   * Filter files you wish to parse
+   * The class `InputFileFilter` contains some default options
+   * @default *.ts files
+   */
+  inputFileFilter: RegExp;
 }
 ```
 

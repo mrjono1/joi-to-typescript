@@ -55,6 +55,13 @@ export async function convertFilesInDirectory(
         fileNamesToExport = fileNamesToExport.concat(thisDirsFileNamesToExport.typeFileNames);
       }
     } else {
+
+      if (!appSettings.inputFileFilter.test(schemaFileName)) {
+        if (appSettings.debug) {
+          console.debug(`Skipping ${schemaFileName} because it's excluded via inputFileFilter`);
+        }
+        continue;
+      }
       if (appSettings.ignoreFiles.includes(schemaFileName)) {
         if (appSettings.debug) {
           console.debug(`Skipping ${schemaFileName} because it's in your ignore files list`);

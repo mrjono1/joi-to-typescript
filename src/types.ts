@@ -80,6 +80,27 @@ export interface Settings {
    * @defatult false
    */
   readonly supplyDefaultsInType: boolean;
+  /**
+   * Filter files you wish to parse
+   * The class `InputFileFilter` contains some default options
+   * @default *.ts files
+   */
+  readonly inputFileFilter: RegExp;
+}
+
+export class InputFileFilter {
+  /**
+   * *.ts files
+   */
+  public static readonly Default = new RegExp(/\.(ts)$/);
+  /**
+   * *.ts files excluding index.ts files
+   */
+  public static readonly ExcludeIndex = new RegExp(/(?<!index)\.(ts)$/);
+  /**
+   * *.ts and *.js files
+   */
+  public static readonly IncludeJavaScript = new RegExp(/\.(ts|js)$/);
 }
 
 export interface ConvertedType {
