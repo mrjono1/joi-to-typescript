@@ -25,7 +25,7 @@ export function getInterfaceOrTypeName(settings: Settings, details: Describe): s
   console.log(JSON.stringify(details))
 
   if (details.flags?.presence === 'forbidden'){
-    return 'never';
+    return 'undefined';
   }
   if (settings.useLabelAsInterfaceName) {
     return details?.flags?.label?.replace(/\s/g, '');

@@ -16,7 +16,7 @@ describe('forbidden tests', () => {
  * a test schema definition
  */
 export interface TestSchema {
-  bit: never;
+  bit: undefined;
 }`);
   });
 });
