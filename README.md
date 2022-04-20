@@ -263,6 +263,7 @@ export interface Settings {
   ```
 - `.example()` - jsdoc
 - `.cast()` - currently will honor casting to string and number types, map and set to be added later
+- `.forbidden()` will set the type to `undefined`
 - And many others
 
 ## Contributing

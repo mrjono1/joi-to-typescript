@@ -22,6 +22,11 @@ export function getMetadataFromDetails(field: string, details: Describe): any[] 
  * @returns a string if it can find one
  */
 export function getInterfaceOrTypeName(settings: Settings, details: Describe): string | undefined {
+  console.log(JSON.stringify(details))
+
+  if (details.flags?.presence === 'forbidden'){
+    return 'undefined';
+  }
   if (settings.useLabelAsInterfaceName) {
     return details?.flags?.label?.replace(/\s/g, '');
   } else {
