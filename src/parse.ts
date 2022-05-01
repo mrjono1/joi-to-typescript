@@ -299,6 +299,7 @@ export function parseSchema(
     }
 
     if (settings.debug) {
+      // eslint-disable-next-line no-console
       console.debug(`Using '${typeToUse}' for unsupported type '${details.type}'`);
     }
     return makeTypeContentChild({ content: typeToUse, interfaceOrTypeName, jsDoc, required });

@@ -33,6 +33,7 @@ export async function convertFilesInDirectory(
     if (!appSettings.rootDirectoryOnly && lstatSync(subDirectoryPath).isDirectory()) {
       if (appSettings.ignoreFiles.includes(`${schemaFileName}/`)) {
         if (appSettings.debug) {
+          // eslint-disable-next-line no-console
           console.debug(`Skipping ${subDirectoryPath} because it's in your ignore files list`);
         }
         continue;
@@ -58,12 +59,14 @@ export async function convertFilesInDirectory(
 
       if (!appSettings.inputFileFilter.test(schemaFileName)) {
         if (appSettings.debug) {
+          // eslint-disable-next-line no-console
           console.debug(`Skipping ${schemaFileName} because it's excluded via inputFileFilter`);
         }
         continue;
       }
       if (appSettings.ignoreFiles.includes(schemaFileName)) {
         if (appSettings.debug) {
+          // eslint-disable-next-line no-console
           console.debug(`Skipping ${schemaFileName} because it's in your ignore files list`);
         }
         continue;
