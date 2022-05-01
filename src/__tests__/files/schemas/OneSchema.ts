@@ -9,5 +9,6 @@ export const TestSchema = Joi.object({
   .description('a test schema definition');
 
 export const purple = (): void => {
+  // eslint-disable-next-line no-console
   console.log('this is not a schema');
 };

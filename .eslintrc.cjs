@@ -25,7 +25,10 @@ module.exports = {
       'error',
       {
         functions: false
-      }
-    ]
+      },
+
+
+    ],
+    "no-console": "error"
   }
 };
