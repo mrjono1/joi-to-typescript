@@ -201,6 +201,17 @@ export function typeContentToTs(settings: Settings, parsedSchema: TypeContent, d
   return `${descriptionStr}${tsContent}`;
 }
 
+/**
+ * If the first item in the details array is { override: true } then remove it from the array
+ */
+function popOffOverride(details: Describe) {
+  const allowAr = details.allow as any[] | undefined
+  // afaik schema.describe() converts Joi.override to { override: true }
+  if (allowAr && allowAr[0]?.override ) {
+    allowAr.shift()
+  }
+}
+
 // TODO: will be issues with useLabels if a nested schema has a label but is not exported on its own
 
 // TODO: will need to pass around ignoreLabels more
@@ -219,6 +230,7 @@ export function parseSchema(
   ignoreLabels: string[] = [],
   rootSchema?: boolean
 ): TypeContent | undefined {
+  popOffOverride(details)
   function parseHelper(): TypeContent | undefined {
     // Convert type if a valid cast type is present
     if (details.flags?.cast && validCastTo.includes(details.flags?.cast as 'number' | 'string')) {
