@@ -109,6 +109,8 @@ function typeContentToTsHelper(
 
   const children = parsedSchema.children;
   if (doExport && !parsedSchema.interfaceOrTypeName) {
+    // Cannot figured a way to make this error happen
+    /* istanbul ignore next */
     throw new Error(`Type ${JSON.stringify(parsedSchema)} needs a name to be exported`);
   }
   switch (parsedSchema.joinOperation) {
@@ -201,6 +203,28 @@ export function typeContentToTs(settings: Settings, parsedSchema: TypeContent, d
   return `${descriptionStr}${tsContent}`;
 }
 
+function parseHelper(details: Describe, settings: Settings, rootSchema?: boolean): TypeContent | undefined {
+  // Convert type if a valid cast type is present
+  if (details.flags?.cast && validCastTo.includes(details.flags?.cast as 'number' | 'string')) {
+    // @NOTE - if additional values are added beyond 'string' and 'number' further transformation will
+    // be needed on the details object to support those types
+    details.type = details.flags?.cast as 'string' | 'number';
+  }
+
+  switch (details.type) {
+    case 'array':
+      return parseArray(details, settings);
+    case 'string':
+      return parseStringSchema(details, settings, rootSchema ?? false);
+    case 'alternatives':
+      return parseAlternatives(details, settings);
+    case 'object':
+      return parseObjects(details, settings);
+    default:
+      return parseBasicSchema(details, settings, rootSchema ?? false);
+  }
+}
+
 // TODO: will be issues with useLabels if a nested schema has a label but is not exported on its own
 
 // TODO: will need to pass around ignoreLabels more
@@ -219,27 +243,6 @@ export function parseSchema(
   ignoreLabels: string[] = [],
   rootSchema?: boolean
 ): TypeContent | undefined {
-  function parseHelper(): TypeContent | undefined {
-    // Convert type if a valid cast type is present
-    if (details.flags?.cast && validCastTo.includes(details.flags?.cast as 'number' | 'string')) {
-      // @NOTE - if additional values are added beyond 'string' and 'number' further transformation will
-      // be needed on the details object to support those types
-      details.type = details.flags?.cast as 'string' | 'number';
-    }
-
-    switch (details.type) {
-      case 'array':
-        return parseArray(details, settings);
-      case 'string':
-        return parseStringSchema(details, settings, rootSchema ?? false);
-      case 'alternatives':
-        return parseAlternatives(details, settings);
-      case 'object':
-        return parseObjects(details, settings);
-      default:
-        return parseBasicSchema(details, settings, rootSchema ?? false);
-    }
-  }
   const { interfaceOrTypeName, jsDoc, required, value } = getCommonDetails(details, settings);
   if (interfaceOrTypeName && useLabels && !ignoreLabels.includes(interfaceOrTypeName)) {
     // skip parsing and just reference the label since we assumed we parsed the schema that the label references
@@ -304,7 +307,7 @@ export function parseSchema(
     }
     return makeTypeContentChild({ content: typeToUse, interfaceOrTypeName, jsDoc, required });
   }
-  const parsedSchema = parseHelper();
+  const parsedSchema = parseHelper(details, settings, rootSchema);
   if (!parsedSchema) {
     return undefined;
   }
@@ -323,10 +326,10 @@ function parseBasicSchema(details: BasicDescribe, settings: Settings, rootSchema
   if (joiType === 'date') {
     content = 'Date';
   }
-  const values = details.allow;
+  const values = getAllowValues(details.allow);
 
   // at least one value
-  if (values && values.length !== 0) {
+  if (values.length !== 0) {
     const allowedValues = createAllowTypes(details);
 
     if (values[0] === null) {
@@ -347,11 +350,27 @@ function parseBasicSchema(details: BasicDescribe, settings: Settings, rootSchema
   }
 }
 
+/**
+ * Ensure values is an array and remove any junk
+ * - If the first item in the details array is { override: true } then remove it from the array
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function getAllowValues(allow: unknown[] | undefined): any[] {
+  if (!allow || allow.length === 0) {
+    return [];
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const allowValues = allow.filter(item => !(item as any)?.override);
+
+  return allowValues;
+}
+
 function createAllowTypes(details: BaseDescribe): TypeContent[] {
-  const values = details.allow;
+  const values = getAllowValues(details.allow);
 
   // at least one value
-  if (values && values.length !== 0) {
+  if (values.length !== 0) {
     const allowedValues = values.map((value: unknown) =>
       makeTypeContentChild({ content: typeof value === 'string' ? toStringLiteral(value) : `${value}` })
     );
@@ -368,10 +387,10 @@ const stringAllowValues = [null, ''];
 
 function parseStringSchema(details: StringDescribe, settings: Settings, rootSchema: boolean): TypeContent | undefined {
   const { interfaceOrTypeName, jsDoc } = getCommonDetails(details, settings);
-  const values = details.allow;
+  const values = getAllowValues(details.allow);
 
   // at least one value
-  if (values && values.length !== 0) {
+  if (values.length !== 0) {
     if (values.length === 1 && values[0] === '') {
       // special case of empty string sometimes used in Joi to allow just empty string
     } else {
