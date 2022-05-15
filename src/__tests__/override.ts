@@ -1,20 +1,16 @@
 import Joi from 'joi';
 import { convertSchema } from '../index';
 
-
-
 describe('override tests', () => {
-
   test("figure out what joi's doing", () => {
-    const val = Joi.override
-    expect(val).toBe(Joi.override)
-    if (val != Joi.override) throw "not equal" // double checking
-  })
-
+    const val = Joi.override;
+    expect(val).toBe(Joi.override);
+    if (val != Joi.override) throw 'not equal'; // double checking
+  });
 
   test('control: valid without Joi.override', () => {
     const schema = Joi.object({
-      foo: Joi.string().valid("val1", "val2").valid("val3", "val4")
+      foo: Joi.string().valid('val1', 'val2').valid('val3', 'val4')
     })
       .meta({ className: 'OverrideSchema' })
       .description('a test schema definition');
@@ -30,10 +26,9 @@ export interface OverrideSchema {
 }`);
   });
 
-
   test('no error with valid() strings and Joi.override', () => {
     const schema = Joi.object({
-      foo: Joi.string().valid("val1", "val2").valid(Joi.override, "val3", "val4")
+      foo: Joi.string().valid('val1', 'val2').valid(Joi.override, 'val3', 'val4')
     })
       .meta({ className: 'OverrideSchema' })
       .description('a test schema definition');
@@ -86,7 +81,6 @@ export interface OverrideSchema {
 }`);
   });
 
-
   // skipping -- these all fail:
   // original String sends allows (of non strings) to parseStringSchema
   // and then to toStringLiteral
@@ -129,11 +123,10 @@ export interface OverrideSchema {
 }`);
   });
 
-
   test.skip('[not implemented] no error with any().invalid(Joi.string())', () => {
     const schema = Joi.object({
-      foo: Joi.any().invalid( Joi.string() )
-        // .invalid( Joi.string() ).invalid( Joi.number() )
+      foo: Joi.any().invalid(Joi.string())
+      // .invalid( Joi.string() ).invalid( Joi.number() )
     })
       .meta({ className: 'OverrideSchema' })
       .description('a test schema definition');
@@ -151,7 +144,7 @@ export interface OverrideSchema {
 
   test.skip('[not implemented] no error with any().invalid(string).invalid(Joi.override, number)', () => {
     const schema = Joi.object({
-      foo: Joi.any().invalid( Joi.string() ).invalid(Joi.override, Joi.number() )
+      foo: Joi.any().invalid(Joi.string()).invalid(Joi.override, Joi.number())
     })
       .meta({ className: 'OverrideSchema' })
       .description('a test schema definition');
@@ -167,8 +160,7 @@ export interface OverrideSchema {
 }`);
   });
 
-  test.skip("[unfinished] try mixing .valid() .allow() .invalid() on one schema", () => {
-    throw new Error("not implemented")
-  })
-
+  test.skip('[unfinished] try mixing .valid() .allow() .invalid() on one schema', () => {
+    throw new Error('not implemented');
+  });
 });

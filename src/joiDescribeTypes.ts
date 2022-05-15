@@ -46,6 +46,10 @@ export interface BaseDescribe extends Joi.Description {
     rule: Describe;
   }[];
   metas?: Meta[];
+  /**
+   * The fist item in this array could be this instead of a value { override?: boolean;};
+   */
+  allow?: unknown[];
 }
 
 export interface Meta {
@@ -70,7 +74,6 @@ export interface AlternativesDescribe extends BaseDescribe {
 
 export interface StringDescribe extends BaseDescribe {
   type: 'string';
-  allow?: string[];
 }
 
 export interface BasicDescribe extends BaseDescribe {

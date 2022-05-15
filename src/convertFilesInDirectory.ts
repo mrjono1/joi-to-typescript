@@ -56,7 +56,6 @@ export async function convertFilesInDirectory(
         fileNamesToExport = fileNamesToExport.concat(thisDirsFileNamesToExport.typeFileNames);
       }
     } else {
-
       if (!appSettings.inputFileFilter.test(schemaFileName)) {
         if (appSettings.debug) {
           // eslint-disable-next-line no-console
