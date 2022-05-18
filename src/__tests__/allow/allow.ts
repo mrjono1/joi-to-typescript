@@ -133,4 +133,36 @@ export interface Parent {
   enumeration?: 'Option1' | 'Option2' | 'Option3' | 0 | 1 | 2;
 }`);
   });
+
+
+  test('allow joi.ref dont crash', () => {
+    const schema = Joi.object()
+  .label('SignUp')
+  .keys({
+    password: Joi.string()
+      .required()
+      .description('The password of the authenticating user')
+      .example('test-PASSWORD123'),
+    repeatPassword: Joi.string()
+      .required()
+      .allow(Joi.ref('password'))
+      .description('Repeat the password to ensure no typos')
+      .example('test-PASSWORD123')
+  }).meta({ className: 'TestSchema' });
+
+  const result = convertSchema({}, schema);
+  expect(result).not.toBeUndefined;
+  expect(result?.content).toBe(`export interface TestSchema {
+  /**
+   * The password of the authenticating user
+   * @example test-PASSWORD123
+   */
+  password: string;
+  /**
+   * Repeat the password to ensure no typos
+   * @example test-PASSWORD123
+   */
+  repeatPassword: string;
+}`);
+  })
 });

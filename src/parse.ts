@@ -352,7 +352,6 @@ function parseBasicSchema(details: BasicDescribe, settings: Settings, rootSchema
 
 /**
  * Ensure values is an array and remove any junk
- * - If the first item in the details array is { override: true } then remove it from the array
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getAllowValues(allow: unknown[] | undefined): any[] {
@@ -360,8 +359,11 @@ function getAllowValues(allow: unknown[] | undefined): any[] {
     return [];
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const allowValues = allow.filter(item => !(item as any)?.override);
+  // This may contain things like, so remove them
+  // { override: true }
+  // { ref: {...}}
+  // If a user wants a complex custom type they need to use an interface
+  const allowValues = allow.filter(item => item === null || !(typeof item === 'object'));
 
   return allowValues;
 }
