@@ -21,8 +21,8 @@ export function filterMap<T, K>(list: T[], mapper: (t: T) => K | undefined): K[]
  * Escape value so that it can be go into single quoted string literal.
  * @param value
  */
-export function toStringLiteral(value: string): string {
-  return `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
+export function toStringLiteral(value?: string): string {
+  return `'${value?.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
 }
 
 export function isDescribe(x: unknown): x is Describe {

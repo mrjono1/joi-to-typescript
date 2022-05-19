@@ -105,6 +105,10 @@ export class InputFileFilter {
 
 export interface ConvertedType {
   interfaceOrTypeName: string;
+  /**
+   * List of interfaces this interface extends
+   */
+  extendedInterfaces?: string[];
   content: string;
   customTypes: string[];
   location?: string;
@@ -141,6 +145,11 @@ export interface TypeContentRoot extends BaseTypeContent {
    * How to join the children types together
    */
   joinOperation: 'list' | 'union' | 'intersection' | 'object';
+
+  /**
+   * List of interfaces this interface/object extends
+   */
+  extendedInterfaces?: string[];
 
   /**
    * Children types
@@ -210,7 +219,7 @@ export interface Property {
    */
   name: string;
   /**
-   * number, string literals, Joi.label, etc
+   * number, string literals, Joi.meta({className:value}), etc
    */
   type: string;
   /**

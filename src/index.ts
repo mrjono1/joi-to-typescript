@@ -87,6 +87,8 @@ export async function convertFromDirectory(settings: Partial<Settings>): Promise
     throw new Error('No schemas found, cannot generate interfaces');
   }
 
+  // TODO: remove fields from derived interfaces here
+
   for (const exportType of filesInDirectory.types) {
     writeInterfaceFile(appSettings, exportType.typeFileName, filesInDirectory.types);
   }

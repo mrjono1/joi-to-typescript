@@ -42,7 +42,7 @@ export interface Foo {
   a?: string;
 }
 
-export interface FooBar {
+export interface FooBar extends Bar, Foo {
   a?: string;
   b?: string;
 }

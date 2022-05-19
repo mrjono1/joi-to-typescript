@@ -31,10 +31,41 @@ export function getInterfaceOrTypeName(settings: Settings, details: Describe): s
     if (details?.metas && details.metas.length > 0) {
       const classNames: string[] = getMetadataFromDetails('className', details);
       if (classNames.length !== 0) {
-        // If Joi.concat() has been used then there may be multiple
-        // get the last one as that should be the correct one
+        // If Joi.concat() or Joi.keys() has been used then there may be multiple
+        // get the last one as this is the current className
         const className = classNames.pop();
         return className?.replace(/\s/g, '');
+      }
+    }
+    return undefined;
+  }
+}
+
+/**
+ * Get the interface name from the Joi
+ * @returns a string if it can find one
+ */
+export function getExtendedInterfaces(settings: Settings, details: Describe): string[] | undefined {
+  if (details.flags?.presence === 'forbidden') {
+    return undefined;
+  }
+  if (settings.useLabelAsInterfaceName) {
+    return undefined;
+  } else {
+    if (details?.metas && details.metas.length > 0) {
+      const allClassNames: string[] = getMetadataFromDetails('className', details);
+      if (allClassNames.length !== 0) {
+        // If Joi.concat() has been used then there may be multiple
+        // get the last one as that should be the correct one
+        const classNames = allClassNames.reverse().filter((value, index, self) => {
+          // Remove Duplicates
+          return self.indexOf(value) === index;
+        }).map(className => className.replace(/\s/g, ''));
+        classNames.shift();
+        if (classNames.length === 0){
+          return undefined;
+        }
+        return classNames;
       }
     }
     return undefined;
@@ -66,4 +97,22 @@ export function ensureInterfaceorTypeName(settings: Settings, details: Describe,
       }
     }
   }
+}
+
+/**
+ * Ensure values is an array and remove any junk
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function getAllowValues(allow: unknown[] | undefined): any[] {
+  if (!allow || allow.length === 0) {
+    return [];
+  }
+
+  // This may contain things like, so remove them
+  // { override: true }
+  // { ref: {...}}
+  // If a user wants a complex custom type they need to use an interface
+  const allowValues = allow.filter(item => item === null || !(typeof item === 'object'));
+
+  return allowValues;
 }
