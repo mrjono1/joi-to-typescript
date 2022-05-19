@@ -47,13 +47,18 @@ export interface BaseDescribe extends Joi.Description {
   }[];
   metas?: Meta[];
   /**
-   * The fist item in this array could be this instead of a value { override?: boolean;};
+   * The fist item in this array could be this instead of a value { override?: boolean} or contain { ref : {}};
    */
   allow?: unknown[];
 }
 
+/**
+ * Meta is a custom object provided by Joi
+ * The values here are how this libarary uses it they are not standard Joi
+ */
 export interface Meta {
   className?: string;
+  unknownType?: string;
 }
 
 export interface ArrayDescribe extends BaseDescribe {
