@@ -42,37 +42,6 @@ export function getInterfaceOrTypeName(settings: Settings, details: Describe): s
 }
 
 /**
- * Get the interface name from the Joi
- * @returns a string if it can find one
- */
-export function getExtendedInterfaces(settings: Settings, details: Describe): string[] | undefined {
-  if (details.flags?.presence === 'forbidden') {
-    return undefined;
-  }
-  if (settings.useLabelAsInterfaceName) {
-    return undefined;
-  } else {
-    if (details?.metas && details.metas.length > 0) {
-      const allClassNames: string[] = getMetadataFromDetails('className', details);
-      if (allClassNames.length !== 0) {
-        // If Joi.concat() has been used then there may be multiple
-        // get the last one as that should be the correct one
-        const classNames = allClassNames.reverse().filter((value, index, self) => {
-          // Remove Duplicates
-          return self.indexOf(value) === index;
-        }).map(className => className.replace(/\s/g, ''));
-        classNames.shift();
-        if (classNames.length === 0){
-          return undefined;
-        }
-        return classNames;
-      }
-    }
-    return undefined;
-  }
-}
-
-/**
  * Note: this is updating by reference
  */
 export function ensureInterfaceorTypeName(settings: Settings, details: Describe, interfaceOrTypeName: string): void {

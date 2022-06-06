@@ -41,8 +41,8 @@ function getCommonDetails(
   return { interfaceOrTypeName, jsDoc: { description, example }, required, value };
 }
 
-export function getAllCustomTypes(parsedSchema: TypeContent, extendedInterfaces?: string[]): string[] {
-  const customTypes = extendedInterfaces ?? [];
+export function getAllCustomTypes(parsedSchema: TypeContent): string[] {
+  const customTypes = [];
   if (parsedSchema.__isRoot) {
     customTypes.push(...parsedSchema.children.flatMap(child => getAllCustomTypes(child)));
   } else {
@@ -157,9 +157,8 @@ function typeContentToTsHelper(
         }
       }
       if (doExport) {
-        const extendsInterface = parsedSchema.extendedInterfaces && parsedSchema.extendedInterfaces.length !== 0 ? ` extends ${parsedSchema.extendedInterfaces?.join(', ')}` : ''
         return {
-          tsContent: `export interface ${parsedSchema.interfaceOrTypeName}${extendsInterface} ${objectStr}`,
+          tsContent: `export interface ${parsedSchema.interfaceOrTypeName} ${objectStr}`,
           jsDoc: parsedSchema.jsDoc
         };
       }
@@ -215,8 +214,7 @@ export function parseSchema(
   settings: Settings,
   useLabels = true,
   ignoreLabels: string[] = [],
-  rootSchema?: boolean,
-  extendedInterfaces?: string[]
+  rootSchema?: boolean
 ): TypeContent | undefined {
   const { interfaceOrTypeName, jsDoc, required, value } = getCommonDetails(details, settings);
   if (interfaceOrTypeName && useLabels && !ignoreLabels.includes(interfaceOrTypeName)) {
@@ -290,9 +288,7 @@ export function parseSchema(
   parsedSchema.jsDoc = jsDoc;
   parsedSchema.required = required;
   parsedSchema.value = value;
-  if (parsedSchema.__isRoot) {
-    parsedSchema.extendedInterfaces = extendedInterfaces;
-  }
+
   return parsedSchema;
 }
 
@@ -491,10 +487,6 @@ function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent 
       return 0;
     });
   }
-
-  // todo extends here??
-
-  //extendedInterfaces
 
   const { interfaceOrTypeName, jsDoc } = getCommonDetails(details, settings);
 

@@ -5,7 +5,7 @@ import { Settings, ConvertedType, GenerateTypeFile } from './types';
 import { getTypeFileNameFromSchema } from './write';
 import { getAllCustomTypes, parseSchema, typeContentToTs } from './parse';
 import { Describe } from './joiDescribeTypes';
-import { ensureInterfaceorTypeName, getExtendedInterfaces, getInterfaceOrTypeName } from './joiUtils';
+import { ensureInterfaceorTypeName, getInterfaceOrTypeName } from './joiUtils';
 
 export function convertSchemaInternal(
   settings: Settings,
@@ -16,7 +16,6 @@ export function convertSchemaInternal(
   const details = joi.describe() as Describe;
 
   const interfaceOrTypeName = getInterfaceOrTypeName(settings, details) || exportedName;
-  const extendedInterfaces = getExtendedInterfaces(settings, details);
 
   if (!interfaceOrTypeName) {
     if (settings.useLabelAsInterfaceName) {
@@ -48,15 +47,14 @@ export function convertSchemaInternal(
 
   ensureInterfaceorTypeName(settings, details, interfaceOrTypeName);
 
-  const parsedSchema = parseSchema(details, settings, false, undefined, rootSchema, extendedInterfaces);
+  const parsedSchema = parseSchema(details, settings, false, undefined, rootSchema);
   if (parsedSchema) {
-    const customTypes = getAllCustomTypes(parsedSchema, extendedInterfaces);
+    const customTypes = getAllCustomTypes(parsedSchema);
     const content = typeContentToTs(settings, parsedSchema, true);
     return {
       interfaceOrTypeName,
       customTypes,
-      content,
-      extendedInterfaces
+      content
     };
   }
 
