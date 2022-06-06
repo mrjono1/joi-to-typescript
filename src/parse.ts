@@ -10,7 +10,7 @@ import {
   StringDescribe
 } from './joiDescribeTypes';
 import { getAllowValues, getInterfaceOrTypeName, getMetadataFromDetails } from './joiUtils';
-import { getIndentStr, getJsDocString } from 'write';
+import { getIndentStr, getJsDocString } from './write';
 
 // see __tests__/joiTypes.ts for more information
 export const supportedJoiTypes = ['array', 'object', 'alternatives', 'any', 'boolean', 'date', 'number', 'string'];

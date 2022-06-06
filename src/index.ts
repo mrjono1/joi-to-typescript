@@ -5,7 +5,7 @@ import { Settings, ConvertedType, InputFileFilter } from './types';
 import { convertFilesInDirectory } from './convertFilesInDirectory';
 import { writeInterfaceFile } from './writeInterfaceFile';
 import { convertSchemaInternal } from './analyseSchemaFile';
-import { writeIndexFile } from 'write';
+import { writeIndexFile } from './write';
 
 export { Settings };
 
