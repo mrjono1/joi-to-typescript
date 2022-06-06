@@ -9,7 +9,8 @@ import {
   ObjectDescribe,
   StringDescribe
 } from './joiDescribeTypes';
-import { getInterfaceOrTypeName, getMetadataFromDetails } from './joiUtils';
+import { getAllowValues, getInterfaceOrTypeName, getMetadataFromDetails } from './joiUtils';
+import { getIndentStr, getJsDocString } from 'write';
 
 // see __tests__/joiTypes.ts for more information
 export const supportedJoiTypes = ['array', 'object', 'alternatives', 'any', 'boolean', 'date', 'number', 'string'];
@@ -23,6 +24,7 @@ function getCommonDetails(
   settings: Settings
 ): { interfaceOrTypeName?: string; jsDoc: JsDoc; required: boolean; value?: unknown } {
   const interfaceOrTypeName = getInterfaceOrTypeName(settings, details);
+
   const description = details.flags?.description;
   const presence = details.flags?.presence;
   const value = details.flags?.default;
@@ -40,42 +42,13 @@ function getCommonDetails(
 }
 
 export function getAllCustomTypes(parsedSchema: TypeContent): string[] {
+  const customTypes = [];
   if (parsedSchema.__isRoot) {
-    return parsedSchema.children.flatMap(child => getAllCustomTypes(child));
+    customTypes.push(...parsedSchema.children.flatMap(child => getAllCustomTypes(child)));
   } else {
-    return parsedSchema.customTypes || [];
+    customTypes.push(...parsedSchema.customTypes ?? []);
   }
-}
-
-/**
- * Get all indent characters for this indent level
- * @param settings includes what the indent characters are
- * @param indentLevel how many indent levels
- */
-function getIndentStr(settings: Settings, indentLevel: number): string {
-  return settings.indentationChacters.repeat(indentLevel);
-}
-
-/**
- * Get Interface jsDoc
- */
-function getDescriptionStr(settings: Settings, name: string, jsDoc?: JsDoc, indentLevel = 0): string {
-  if (!settings.commentEverything && !jsDoc?.description && !jsDoc?.example) {
-    return '';
-  }
-
-  const lines = ['/**'];
-
-  if (settings.commentEverything || (jsDoc && jsDoc.description)) {
-    lines.push(` * ${jsDoc?.description ?? name}`);
-  }
-
-  if (jsDoc?.example) {
-    lines.push(` * @example ${jsDoc.example}`);
-  }
-
-  lines.push(' */');
-  return lines.map(line => `${getIndentStr(settings, indentLevel)}${line}`).join('\n') + '\n';
+  return customTypes;
 }
 
 const wrapValue = (value: unknown): string | object | boolean | number => {
@@ -167,7 +140,7 @@ function typeContentToTsHelper(
           const childInfo = typeContentToTsHelper(settings, child, indentLevel + 1, false);
 
           // forcing name to be defined here, might need a runtime check but it should be set if we are here
-          const descriptionStr = getDescriptionStr(
+          const descriptionStr = getJsDocString(
             settings,
             child.interfaceOrTypeName as string,
             childInfo.jsDoc,
@@ -199,7 +172,7 @@ function typeContentToTsHelper(
 export function typeContentToTs(settings: Settings, parsedSchema: TypeContent, doExport = false): string {
   const { tsContent, jsDoc } = typeContentToTsHelper(settings, parsedSchema, 1, doExport);
   // forcing name to be defined here, might need a runtime check but it should be set if we are here
-  const descriptionStr = getDescriptionStr(settings, parsedSchema.interfaceOrTypeName as string, jsDoc);
+  const descriptionStr = getJsDocString(settings, parsedSchema.interfaceOrTypeName as string, jsDoc);
   return `${descriptionStr}${tsContent}`;
 }
 
@@ -315,6 +288,7 @@ export function parseSchema(
   parsedSchema.jsDoc = jsDoc;
   parsedSchema.required = required;
   parsedSchema.value = value;
+
   return parsedSchema;
 }
 
@@ -348,24 +322,6 @@ function parseBasicSchema(details: BasicDescribe, settings: Settings, rootSchema
   } else {
     return makeTypeContentChild({ content, interfaceOrTypeName, jsDoc });
   }
-}
-
-/**
- * Ensure values is an array and remove any junk
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function getAllowValues(allow: unknown[] | undefined): any[] {
-  if (!allow || allow.length === 0) {
-    return [];
-  }
-
-  // This may contain things like, so remove them
-  // { override: true }
-  // { ref: {...}}
-  // If a user wants a complex custom type they need to use an interface
-  const allowValues = allow.filter(item => item === null || !(typeof item === 'object'));
-
-  return allowValues;
 }
 
 function createAllowTypes(details: BaseDescribe): TypeContent[] {

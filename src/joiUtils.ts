@@ -31,8 +31,8 @@ export function getInterfaceOrTypeName(settings: Settings, details: Describe): s
     if (details?.metas && details.metas.length > 0) {
       const classNames: string[] = getMetadataFromDetails('className', details);
       if (classNames.length !== 0) {
-        // If Joi.concat() has been used then there may be multiple
-        // get the last one as that should be the correct one
+        // If Joi.concat() or Joi.keys() has been used then there may be multiple
+        // get the last one as this is the current className
         const className = classNames.pop();
         return className?.replace(/\s/g, '');
       }
@@ -66,4 +66,22 @@ export function ensureInterfaceorTypeName(settings: Settings, details: Describe,
       }
     }
   }
+}
+
+/**
+ * Ensure values is an array and remove any junk
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function getAllowValues(allow: unknown[] | undefined): any[] {
+  if (!allow || allow.length === 0) {
+    return [];
+  }
+
+  // This may contain things like, so remove them
+  // { override: true }
+  // { ref: {...}}
+  // If a user wants a complex custom type they need to use an interface
+  const allowValues = allow.filter(item => item === null || !(typeof item === 'object'));
+
+  return allowValues;
 }

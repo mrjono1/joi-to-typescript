@@ -2,7 +2,7 @@ import Joi, { AnySchema } from 'joi';
 import Path from 'path';
 
 import { Settings, ConvertedType, GenerateTypeFile } from './types';
-import { getTypeFileNameFromSchema } from './index';
+import { getTypeFileNameFromSchema } from './write';
 import { getAllCustomTypes, parseSchema, typeContentToTs } from './parse';
 import { Describe } from './joiDescribeTypes';
 import { ensureInterfaceorTypeName, getInterfaceOrTypeName } from './joiUtils';

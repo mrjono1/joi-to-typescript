@@ -210,7 +210,7 @@ export interface Property {
    */
   name: string;
   /**
-   * number, string literals, Joi.label, etc
+   * number, string literals, Joi.meta({className:value}), etc
    */
   type: string;
   /**

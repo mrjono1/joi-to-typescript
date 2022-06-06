@@ -1,11 +1,11 @@
 import { AnySchema } from 'joi';
 import Path from 'path';
-import { writeFileSync } from 'fs';
 
 import { Settings, ConvertedType, InputFileFilter } from './types';
 import { convertFilesInDirectory } from './convertFilesInDirectory';
 import { writeInterfaceFile } from './writeInterfaceFile';
 import { convertSchemaInternal } from './analyseSchemaFile';
+import { writeIndexFile } from 'write';
 
 export { Settings };
 
@@ -51,28 +51,6 @@ export function convertSchema(
   return convertSchemaInternal(appSettings, joi, exportedName, root);
 }
 
-export function getTypeFileNameFromSchema(schemaFileName: string, settings: Settings): string {
-  return schemaFileName.endsWith(`${settings.schemaFileSuffix}.ts`)
-    ? schemaFileName.substring(0, schemaFileName.length - `${settings.schemaFileSuffix}.ts`.length)
-    : schemaFileName.replace('.ts', '');
-}
-
-/**
- * Write index.ts file
- *
- * @param settings - Settings Object
- * @param fileNamesToExport - List of file names that will be added to the index.ts file
- */
-export function writeIndexFile(settings: Settings, fileNamesToExport: string[]): void {
-  if (fileNamesToExport.length === 0) {
-    // Don't write an index file if its going to export nothing
-    return;
-  }
-  const exportLines = fileNamesToExport.map(fileName => `export * from './${fileName.replace(/\\/g, '/')}';`);
-  const fileContent = `${settings.fileHeader}\n\n${exportLines.join('\n').concat('\n')}`;
-  writeFileSync(Path.join(settings.typeOutputDirectory, 'index.ts'), fileContent);
-}
-
 /**
  * Create types from schemas from a directory
  *
@@ -86,6 +64,8 @@ export async function convertFromDirectory(settings: Partial<Settings>): Promise
   if (!filesInDirectory.types || filesInDirectory.types.length === 0) {
     throw new Error('No schemas found, cannot generate interfaces');
   }
+
+  // TODO: remove fields from derived interfaces here
 
   for (const exportType of filesInDirectory.types) {
     writeInterfaceFile(appSettings, exportType.typeFileName, filesInDirectory.types);
