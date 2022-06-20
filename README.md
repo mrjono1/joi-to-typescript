@@ -18,7 +18,7 @@ For generating Open Api/Swagger this project works with
 - [joi-to-swagger](https://github.com/Twipped/joi-to-swagger) using `.meta({className:''})`
 - [hapi-swagger](https://github.com/glennjones/hapi-swagger) using `.label('')`
 
-The use of `.meta({className:'')` is prefeerd over `.label('')`, because `Joi.label()` is intended to be used for meaningful error message, using it for another purpose makes Joi lose a standard feature, this is especially noticeable for frontend usages of Joi. The choice of the property `className` is because this property is used by joi-to-swagger making this project work with other projects.
+The use of `.meta({className:'')` is preferred over `.label('')`, because `Joi.label()` is intended to be used for meaningful error message, using it for another purpose makes Joi lose a standard feature, this is especially noticeable for frontend usages of Joi. The choice of the property `className` is because this property is used by joi-to-swagger making this project work with other projects.
 
 ## Installation Notes
 
