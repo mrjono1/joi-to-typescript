@@ -2241,9 +2241,9 @@ jest@^27.4.7:
     jest-cli "^27.5.1"
 
 joi@^17.4.0:
-  version "17.6.2"
-  resolved "https://registry.yarnpkg.com/joi/-/joi-17.6.2.tgz#00ac55ce6495596545cce45309f38738cfbd7cd3"
-  integrity sha512-+gqqdh1xc1wb+Lor0J9toqgeReyDOCqOdG8QSdRcEvwrcRiFQZneUCGKjFjuyBWUb3uaFOgY56yMaZ5FIc+H4w==
+  version "17.6.4"
+  resolved "https://registry.yarnpkg.com/joi/-/joi-17.6.4.tgz#4d9536a059ef0762c718ae98673016b3ec151abd"
+  integrity sha512-tPzkTJHZQjSFCc842QpdVpOZ9LI2txApboNUbW70qgnRB14Lzl+oWQOPdF2N4yqyiY14wBGe8lc7f/2hZxbGmw==
   dependencies:
     "@hapi/hoek" "^9.0.0"
     "@hapi/topo" "^5.0.0"
