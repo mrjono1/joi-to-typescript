@@ -1,6 +1,8 @@
 # joi-to-typescript
 
 [![NPM version][npm-image]][npm-url] ![Latest Build](https://github.com/mrjono1/joi-to-typescript/workflows/Node.js%20CI/badge.svg) ![NPM Release Build](https://github.com/mrjono1/joi-to-typescript/workflows/Node.js%20Package/badge.svg) ![GitHub top language](https://img.shields.io/github/languages/top/mrjono1/joi-to-typescript) [![codecov](https://codecov.io/gh/mrjono1/joi-to-typescript/branch/master/graph/badge.svg?token=7UtmWfj5cA)](https://codecov.io/gh/mrjono1/joi-to-typescript)
+[![npm downloads](https://img.shields.io/npm/dm/joi-to-typescript.svg?style=flat-square)](https://npm-stat.com/charts.html?package=joi-to-typescript)
+[![Known Vulnerabilities](https://snyk.io/test/npm/joi-to-typescript/badge.svg)](https://snyk.io/test/npm/joi-to-typescript)
 
 [joi-to-typescript on GitHub](https://github.com/mrjono1/joi-to-typescript)
 
