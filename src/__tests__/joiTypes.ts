@@ -9,7 +9,7 @@ describe('`Joi.types()`', () => {
     const types = Joi.types();
 
     const listOfTypes = [
-      'alternatives', // Supported
+      'alternatives', // Basic support
       'any', // Supported
       'array', // Supported
       'boolean', // Supported
