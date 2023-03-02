@@ -34,9 +34,9 @@
     "@hapi/hoek" "^9.0.0"
 
 "@sideway/formula@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@sideway/formula/-/formula-3.0.0.tgz#fe158aee32e6bd5de85044be615bc08478a0a13c"
-  integrity sha512-vHe7wZ4NOXVfkoRb8T5otiENVlT7a3IAiw7H5M2+GO+9CDgcVUUsX1zalAztCmwyOr2RUTGJdgB+ZvSVqmdHmg==
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@sideway/formula/-/formula-3.0.1.tgz#80fcbcbaf7ce031e0ef2dd29b1bfc7c3f583611f"
+  integrity sha512-/poHZJJVjx3L+zVD6g9KgHfYnb443oi7wLu/XKojDviHy6HOEOA6z1Trk5aR1dGcmPenJEgb2sK2I80LeS3MIg==
 
 "@sideway/pinpoint@^2.0.0":
   version "2.0.0"
@@ -93,8 +93,13 @@ diff@^4.0.1:
   resolved "https://registry.yarnpkg.com/diff/-/diff-4.0.2.tgz#60f3aecb89d5fae520c11aa19efc2bb982aade7d"
   integrity sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==
 
-joi-to-typescript@^3.0.2, "joi-to-typescript@file:../..":
-  version "3.0.2"
+joi-to-typescript@^3.0.2:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/joi-to-typescript/-/joi-to-typescript-3.1.0.tgz#25a0ff6a7d0b6cdec295f2431febcb9ae65a0679"
+  integrity sha512-bhNf0vqoXphFVXj1v3oDHedrF4fGRdTex7k8Uoji9QuqJ8UueonMvKw9kk62sU/jcyOsVNXbZykikMiH8HaXwQ==
+
+"joi-to-typescript@file:../..":
+  version "4.0.7"
 
 joi@^17.6.0:
   version "17.6.0"
