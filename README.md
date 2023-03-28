@@ -254,7 +254,7 @@ export interface Settings {
 - `.optional()` - optional properties `?`
 - `.required()` - required properties
 - `.array()`, `.object()`, `.string()`, `.number()`, `.boolean()` - standard Joi schemas
-- `.alternatives()`
+- `.alternatives()` - try is supported, conditionals would be converted to `any`
 - `.allow('')` - will be ignored on a string
 - `.allow(null)` - will add as an optional type eg `string | null`
 - `.unknown(true)` - will add a property `[x: string]: unknown;` to the interface
