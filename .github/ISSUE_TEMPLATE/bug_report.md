@@ -1,10 +1,9 @@
 ---
-name: Bug report
+name: Report an issue
 about: Create a report to help us improve
-title: ''
+title: 'What is your issue?'
 labels: ''
 assignees: ''
-
 ---
 
 **Describe the bug**
@@ -12,6 +11,7 @@ A clear and concise description of what the bug is.
 
 **To Reproduce**
 Steps to reproduce the behavior:
+
 ```TypeScript
 import Joi from "joi";
 export const JobSchema = Joi.object({
@@ -22,6 +22,7 @@ export const JobSchema = Joi.object({
 
 **Expected behavior**
 A clear and concise description of what you expected to happen.
+
 ```TypeScript
 export interface Job {
   businessName: string;
@@ -31,6 +32,7 @@ export interface Job {
 
 **Actual behavior**
 A clear and concise description of what actually to happened.
+
 ```TypeScript
 export interface Job {}
 ```
