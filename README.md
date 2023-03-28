@@ -13,7 +13,9 @@ Convert [Joi](https://github.com/sideway/joi) Schemas to TypeScript interfaces
 
 Now supporting ESM and CJS Modules
 
-This will allow you to use generate TypeScript interfaces from Joi Schemas that can be used to assign types to JavaScript objects or [Hapi](https://github.com/hapijs/hapi) API requests. You no longer have to manually create the same structure again, saving you time and reducing errors.
+This will allow you to use generate TypeScript interfaces from Joi Schemas giving you confidence the schema and interface match. You no longer have to manually create the same structure again, saving you time and reducing errors.
+
+Works with any TypeScript project and also perfectly with [Hapi](https://github.com/hapijs/hapi) API requests/responses.
 
 For generating Open Api/Swagger this project works with
 
