@@ -134,25 +134,25 @@ export interface Parent {
 }`);
   });
 
-
   test('allow joi.ref dont crash', () => {
     const schema = Joi.object()
-  .label('SignUp')
-  .keys({
-    password: Joi.string()
-      .required()
-      .description('The password of the authenticating user')
-      .example('test-PASSWORD123'),
-    repeatPassword: Joi.string()
-      .required()
-      .allow(Joi.ref('password'))
-      .description('Repeat the password to ensure no typos')
-      .example('test-PASSWORD123')
-  }).meta({ className: 'TestSchema' });
+      .label('SignUp')
+      .keys({
+        password: Joi.string()
+          .required()
+          .description('The password of the authenticating user')
+          .example('test-PASSWORD123'),
+        repeatPassword: Joi.string()
+          .required()
+          .allow(Joi.ref('password'))
+          .description('Repeat the password to ensure no typos')
+          .example('test-PASSWORD123')
+      })
+      .meta({ className: 'TestSchema' });
 
-  const result = convertSchema({}, schema);
-  expect(result).not.toBeUndefined;
-  expect(result?.content).toBe(`export interface TestSchema {
+    const result = convertSchema({}, schema);
+    expect(result).not.toBeUndefined;
+    expect(result?.content).toBe(`export interface TestSchema {
   /**
    * The password of the authenticating user
    * @example test-PASSWORD123
@@ -164,5 +164,5 @@ export interface Parent {
    */
   repeatPassword: string;
 }`);
-  })
+  });
 });

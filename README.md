@@ -281,7 +281,7 @@ export interface Settings {
 Recommended Editor is VS Code, this project is setup with VSCode settings in the `./.vscode` directory to keep development consistent.
 
 Best developed on macOS, Linux, or on Windows via WSL.
-Node 12, 14, or 16
+Node 14, 16 or 18
 
 Install [nodejs](https://nodejs.org/) via [nvm](https://github.com/nvm-sh/nvm) so you can have multiple versions installed
 
