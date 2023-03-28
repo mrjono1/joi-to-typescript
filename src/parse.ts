@@ -46,7 +46,7 @@ export function getAllCustomTypes(parsedSchema: TypeContent): string[] {
   if (parsedSchema.__isRoot) {
     customTypes.push(...parsedSchema.children.flatMap(child => getAllCustomTypes(child)));
   } else {
-    customTypes.push(...parsedSchema.customTypes ?? []);
+    customTypes.push(...(parsedSchema.customTypes ?? []));
   }
   return customTypes;
 }
@@ -405,7 +405,9 @@ function parseAlternatives(details: AlternativesDescribe, settings: Settings): T
   const ignoreLabels = interfaceOrTypeName ? [interfaceOrTypeName] : [];
   const children = filterMap(details.matches, match => {
     // ignore alternatives().conditional() and return 'any' since we don't handle is / then / otherwise for now
-    if(!match.schema) return parseSchema({ type: 'any' }, settings, true, ignoreLabels );
+    if (!match.schema) {
+      return parseSchema({ type: 'any' }, settings, true, ignoreLabels);
+    }
     return parseSchema(match.schema, settings, true, ignoreLabels);
   });
   // This is an check that cannot be tested as Joi throws an error before this package

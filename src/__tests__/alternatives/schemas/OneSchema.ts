@@ -27,13 +27,11 @@ export const TestListOfAltsSchema = Joi.array()
   .meta({ className: 'TestList' })
   .description('A list of Test object');
 
-export const AlternativesConditionalSchema = Joi
-.object({
+export const AlternativesConditionalSchema = Joi.object({
   label: Joi.string(),
   someId: Joi.alternatives().conditional('label', {
     is: 'abc',
     then: Joi.string().hex().required().length(24),
-    otherwise: Joi.forbidden(),
-  }),
-})
-.meta({ className: 'SomeSchema' });
+    otherwise: Joi.forbidden()
+  })
+}).meta({ className: 'SomeSchema' });

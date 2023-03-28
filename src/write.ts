@@ -1,10 +1,10 @@
 // Functions for converting properties to strings and to file system
 // TODO: Move all code here
 
-import { writeFileSync } from "fs";
+import { writeFileSync } from 'fs';
 import Path from 'path';
 
-import { Settings, JsDoc } from "./types";
+import { Settings, JsDoc } from './types';
 
 /**
  * Write index.ts file
@@ -12,7 +12,7 @@ import { Settings, JsDoc } from "./types";
  * @param settings - Settings Object
  * @param fileNamesToExport - List of file names that will be added to the index.ts file
  */
- export function writeIndexFile(settings: Settings, fileNamesToExport: string[]): void {
+export function writeIndexFile(settings: Settings, fileNamesToExport: string[]): void {
   if (fileNamesToExport.length === 0) {
     // Don't write an index file if its going to export nothing
     return;
@@ -33,14 +33,14 @@ export function getTypeFileNameFromSchema(schemaFileName: string, settings: Sett
  * @param settings includes what the indent characters are
  * @param indentLevel how many indent levels
  */
- export function getIndentStr(settings: Settings, indentLevel: number): string {
+export function getIndentStr(settings: Settings, indentLevel: number): string {
   return settings.indentationChacters.repeat(indentLevel);
 }
 
 /**
  * Get Interface jsDoc
  */
- export function getJsDocString(settings: Settings, name: string, jsDoc?: JsDoc, indentLevel = 0): string {
+export function getJsDocString(settings: Settings, name: string, jsDoc?: JsDoc, indentLevel = 0): string {
   if (!settings.commentEverything && !jsDoc?.description && !jsDoc?.example) {
     return '';
   }
@@ -58,4 +58,3 @@ export function getTypeFileNameFromSchema(schemaFileName: string, settings: Sett
   lines.push(' */');
   return lines.map(line => `${getIndentStr(settings, indentLevel)}${line}`).join('\n') + '\n';
 }
-
