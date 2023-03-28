@@ -37,6 +37,11 @@ export interface Other {
   other?: string;
 }
 
+export interface SomeSchema {
+  label?: string;
+  someId?: any;
+}
+
 /**
  * a test schema definition
  */
