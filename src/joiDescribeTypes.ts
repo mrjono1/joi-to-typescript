@@ -71,6 +71,9 @@ export interface ObjectDescribe extends BaseDescribe {
   keys: Record<'string', Describe>;
 }
 
+// We only properly support alternatives where matches have a schema
+// This interface represents that
+// When matches do not have a schema, like in conditionals, we return 'any' in code
 export interface AlternativesDescribe extends BaseDescribe {
   // Joi.alt and Joi.alternatives both output as 'alternatives'
   type: 'alternatives';
