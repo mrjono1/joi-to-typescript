@@ -1,26 +1,39 @@
 ---
-name: Report an issue
-about: Create a report to help us improve this project
-title: What is your issue?
+name: Bug report
+about: Create a report to help us improve
+title: ''
 labels: ''
 assignees: ''
----**Describe the bug**
+
+---
+
+**Describe the bug**
 A clear and concise description of what the bug is.
 
 **To Reproduce**
-
-```typescript
-// example Joi Schema
+Steps to reproduce the behavior:
+```TypeScript
+import Joi from "joi";
+export const JobSchema = Joi.object({
+  businessName: Joi.string().required(),
+  jobTitle: Joi.string().required()
+}).meta({ className: 'Job' });
 ```
 
 **Expected behavior**
-
-```typescript
-// expected interface
+A clear and concise description of what you expected to happen.
+```TypeScript
+export interface Job {
+  businessName: string;
+  jobTitle: string;
+}
 ```
 
 **Actual behavior**
-
-```typescript
-// acutal interface
+A clear and concise description of what actually to happened.
+```TypeScript
+export interface Job {}
 ```
+
+**Additional context**
+Add any other context about the problem here.
