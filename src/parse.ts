@@ -306,7 +306,7 @@ function parseBasicSchema(details: BasicDescribe, settings: Settings, rootSchema
   if (values.length !== 0) {
     const allowedValues = createAllowTypes(details);
 
-    if (values[0] === null) {
+    if (values[0] === null && joiType !== 'any') {
       allowedValues.unshift(makeTypeContentChild({ content }));
     }
     return makeTypeContentRoot({ joinOperation: 'union', children: allowedValues, interfaceOrTypeName, jsDoc });

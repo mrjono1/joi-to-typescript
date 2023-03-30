@@ -165,4 +165,16 @@ export interface Parent {
   repeatPassword: string;
 }`);
   });
+
+  test('allow null', () => {
+    const schema = Joi.object({
+      value: Joi.allow(null)
+    }).meta({ className: 'TestSchema' });
+
+    const result = convertSchema({}, schema);
+    expect(result).not.toBeUndefined;
+    expect(result?.content).toBe(`export interface TestSchema {
+  value?: null;
+}`);
+  });
 });
