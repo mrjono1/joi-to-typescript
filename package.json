@@ -48,7 +48,7 @@
     "joi": "17.9.1",
     "prettier": "2.8.7",
     "ts-jest": "29.0.5",
-    "typescript": "5.0.2"
+    "typescript": "5.0.3"
   },
   "peerDependencies": {
     "joi": "17.x"
