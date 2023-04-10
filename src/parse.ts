@@ -9,7 +9,7 @@ import {
   ObjectDescribe,
   StringDescribe
 } from './joiDescribeTypes';
-import { getAllowValues, getInterfaceOrTypeName, getMetadataFromDetails } from './joiUtils';
+import { getAllowValues, getInterfaceOrTypeName, getIsReadonly, getMetadataFromDetails } from './joiUtils';
 import { getIndentStr, getJsDocString } from './write';
 
 // see __tests__/joiTypes.ts for more information
@@ -22,13 +22,14 @@ const validCastTo = ['string', 'number'];
 function getCommonDetails(
   details: Describe,
   settings: Settings
-): { interfaceOrTypeName?: string; jsDoc: JsDoc; required: boolean; value?: unknown } {
+): { interfaceOrTypeName?: string; jsDoc: JsDoc; required: boolean; value?: unknown; isReadonly?: boolean } {
   const interfaceOrTypeName = getInterfaceOrTypeName(settings, details);
 
   const description = details.flags?.description;
   const presence = details.flags?.presence;
   const value = details.flags?.default;
   const example = details.examples?.[0];
+  const isReadonly = getIsReadonly(details);
 
   let required;
   if (presence === 'required' || (settings.treatDefaultedOptionalAsRequired && value !== undefined)) {
@@ -38,7 +39,7 @@ function getCommonDetails(
   } else {
     required = settings.defaultToRequired;
   }
-  return { interfaceOrTypeName, jsDoc: { description, example }, required, value };
+  return { interfaceOrTypeName, jsDoc: { description, example }, required, value, isReadonly };
 }
 
 export function getAllCustomTypes(parsedSchema: TypeContent): string[] {
@@ -148,7 +149,8 @@ function typeContentToTsHelper(
           );
           const optionalStr = child.required ? '' : '?';
           const indentString = getIndentStr(settings, indentLevel);
-          return `${descriptionStr}${indentString}${child.interfaceOrTypeName}${optionalStr}: ${childInfo.tsContent};`;
+          const modifier = child.isReadonly ? 'readonly ' : '';
+          return `${descriptionStr}${indentString}${modifier}${child.interfaceOrTypeName}${optionalStr}: ${childInfo.tsContent};`;
         });
         objectStr = `{\n${childrenContent.join('\n')}\n${getIndentStr(settings, indentLevel - 1)}}`;
 
@@ -216,7 +218,7 @@ export function parseSchema(
   ignoreLabels: string[] = [],
   rootSchema?: boolean
 ): TypeContent | undefined {
-  const { interfaceOrTypeName, jsDoc, required, value } = getCommonDetails(details, settings);
+  const { interfaceOrTypeName, jsDoc, required, value, isReadonly } = getCommonDetails(details, settings);
   if (interfaceOrTypeName && useLabels && !ignoreLabels.includes(interfaceOrTypeName)) {
     // skip parsing and just reference the label since we assumed we parsed the schema that the label references
     // TODO: do we want to use the labels description if we reference it?
@@ -225,7 +227,8 @@ export function parseSchema(
       content: interfaceOrTypeName,
       customTypes: [interfaceOrTypeName],
       jsDoc,
-      required
+      required,
+      isReadonly
     });
 
     const allowedValues = createAllowTypes(details);
@@ -237,7 +240,8 @@ export function parseSchema(
         interfaceOrTypeName: '',
         children: allowedValues,
         jsDoc,
-        required
+        required,
+        isReadonly
       });
     }
     return child;
@@ -278,7 +282,7 @@ export function parseSchema(
       // eslint-disable-next-line no-console
       console.debug(`Using '${typeToUse}' for unsupported type '${details.type}'`);
     }
-    return makeTypeContentChild({ content: typeToUse, interfaceOrTypeName, jsDoc, required });
+    return makeTypeContentChild({ content: typeToUse, interfaceOrTypeName, jsDoc, required, isReadonly });
   }
   const parsedSchema = parseHelper(details, settings, rootSchema);
   if (!parsedSchema) {
@@ -288,6 +292,7 @@ export function parseSchema(
   parsedSchema.jsDoc = jsDoc;
   parsedSchema.required = required;
   parsedSchema.value = value;
+  parsedSchema.isReadonly = isReadonly;
 
   return parsedSchema;
 }
