@@ -17,6 +17,18 @@ export function getMetadataFromDetails(field: string, details: Describe): any[] 
   return metas.filter(entry => entry[field]).map(entry => entry[field]);
 }
 
+export function getIsReadonly(details: Describe): boolean | undefined {
+  const isReadonlyItems = getMetadataFromDetails('readonly', details);
+  if (isReadonlyItems.length !== 0) {
+    // If Joi.concat() or Joi.keys() has been used then there may be multiple
+    // get the last one as this is the current value
+    const isReadonly = isReadonlyItems.pop();
+    return Boolean(isReadonly);
+  }
+
+  return undefined;
+}
+
 /**
  * Get the interface name from the Joi
  * @returns a string if it can find one

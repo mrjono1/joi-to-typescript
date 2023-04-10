@@ -130,6 +130,11 @@ export interface BaseTypeContent {
    * Default value
    */
   value?: unknown;
+
+  /**
+   * Is readonly
+   */
+  isReadonly?: boolean;
 }
 
 /**
@@ -169,6 +174,7 @@ export function makeTypeContentChild({
   content,
   customTypes,
   required,
+  isReadonly,
   interfaceOrTypeName,
   jsDoc
 }: Omit<TypeContentChild, '__isRoot'>): TypeContentChild {
@@ -178,6 +184,7 @@ export function makeTypeContentChild({
     customTypes,
     required,
     interfaceOrTypeName,
+    isReadonly,
     jsDoc
   };
 }
@@ -187,6 +194,7 @@ export function makeTypeContentRoot({
   interfaceOrTypeName,
   children,
   required,
+  isReadonly,
   jsDoc
 }: Omit<TypeContentRoot, '__isRoot'>): TypeContentRoot {
   return {
@@ -195,6 +203,7 @@ export function makeTypeContentRoot({
     interfaceOrTypeName,
     children,
     required,
+    isReadonly,
     jsDoc
   };
 }
