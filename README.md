@@ -250,13 +250,13 @@ export interface Settings {
 
 - `.meta({className:'InterfaceName'})` - interface Name and in jsDoc
 - `.description('What this interface is for')` - jsdoc
-- `.valid(['red', 'green', 'blue'])` - enumerations
 - `.optional()` - optional properties `?`
 - `.required()` - required properties
-- `.array()`, `.object()`, `.string()`, `.number()`, `.boolean()` - standard Joi schemas
-- `.alternatives()` - try is supported, conditionals would be converted to `any`
+- `.valid(['red', 'green', 'blue'])` - enumerations - `allow` can be used for enumerations but `valid` works better see `_tests_/allow/allow.ts` for more information
 - `.allow('')` - will be ignored on a string
 - `.allow(null)` - will add as an optional type eg `string | null`
+- `.array()`, `.object()`, `.string()`, `.number()`, `.boolean()` - standard Joi schemas
+- `.alternatives()` - try is supported, conditionals would be converted to `any`
 - `.unknown(true)` - will add a property `[x: string]: unknown;` to the interface
   - Assert `unknown` to some type with a stringified type or a Joi schema, e.g.:
   ```typescript

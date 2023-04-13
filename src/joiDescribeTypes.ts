@@ -34,9 +34,13 @@ export interface BaseDescribe extends Joi.Description {
      */
     unknown?: boolean;
     /**
-     * https://joi.dev/api/?v=17.4.2#anycastto
+     * https://joi.dev/api/#anycastto
      */
     cast?: 'string' | 'number' | 'map' | 'set';
+    /**
+     * https://joi.dev/api/#anyonly
+     */
+    only?: boolean;
   };
   /**
    * https://joi.dev/api/#objectpatternpattern-schema-options

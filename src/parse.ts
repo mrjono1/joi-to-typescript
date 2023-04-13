@@ -231,9 +231,13 @@ export function parseSchema(
       isReadonly
     });
 
-    const allowedValues = createAllowTypes(details);
+    let allowedValues = createAllowTypes(details);
     if (allowedValues.length !== 0) {
-      allowedValues.unshift(child);
+      if (!details.flags?.only) {
+        allowedValues.unshift(child);
+      } else {
+        allowedValues = [child];
+      }
 
       return makeTypeContentRoot({
         joinOperation: 'union',
