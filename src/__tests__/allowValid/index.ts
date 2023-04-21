@@ -1,4 +1,3 @@
-
 import { existsSync, readFileSync, rmdirSync } from 'fs';
 
 import { convertFromDirectory, convertSchema } from '../../index';
@@ -177,7 +176,7 @@ export interface Parent {
     expect(result?.content).toBe(`export interface TestSchema {
   value?: null;
 }`);
-    const validationResult = schema.validate({value: {}});
+    const validationResult = schema.validate({ value: {} });
     expect(validationResult.error).toBeTruthy();
   });
 });
@@ -195,7 +194,6 @@ describe('Allow/Valid Enums', () => {
   });
 
   test('Allow', async () => {
-
     const oneContent = readFileSync(`${typeOutputDirectory}/Allow.ts`).toString();
 
     expect(oneContent).toBe(
@@ -216,7 +214,6 @@ export interface AllowUser {
   });
 
   test('AllowOnly', async () => {
-
     const oneContent = readFileSync(`${typeOutputDirectory}/AllowOnly.ts`).toString();
 
     expect(oneContent).toBe(
@@ -237,7 +234,6 @@ export interface AllowOnlyUser {
   });
 
   test('Valid', async () => {
-
     const oneContent = readFileSync(`${typeOutputDirectory}/Valid.ts`).toString();
 
     expect(oneContent).toBe(

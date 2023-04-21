@@ -1,13 +1,13 @@
 .github
 .vscode
 coverage
-example
+examples
 src
 .editorconfig
 .eslintignore
-.eslintrc.js
+.eslintrc.cjs
 .gitignore
 .nvmrc
-.prettierrc.js
-jest.config.js
+.prettierrc.cjs
+jest.config.cjs
 tsconfig.json
