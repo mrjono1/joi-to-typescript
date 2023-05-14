@@ -63,6 +63,7 @@ export interface BaseDescribe extends Joi.Description {
 export interface Meta {
   className?: string;
   unknownType?: string;
+  readonly?: boolean;
 }
 
 export interface ArrayDescribe extends BaseDescribe {

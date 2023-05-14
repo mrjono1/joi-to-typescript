@@ -12,15 +12,15 @@ describe('some basic tests', () => {
       count: Joi.number(),
       obj: Joi.object()
     })
-      .meta({ className: 'TestSchema' })
+      .meta({ className: 'Test' })
       .description('a test schema definition');
 
-    const result = convertSchema({ sortPropertiesByName: true }, schema);
+    const result = convertSchema({}, schema);
     expect(result).not.toBeUndefined;
     expect(result?.content).toBe(`/**
  * a test schema definition
  */
-export interface TestSchema {
+export interface Test {
   count?: number;
   dateCreated?: Date;
   /**
@@ -67,11 +67,11 @@ export interface ArrayObject {
         aType: Joi.object().meta({ className: 'Blue' }).description('A blue object property')
       }),
       'x.y': Joi.string()
-    }).meta({ className: 'TestSchema' });
+    }).meta({ className: 'Test' });
 
     const result = convertSchema({ sortPropertiesByName: false }, schema);
     expect(result).not.toBeUndefined;
-    expect(result?.content).toBe(`export interface TestSchema {
+    expect(result?.content).toBe(`export interface Test {
   nested?: {
     a?: {
       b?: string;
@@ -99,21 +99,21 @@ export interface ArrayObject {
     const schema = Joi.object({
       a: Joi.string(),
       A: Joi.string()
-    }).meta({ className: 'TestSchema' });
+    }).meta({ className: 'Test' });
 
     const result = convertSchema({ sortPropertiesByName: false }, schema);
     expect(result).not.toBeUndefined;
-    expect(result?.content).toBe(`export interface TestSchema {
+    expect(result?.content).toBe(`export interface Test {
   a?: string;
   A?: string;
 }`);
   });
 
   test('no properties on a schema', () => {
-    const schema = Joi.object({}).meta({ className: 'TestSchema' });
+    const schema = Joi.object({}).meta({ className: 'Test' });
 
-    const result = convertSchema({ sortPropertiesByName: true }, schema);
+    const result = convertSchema({}, schema);
     expect(result).not.toBeUndefined;
-    expect(result?.content).toBe(`export interface TestSchema {}`);
+    expect(result?.content).toBe(`export interface Test {}`);
   });
 });
