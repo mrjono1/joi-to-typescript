@@ -23,9 +23,9 @@ export function writeIndexFile(settings: Settings, fileNamesToExport: string[]):
 }
 
 export function getTypeFileNameFromSchema(schemaFileName: string, settings: Settings): string {
-  return schemaFileName.endsWith(`${settings.schemaFileSuffix}.ts`)
+  return (schemaFileName.endsWith(`${settings.schemaFileSuffix}.ts`)
     ? schemaFileName.substring(0, schemaFileName.length - `${settings.schemaFileSuffix}.ts`.length)
-    : schemaFileName.replace('.ts', '');
+    : schemaFileName.replace('.ts', '')) + settings.interfaceFileSuffix;
 }
 
 /**

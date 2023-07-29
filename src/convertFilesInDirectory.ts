@@ -86,7 +86,7 @@ export async function convertFilesInDirectory(
     }
   }
 
-  if (!appSettings.indexAllToRoot && !appSettings.flattenTree) {
+  if (!appSettings.omitIndexFiles && (!appSettings.indexAllToRoot && !appSettings.flattenTree)) {
     // Write index.ts
     writeIndexFile(appSettings, fileNamesToExport);
   }
