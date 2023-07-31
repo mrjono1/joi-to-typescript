@@ -28,6 +28,11 @@ export interface Settings {
    */
   readonly schemaFileSuffix: string;
   /**
+   * If provided, appends this suffix to the generated interface filenames
+   * @default ""
+   */
+  readonly interfaceFileSuffix: string;
+  /**
    * If `true` the console will include more information
    * @default false
    */
@@ -86,6 +91,11 @@ export interface Settings {
    * @default *.ts files
    */
   readonly inputFileFilter: RegExp;
+  /**
+   * If true, skips the creation of index.ts files in the generated interface directories
+   * @default false
+   */
+  readonly omitIndexFiles: boolean
 }
 
 export class InputFileFilter {

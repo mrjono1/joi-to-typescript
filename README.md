@@ -185,6 +185,11 @@ export interface Settings {
    */
   schemaFileSuffix: string;
   /**
+   * If provided, appends this suffix to the generated interface filenames
+   * @default ""
+   */
+  interfaceFileSuffix: string;
+  /**
    * If `true` the console will include more information
    * @default false
    */
@@ -243,6 +248,11 @@ export interface Settings {
    * @default *.ts files
    */
   inputFileFilter: RegExp;
+  /**
+   * If true, skips the creation of index.ts files in the generated interface directories
+   * @default false
+   */
+  omitIndexFiles: boolean
 }
 ```
 
