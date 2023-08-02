@@ -41,7 +41,7 @@
     "@types/jest": "29.5.3",
     "@types/node": "18.15.11",
     "@typescript-eslint/eslint-plugin": "5.60.1",
-    "@typescript-eslint/parser": "5.60.1",
+    "@typescript-eslint/parser": "5.62.0",
     "eslint": "8.46.0",
     "eslint-config-prettier": "8.9.0",
     "eslint-plugin-prettier": "4.2.1",
