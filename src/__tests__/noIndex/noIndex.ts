@@ -1,4 +1,4 @@
-import {existsSync, rmdirSync} from 'fs';
+import {existsSync, readFileSync, rmdirSync} from 'fs';
 
 import {convertFromDirectory} from '../../index';
 
@@ -23,5 +23,10 @@ describe('Create interfaces from schema files but not index files', () => {
 
     expect(existsSync(`${typeOutputDirectory}/index.ts`))
       .toBe(false)
+
+    const fooBarContent = readFileSync(`${typeOutputDirectory}/FooBar.ts`).toString();
+
+    // The import should properly point to a file, and not to the root folder
+    expect(fooBarContent).toContain(`import { InnerInterface } from './Inner';`)
   });
 });
