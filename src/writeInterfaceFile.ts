@@ -45,12 +45,18 @@ export async function writeInterfaceFile(
               return value.interfaceOrTypeName === externalCustomType && self.indexOf(value) === index;
             })) {
             if (generatedInternalType && generatedInternalType.location) {
-              if (!customTypeLocationDict[Path.dirname(generatedInternalType.location)]) {
-                customTypeLocationDict[Path.dirname(generatedInternalType.location)] = [];
+              const generatedInternalTypeLocation = settings.omitIndexFiles
+                ? // When we don't want to generate index files it means we need to directly refer
+                  // to each individually generated file
+                  generatedInternalType.location
+                : // Otherwise it's ok to refer to the output directory's path
+                  Path.dirname(generatedInternalType.location);
+              if (!customTypeLocationDict[generatedInternalTypeLocation]) {
+                customTypeLocationDict[generatedInternalTypeLocation] = [];
               }
 
-              if (!customTypeLocationDict[Path.dirname(generatedInternalType.location)].includes(externalCustomType)) {
-                customTypeLocationDict[Path.dirname(generatedInternalType.location)].push(externalCustomType);
+              if (!customTypeLocationDict[generatedInternalTypeLocation].includes(externalCustomType)) {
+                customTypeLocationDict[generatedInternalTypeLocation].push(externalCustomType);
               }
             }
           }
