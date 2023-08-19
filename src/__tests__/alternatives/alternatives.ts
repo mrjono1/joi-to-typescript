@@ -72,6 +72,19 @@ export interface Thing {
     }).toThrow();
   });
 
+  test('allowed value in alternatives', () => {
+    const schema = Joi.alternatives(Joi.string(), Joi.number()).allow(null)
+      .meta({ className: 'Test' })
+      .description('Test allowed values in alternatives');
+
+    const result = convertSchema({}, schema);
+    expect(result).not.toBeUndefined();
+    expect(result?.content).toBe(`/**
+ * Test allowed values in alternatives
+ */
+export type Test = string | number | null;`);
+  });
+
   test.skip('blank alternative thrown by joi but extra test if joi changes it', () => {
     expect(() => {
       const invalidSchema = Joi.alternatives()
