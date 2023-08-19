@@ -112,6 +112,28 @@ function typeContentToTsHelper(
       }
       return { tsContent: arrayStr, jsDoc: parsedSchema.jsDoc };
     }
+    case 'tuple': {
+      const childrenContent = children.map(child => {
+        let { tsContent } = typeContentToTsHelper(settings, child, indentLevel);
+
+        if (tsContent.includes('|')) {
+          tsContent = `(${tsContent})`;
+        }
+
+        return `${tsContent}${child.required ? '' : '?'}`;
+      });
+
+      const tupleStr = `[${childrenContent.join(', ')}]`;
+
+      if (doExport) {
+        return {
+          tsContent: `export type ${parsedSchema.interfaceOrTypeName} = ${tupleStr};`,
+          jsDoc: parsedSchema.jsDoc
+        };
+      }
+
+      return { tsContent: tupleStr, jsDoc: parsedSchema.jsDoc };
+    }
     case 'union': {
       const childrenContent = children.map(child => typeContentToTsHelper(settings, child, indentLevel).tsContent);
       const unionStr = childrenContent.join(' | ');
@@ -387,9 +409,36 @@ function parseStringSchema(details: StringDescribe, settings: Settings, rootSche
 }
 
 function parseArray(details: ArrayDescribe, settings: Settings): TypeContent | undefined {
-  // TODO: handle multiple things in the items arr
-  const item = details.items ? details.items[0] : ({ type: 'any' } as Describe);
   const { interfaceOrTypeName, jsDoc } = getCommonDetails(details, settings);
+
+  if (details.ordered && !details.items) {
+    const parsedChildren = details.ordered.map(item => parseSchema(item, settings)).filter(Boolean) as TypeContent[];
+    const allowedValues = createAllowTypes(details);
+
+    // at least one value
+    if (allowedValues.length !== 0) {
+      allowedValues.unshift(
+        makeTypeContentRoot({
+          joinOperation: 'tuple',
+          children: parsedChildren,
+          interfaceOrTypeName,
+          jsDoc
+        })
+      );
+
+      return makeTypeContentRoot({ joinOperation: 'union', children: allowedValues, interfaceOrTypeName, jsDoc });
+    }
+
+    return makeTypeContentRoot({
+      joinOperation: 'tuple',
+      children: parsedChildren,
+      interfaceOrTypeName,
+      jsDoc
+    });
+  }
+
+  // TODO: handle multiple things in the items arr
+  const item = details.items && !details.ordered ? details.items[0] : ({ type: 'any' } as Describe);
 
   const child = parseSchema(item, settings);
   if (!child) {
