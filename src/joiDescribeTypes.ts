@@ -69,7 +69,8 @@ export interface Meta {
 
 export interface ArrayDescribe extends BaseDescribe {
   type: 'array';
-  items: Describe[];
+  items?: Describe[];
+  ordered?: Describe[];
 }
 
 export interface ObjectDescribe extends BaseDescribe {

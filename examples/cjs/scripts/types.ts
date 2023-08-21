@@ -16,7 +16,7 @@ async function types(): Promise<void> {
     console.log('Completed joi-to-typescript');
   } else {
     // eslint-disable-next-line no-console
-    console.log('Failed to run joi-to-typescrip');
+    console.log('Failed to run joi-to-typescript');
   }
 }
 

@@ -95,7 +95,7 @@ export interface Settings {
    * If true, skips the creation of index.ts files in the generated interface directories
    * @default false
    */
-  readonly omitIndexFiles: boolean
+  readonly omitIndexFiles: boolean;
 }
 
 export class InputFileFilter {
@@ -155,7 +155,7 @@ export interface TypeContentRoot extends BaseTypeContent {
   /**
    * How to join the children types together
    */
-  joinOperation: 'list' | 'union' | 'intersection' | 'object';
+  joinOperation: 'list' | 'tuple' | 'union' | 'intersection' | 'object';
 
   /**
    * Children types
