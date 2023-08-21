@@ -475,7 +475,14 @@ function parseAlternatives(details: AlternativesDescribe, settings: Settings): T
     return undefined;
   }
 
-  return makeTypeContentRoot({ joinOperation: 'union', children, interfaceOrTypeName, jsDoc });
+  const allowedValues = createAllowTypes(details);
+
+  return makeTypeContentRoot({
+    joinOperation: 'union',
+    children: [...children, ...allowedValues],
+    interfaceOrTypeName,
+    jsDoc,
+  });
 }
 
 function buildUnknownTypeContent(unknownType = 'unknown'): TypeContent {
