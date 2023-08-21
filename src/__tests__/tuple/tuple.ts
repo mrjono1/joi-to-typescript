@@ -50,12 +50,6 @@ export type TestTuple = [Test, (number | string)?];
   });
 
   test("test to ensure can't use ordered and items both", () => {
-    // this tests this code
-    //const childrenContent = children.map(child => typeContentToTsHelper(settings, child, indentLevel));
-    //if (childrenContent.length > 1) {
-    //  /* istanbul ignore next */
-    //  throw new Error('Multiple array item types not supported');
-    //}
     const schema = Joi.array()
       .ordered(Joi.string().description('one'))
       .items(Joi.number().description('two'))
