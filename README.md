@@ -279,6 +279,7 @@ export interface Settings {
 - `.cast()` - currently will honor casting to string and number types, map and set to be added later
 - `.forbidden()` will set the type to `undefined`
 - `.meta({ readonly: true })` to create readonly properties like `readonly property: string;`
+- `.ordered()`
 - And many others
 
 ## Contributing
