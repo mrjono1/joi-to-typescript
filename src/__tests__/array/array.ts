@@ -2,6 +2,7 @@ import { existsSync, readFileSync, rmdirSync } from 'fs';
 import Joi from 'joi';
 
 import { convertFromDirectory, convertSchema } from '../../index';
+import { SparseTestListSchema } from './schemas/OneSparseSchema';
 
 describe('Array types', () => {
   const typeOutputDirectory = './src/__tests__/array/interfaces';
@@ -69,5 +70,30 @@ export type TestList = Test[];
  * A list of Test object
  */
 export type TestList = string[];`);
+  });
+
+  test('test to ensure sparse arrays have undefined as a possible type', () => {
+    // this tests this code
+    // if (isSparse) {
+    //   return makeTypeContentRoot({
+    //     joinOperation: 'list',
+    //     children: [
+    //       makeTypeContentRoot({
+    //         joinOperation: 'union',
+    //         children: [child, makeTypeContentChild({ content: 'undefined' })],
+    //         interfaceOrTypeName,
+    //         jsDoc
+    //       })
+    //     ],
+    //     interfaceOrTypeName,
+    //     jsDoc
+    //   });
+    // }
+    const result = convertSchema({ sortPropertiesByName: true }, SparseTestListSchema);
+    expect(result).not.toBeUndefined;
+    expect(result?.content).toBe(`/**
+ * A sparse list of Item object
+ */
+export type SparseTestList = (Item | undefined)[];`);
   });
 });

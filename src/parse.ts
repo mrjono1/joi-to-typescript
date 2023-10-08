@@ -410,6 +410,8 @@ function parseStringSchema(details: StringDescribe, settings: Settings, rootSche
 
 function parseArray(details: ArrayDescribe, settings: Settings): TypeContent | undefined {
   const { interfaceOrTypeName, jsDoc } = getCommonDetails(details, settings);
+  // @ts-expect-error Idk why but the sparse flag is not in the type
+  const isSparse = details.flags?.sparse;
 
   if (details.ordered && !details.items) {
     const parsedChildren = details.ordered.map(item => parseSchema(item, settings)).filter(Boolean) as TypeContent[];
@@ -439,7 +441,6 @@ function parseArray(details: ArrayDescribe, settings: Settings): TypeContent | u
 
   // TODO: handle multiple things in the items arr
   const item = details.items && !details.ordered ? details.items[0] : ({ type: 'any' } as Describe);
-
   const child = parseSchema(item, settings);
   if (!child) {
     return undefined;
@@ -453,6 +454,21 @@ function parseArray(details: ArrayDescribe, settings: Settings): TypeContent | u
     );
 
     return makeTypeContentRoot({ joinOperation: 'union', children: allowedValues, interfaceOrTypeName, jsDoc });
+  }
+  if (isSparse) {
+    return makeTypeContentRoot({
+      joinOperation: 'list',
+      children: [
+        makeTypeContentRoot({
+          joinOperation: 'union',
+          children: [child, makeTypeContentChild({ content: 'undefined' })],
+          interfaceOrTypeName,
+          jsDoc
+        })
+      ],
+      interfaceOrTypeName,
+      jsDoc
+    });
   }
 
   return makeTypeContentRoot({ joinOperation: 'list', children: [child], interfaceOrTypeName, jsDoc });
@@ -481,7 +497,7 @@ function parseAlternatives(details: AlternativesDescribe, settings: Settings): T
     joinOperation: 'union',
     children: [...children, ...allowedValues],
     interfaceOrTypeName,
-    jsDoc,
+    jsDoc
   });
 }
 
