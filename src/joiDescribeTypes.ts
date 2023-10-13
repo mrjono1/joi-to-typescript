@@ -30,6 +30,10 @@ export interface BaseDescribe extends Joi.Description {
      */
     default?: unknown;
     /**
+     * Allow undefined values in array
+     */
+    sparse?: boolean;
+    /**
      * https://joi.dev/api/#objectunknownallow
      */
     unknown?: boolean;

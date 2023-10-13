@@ -410,7 +410,6 @@ function parseStringSchema(details: StringDescribe, settings: Settings, rootSche
 
 function parseArray(details: ArrayDescribe, settings: Settings): TypeContent | undefined {
   const { interfaceOrTypeName, jsDoc } = getCommonDetails(details, settings);
-  // @ts-expect-error Idk why but the sparse flag is not in the type
   const isSparse = details.flags?.sparse;
 
   if (details.ordered && !details.items) {
