@@ -73,22 +73,6 @@ export type TestList = string[];`);
   });
 
   test('test to ensure sparse arrays have undefined as a possible type', () => {
-    // this tests this code
-    // if (isSparse) {
-    //   return makeTypeContentRoot({
-    //     joinOperation: 'list',
-    //     children: [
-    //       makeTypeContentRoot({
-    //         joinOperation: 'union',
-    //         children: [child, makeTypeContentChild({ content: 'undefined' })],
-    //         interfaceOrTypeName,
-    //         jsDoc
-    //       })
-    //     ],
-    //     interfaceOrTypeName,
-    //     jsDoc
-    //   });
-    // }
     const result = convertSchema({ sortPropertiesByName: true }, SparseTestListSchema);
     expect(result).not.toBeUndefined;
     expect(result?.content).toBe(`/**
