@@ -174,6 +174,12 @@ export interface Settings {
    */
   useLabelAsInterfaceName: boolean;
   /**
+   * If defined, when a schema name ends with "schema", replaces the ending in the generated type by default
+   * with this string.
+   * E.g. when this setting is "Interface", a `TestSchema` object generates a `TestInterface` type
+   */
+  defaultInterfaceSuffix?: string;
+  /**
    * Should interface properties be defaulted to optional or required
    * @default false
    */
