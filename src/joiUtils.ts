@@ -67,13 +67,18 @@ export function ensureInterfaceorTypeName(settings: Settings, details: Describe,
       details.flags.label = interfaceOrTypeName;
     }
   } else {
-    // Set the meta[].className from the exportedName if missing
     if (!details.metas || details.metas.length === 0) {
-      details.metas = [{ className: interfaceOrTypeName }];
-    } else {
-      const className = details.metas.find(meta => meta.className)?.className;
+      details.metas = [];
+    }
 
-      if (!className) {
+    const className = details.metas.find(meta => meta.className)?.className;
+
+    // Set the meta[].className from the exportedName if missing
+    if (!className) {
+      if (settings.defaultInterfaceSuffix && interfaceOrTypeName.toLowerCase().endsWith('schema')) {
+        const nameWithNewSuffix = interfaceOrTypeName.slice(0, -6) + settings.defaultInterfaceSuffix;
+        details.metas.push({ className: nameWithNewSuffix });
+      } else {
         details.metas.push({ className: interfaceOrTypeName });
       }
     }
