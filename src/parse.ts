@@ -32,7 +32,10 @@ function getCommonDetails(
   const isReadonly = getIsReadonly(details);
 
   let required;
-  if (presence === 'required' || (settings.treatDefaultedOptionalAsRequired && value !== undefined)) {
+  if (
+    presence === 'required' ||
+    (settings.treatDefaultedOptionalAsRequired && presence !== 'optional' && value !== undefined)
+  ) {
     required = true;
   } else if (presence === 'optional') {
     required = false;

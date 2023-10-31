@@ -18,7 +18,10 @@ describe('Test behaviour for optional fields with supplied defaults', function (
     }),
     alt2: Joi.alternatives()
       .try(Joi.string(), Joi.number(), Joi.object({ val: Joi.boolean().default(true) }))
-      .default({ val: false })
+      .default({ val: false }),
+    strOptional: Joi.string().default('Test').optional(),
+    numOptional: Joi.number().default(1).optional(),
+    boolOptional: Joi.boolean().default(true).optional()
   });
 
   it('Test defaults as optional and excluded from types', function () {
@@ -36,11 +39,14 @@ describe('Test behaviour for optional fields with supplied defaults', function (
   arr?: number[];
   arr2?: string[];
   bool?: boolean;
+  boolOptional?: boolean;
   num?: number;
+  numOptional?: number;
   obj?: {
     val?: string;
   };
   str?: string;
+  strOptional?: string;
 }`);
   });
   it('Test defaults as required and excluded from types', function () {
@@ -61,11 +67,14 @@ describe('Test behaviour for optional fields with supplied defaults', function (
   arr: number[];
   arr2: string[];
   bool: boolean;
+  boolOptional?: boolean;
   num: number;
+  numOptional?: number;
   obj: {
     val?: string;
   };
   str: string;
+  strOptional?: string;
 }`);
   });
   it('Test defaults as optional and included in types', function () {
@@ -83,11 +92,14 @@ describe('Test behaviour for optional fields with supplied defaults', function (
   arr?: [1,2,3] | number;
   arr2?: ["X","Y","Z"] | string;
   bool?: true | boolean;
+  boolOptional?: true | boolean;
   num?: 1 | number;
+  numOptional?: 1 | number;
   obj?: {"val":"Test"} | {
     val?: string;
   };
   str?: "Test" | string;
+  strOptional?: "Test" | string;
 }`);
   });
   it('Test defaults as required and included in types', function () {
@@ -105,11 +117,14 @@ describe('Test behaviour for optional fields with supplied defaults', function (
   arr: [1,2,3] | number;
   arr2: ["X","Y","Z"] | string;
   bool: true | boolean;
+  boolOptional?: true | boolean;
   num: 1 | number;
+  numOptional?: 1 | number;
   obj: {"val":"Test"} | {
     val?: string;
   };
   str: "Test" | string;
+  strOptional?: "Test" | string;
 }`);
   });
 });
