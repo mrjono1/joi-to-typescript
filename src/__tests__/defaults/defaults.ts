@@ -6,6 +6,7 @@ describe('Test behaviour for optional fields with supplied defaults', function (
   // A junk schema which tests a combination of values and defaults
   const schema = Joi.object({
     str: Joi.string().default('Test'),
+    strWithSpecialChars: Joi.string().default('Test\\World$Hello🚀Hey\nYay'),
     num: Joi.number().default(1),
     bool: Joi.boolean().default(true),
     arr: Joi.array().items(Joi.number()).default([1, 2, 3]),
@@ -47,6 +48,7 @@ describe('Test behaviour for optional fields with supplied defaults', function (
   };
   str?: string;
   strOptional?: string;
+  strWithSpecialChars?: string;
 }`);
   });
   it('Test defaults as required and excluded from types', function () {
@@ -75,6 +77,7 @@ describe('Test behaviour for optional fields with supplied defaults', function (
   };
   str: string;
   strOptional?: string;
+  strWithSpecialChars: string;
 }`);
   });
   it('Test defaults as optional and included in types', function () {
@@ -100,6 +103,7 @@ describe('Test behaviour for optional fields with supplied defaults', function (
   };
   str?: "Test" | string;
   strOptional?: "Test" | string;
+  strWithSpecialChars?: "Test\\\\World$Hello🚀Hey\\nYay" | string;
 }`);
   });
   it('Test defaults as required and included in types', function () {
@@ -125,6 +129,7 @@ describe('Test behaviour for optional fields with supplied defaults', function (
   };
   str: "Test" | string;
   strOptional?: "Test" | string;
+  strWithSpecialChars: "Test\\\\World$Hello🚀Hey\\nYay" | string;
 }`);
   });
 });
