@@ -54,9 +54,6 @@
   "peerDependencies": {
     "joi": "17.x"
   },
-  "jest": {
-    "testEnvironment": "node"
-  },
   "engines": {
     "node": ">=14.0.0"
   }
