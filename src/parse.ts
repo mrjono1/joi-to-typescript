@@ -55,18 +55,6 @@ export function getAllCustomTypes(parsedSchema: TypeContent): string[] {
   return customTypes;
 }
 
-const wrapValue = (value: unknown): string | object | boolean | number => {
-  if (typeof value === 'string') {
-    return `"${value}"`;
-  } else if (Array.isArray(value)) {
-    return `[${value.map(av => wrapValue(av))}]`;
-  } else if (typeof value === 'object') {
-    return JSON.stringify(value);
-  } else {
-    return `${value}`;
-  }
-};
-
 function typeContentToTsHelper(
   settings: Settings,
   parsedSchema: TypeContent,
@@ -77,7 +65,7 @@ function typeContentToTsHelper(
     return {
       tsContent: settings.supplyDefaultsInType
         ? parsedSchema.value !== undefined
-          ? `${wrapValue(parsedSchema.value)} | ${parsedSchema.content}`
+          ? `${JSON.stringify(parsedSchema.value)} | ${parsedSchema.content}`
           : parsedSchema.content
         : parsedSchema.content,
       jsDoc: parsedSchema.jsDoc
@@ -104,7 +92,7 @@ function typeContentToTsHelper(
       }
       const arrayStr = settings.supplyDefaultsInType
         ? parsedSchema.value !== undefined
-          ? `${wrapValue(parsedSchema.value)} | ${content}`
+          ? `${JSON.stringify(parsedSchema.value)} | ${content}`
           : `${content}[]`
         : `${content}[]`;
       if (doExport) {
@@ -142,7 +130,7 @@ function typeContentToTsHelper(
       const unionStr = childrenContent.join(' | ');
       const finalStr = settings.supplyDefaultsInType
         ? parsedSchema.value !== undefined
-          ? `${wrapValue(parsedSchema.value)} | ${unionStr}`
+          ? `${JSON.stringify(parsedSchema.value)} | ${unionStr}`
           : unionStr
         : unionStr;
       if (doExport) {
@@ -180,7 +168,7 @@ function typeContentToTsHelper(
         objectStr = `{\n${childrenContent.join('\n')}\n${getIndentStr(settings, indentLevel - 1)}}`;
 
         if (parsedSchema.value !== undefined && settings.supplyDefaultsInType) {
-          objectStr = `${wrapValue(parsedSchema.value)} | ${objectStr}`;
+          objectStr = `${JSON.stringify(parsedSchema.value)} | ${objectStr}`;
         }
       }
       if (doExport) {
