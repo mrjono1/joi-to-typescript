@@ -48,7 +48,11 @@ export function getJsDocString(settings: Settings, name: string, jsDoc?: JsDoc, 
   const lines = ['/**'];
 
   if (settings.commentEverything || (jsDoc && jsDoc.description)) {
-    lines.push(` * ${jsDoc?.description ?? name}`);
+    let description = name;
+    if (jsDoc?.description) {
+      description = jsDoc.description.trim();
+    }
+    lines.push(...description.split('\n').map(line => ` * ${line}`.trimEnd()));
   }
 
   if (jsDoc?.example) {
