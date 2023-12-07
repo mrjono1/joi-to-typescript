@@ -102,6 +102,18 @@ export interface Settings {
    * @default false
    */
   readonly omitIndexFiles: boolean;
+
+  /**
+   * If provided, prepends the content returned by the function to the
+   * generated interface/type code (including and JSDoc).
+   */
+  readonly tsContentHeader?: (type: ConvertedType) => string;
+
+  /**
+   * If provided, appends the content returned by the function to the
+   * generated interface/type code.
+   */
+  readonly tsContentFooter?: (type: ConvertedType) => string;
 }
 
 export class InputFileFilter {
