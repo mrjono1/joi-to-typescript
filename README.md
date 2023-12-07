@@ -259,6 +259,16 @@ export interface Settings {
    * @default false
    */
   omitIndexFiles: boolean
+  /**
+   * If provided, prepends the content returned by the function to the
+   * generated interface/type code (including and JSDoc).
+   */
+  tsContentHeader?: (type: ConvertedType) => string;
+  /**
+   * If provided, appends the content returned by the function to the
+   * generated interface/type code.
+   */
+  tsContentFooter?: (type: ConvertedType) => string;
 }
 ```
 
