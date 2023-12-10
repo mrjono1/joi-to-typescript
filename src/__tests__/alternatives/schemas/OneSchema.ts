@@ -35,3 +35,13 @@ export const AlternativesConditionalSchema = Joi.object({
     otherwise: Joi.forbidden()
   })
 }).meta({ className: 'SomeSchema' });
+
+export const AlternativesWithFunctionSchema = Joi.alternatives([
+  Joi.function().minArity(2),
+  Joi.object({
+    json: Joi.any().required()
+  }),
+  Joi.object({
+    raw: Joi.string().required()
+  })
+]).meta({ className: 'AlternativesWithFunctionInterface' });
