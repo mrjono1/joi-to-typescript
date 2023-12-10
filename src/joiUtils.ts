@@ -29,6 +29,16 @@ export function getIsReadonly(details: Describe): boolean | undefined {
   return undefined;
 }
 
+export function getIgnoreDescription(details: Describe): boolean | undefined {
+  const ignoreDescriptionItems = getMetadataFromDetails('ignoreDescription', details);
+  if (ignoreDescriptionItems.length !== 0) {
+    const ignoreDescription = ignoreDescriptionItems.pop();
+    return Boolean(ignoreDescription);
+  }
+
+  return undefined;
+}
+
 /**
  * Get the interface name from the Joi
  * @returns a string if it can find one

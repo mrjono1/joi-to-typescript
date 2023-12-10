@@ -9,7 +9,13 @@ import {
   ObjectDescribe,
   StringDescribe
 } from './joiDescribeTypes';
-import { getAllowValues, getInterfaceOrTypeName, getIsReadonly, getMetadataFromDetails } from './joiUtils';
+import {
+  getAllowValues,
+  getIgnoreDescription,
+  getInterfaceOrTypeName,
+  getIsReadonly,
+  getMetadataFromDetails
+} from './joiUtils';
 import { getIndentStr, getJsDocString } from './write';
 
 // see __tests__/joiTypes.ts for more information
@@ -25,7 +31,8 @@ function getCommonDetails(
 ): { interfaceOrTypeName?: string; jsDoc: JsDoc; required: boolean; value?: unknown; isReadonly?: boolean } {
   const interfaceOrTypeName = getInterfaceOrTypeName(settings, details);
 
-  const description = details.flags?.description;
+  const ignoreDescription = getIgnoreDescription(details);
+  const description = ignoreDescription ? undefined : details.flags?.description;
   const presence = details.flags?.presence;
   const value = details.flags?.default;
   const example = details.examples?.[0];

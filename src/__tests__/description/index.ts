@@ -52,6 +52,40 @@ export interface ExampleLong {
 }
 
 /**
+ * IgnoreDescription
+ */
+export interface IgnoreDescription {
+  /**
+   * thing
+   */
+  thing: string;
+}
+
+/**
+ * IgnoreDescriptionObject
+ */
+export interface IgnoreDescriptionObject {
+  /**
+   * withDescription
+   */
+  withDescription?: {
+    /**
+     * A simple description
+     */
+    [x: string]: Example;
+  };
+  /**
+   * withoutDescription
+   */
+  withoutDescription?: {
+    /**
+     * [x: string]
+     */
+    [x: string]: Example;
+  };
+}
+
+/**
  * NoComment
  */
 export interface NoComment {
