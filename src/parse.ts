@@ -286,7 +286,7 @@ export function parseSchema(
     if (typeToUse === undefined) {
       switch (details.type as string) {
         case 'function':
-          typeToUse = '(...args: any[]) => any';
+          typeToUse = '((...args: any[]) => any)';
           break;
 
         case 'symbol':

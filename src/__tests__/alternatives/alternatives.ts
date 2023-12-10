@@ -28,6 +28,12 @@ describe('alternative types', () => {
  * Do not modify this file manually
  */
 
+export type AlternativesWithFunctionInterface = ((...args: any[]) => any) | {
+  json: any;
+} | {
+  raw: string;
+};
+
 /**
  * a description for basic
  */
@@ -73,7 +79,8 @@ export interface Thing {
   });
 
   test('allowed value in alternatives', () => {
-    const schema = Joi.alternatives(Joi.string(), Joi.number()).allow(null)
+    const schema = Joi.alternatives(Joi.string(), Joi.number())
+      .allow(null)
       .meta({ className: 'Test' })
       .description('Test allowed values in alternatives');
 
