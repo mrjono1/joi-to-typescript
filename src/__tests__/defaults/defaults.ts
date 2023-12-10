@@ -92,8 +92,8 @@ describe('Test behaviour for optional fields with supplied defaults', function (
   alt2?: {"val":false} | string | number | {
     val?: true | boolean;
   };
-  arr?: [1,2,3] | number;
-  arr2?: ["X","Y","Z"] | string;
+  arr?: [1,2,3] | number[];
+  arr2?: ["X","Y","Z"] | string[];
   bool?: true | boolean;
   boolOptional?: true | boolean;
   num?: 1 | number;
@@ -118,8 +118,8 @@ describe('Test behaviour for optional fields with supplied defaults', function (
   alt2: {"val":false} | string | number | {
     val: true | boolean;
   };
-  arr: [1,2,3] | number;
-  arr2: ["X","Y","Z"] | string;
+  arr: [1,2,3] | number[];
+  arr2: ["X","Y","Z"] | string[];
   bool: true | boolean;
   boolOptional?: true | boolean;
   num: 1 | number;
