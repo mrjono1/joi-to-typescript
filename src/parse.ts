@@ -100,7 +100,7 @@ function typeContentToTsHelper(
       }
       const arrayStr = settings.supplyDefaultsInType
         ? parsedSchema.value !== undefined
-          ? `${JSON.stringify(parsedSchema.value)} | ${content}`
+          ? `${JSON.stringify(parsedSchema.value)} | ${content}[]`
           : `${content}[]`
         : `${content}[]`;
       if (doExport) {
