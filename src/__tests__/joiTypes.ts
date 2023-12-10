@@ -43,9 +43,9 @@ describe('`Joi.types()`', () => {
     expect(result?.content).toBe(
       [
         'export interface Test {',
-        '  doStuff?: (...args: any[]) => any;',
-        '  moreThings?: (...args: any[]) => any;',
-        '  stuff: (...args: any[]) => any;',
+        '  doStuff?: ((...args: any[]) => any);',
+        '  moreThings?: ((...args: any[]) => any);',
+        '  stuff: ((...args: any[]) => any);',
         '}'
       ].join('\n')
     );
