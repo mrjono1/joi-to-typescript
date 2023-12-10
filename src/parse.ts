@@ -1,5 +1,5 @@
 import { filterMap, isDescribe, toStringLiteral } from './utils';
-import { TypeContent, makeTypeContentRoot, makeTypeContentChild, Settings, JsDoc } from './types';
+import { JsDoc, makeTypeContentChild, makeTypeContentRoot, Settings, TypeContent } from './types';
 import {
   AlternativesDescribe,
   ArrayDescribe,
@@ -62,12 +62,20 @@ function typeContentToTsHelper(
   doExport = false
 ): { tsContent: string; jsDoc?: JsDoc } {
   if (!parsedSchema.__isRoot) {
+    const tsContent = settings.supplyDefaultsInType
+      ? parsedSchema.value !== undefined
+        ? `${JSON.stringify(parsedSchema.value)} | ${parsedSchema.content}`
+        : parsedSchema.content
+      : parsedSchema.content;
+    if (doExport) {
+      return {
+        tsContent: `export type ${parsedSchema.interfaceOrTypeName} = ${tsContent};`,
+        jsDoc: parsedSchema.jsDoc
+      };
+    }
+
     return {
-      tsContent: settings.supplyDefaultsInType
-        ? parsedSchema.value !== undefined
-          ? `${JSON.stringify(parsedSchema.value)} | ${parsedSchema.content}`
-          : parsedSchema.content
-        : parsedSchema.content,
+      tsContent,
       jsDoc: parsedSchema.jsDoc
     };
   }

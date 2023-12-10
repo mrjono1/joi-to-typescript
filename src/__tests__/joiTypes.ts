@@ -51,6 +51,14 @@ describe('`Joi.types()`', () => {
     );
   });
 
+  test('Joi.function() bare value', () => {
+    const schema = Joi.function().meta({ className: 'Test' });
+
+    const result = convertSchema({ debug: true }, schema);
+    expect(result).not.toBeUndefined;
+    expect(result?.content).toBe(['export type Test = (...args: any[]) => any;'].join('\n'));
+  });
+
   // TODO: It might be possible to support link
   // I guess this would find the referenced schema and get its type
   test('Joi.link()', () => {
