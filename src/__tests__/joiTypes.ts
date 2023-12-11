@@ -56,7 +56,7 @@ describe('`Joi.types()`', () => {
 
     const result = convertSchema({ debug: true }, schema);
     expect(result).not.toBeUndefined;
-    expect(result?.content).toBe(['export type Test = (...args: any[]) => any;'].join('\n'));
+    expect(result?.content).toBe(['export type Test = ((...args: any[]) => any);'].join('\n'));
   });
 
   // TODO: It might be possible to support link
