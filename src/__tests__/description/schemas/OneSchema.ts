@@ -29,3 +29,19 @@ export const disableDescriptionObjectSchema = Joi.object({
     .pattern(Joi.string(), exampleSchema)
     .meta({ unknownType: exampleSchema.meta({ disableDescription: true }) })
 }).meta({ className: 'DisableDescriptionObject' });
+
+export const descriptionAndShortExampleSchema = Joi.object({
+  more: Joi.string().required()
+})
+  .description(`A schema with a short example`)
+  .example('One liner')
+  .meta({ className: 'DescriptionAndShortExample' });
+
+export const descriptionAndExampleSchema = Joi.object({
+  more: Joi.string().required()
+})
+  .description(`A schema with an example`)
+  .example({
+    hello: 'world'
+  })
+  .meta({ className: 'DescriptionAndExample' });
