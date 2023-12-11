@@ -99,7 +99,7 @@ function typeContentToTsHelper(
       }
       const arrayStr = settings.supplyDefaultsInType
         ? parsedSchema.value !== undefined
-          ? `${JSON.stringify(parsedSchema.value)} | ${content}`
+          ? `${JSON.stringify(parsedSchema.value)} | ${content}[]`
           : `${content}[]`
         : `${content}[]`;
       if (doExport) {
@@ -285,7 +285,7 @@ export function parseSchema(
     if (typeToUse === undefined) {
       switch (details.type as string) {
         case 'function':
-          typeToUse = '(...args: any[]) => any';
+          typeToUse = '((...args: any[]) => any)';
           break;
 
         case 'symbol':
