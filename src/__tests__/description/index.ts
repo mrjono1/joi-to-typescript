@@ -28,6 +28,34 @@ describe('description', () => {
  * Do not modify this file manually
  */
 
+export interface DisableDescription {
+  /**
+   * thing
+   */
+  thing: string;
+}
+
+/**
+ * DisableDescriptionObject
+ */
+export interface DisableDescriptionObject {
+  /**
+   * withDescription
+   */
+  withDescription?: {
+    /**
+     * A simple description
+     */
+    [x: string]: Example;
+  };
+  /**
+   * withoutDescription
+   */
+  withoutDescription?: {
+    [x: string]: Example;
+  };
+}
+
 /**
  * A simple description
  */

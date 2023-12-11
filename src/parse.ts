@@ -9,7 +9,13 @@ import {
   ObjectDescribe,
   StringDescribe
 } from './joiDescribeTypes';
-import { getAllowValues, getInterfaceOrTypeName, getIsReadonly, getMetadataFromDetails } from './joiUtils';
+import {
+  getAllowValues,
+  getDisableDescription,
+  getInterfaceOrTypeName,
+  getIsReadonly,
+  getMetadataFromDetails
+} from './joiUtils';
 import { getIndentStr, getJsDocString } from './write';
 
 // see __tests__/joiTypes.ts for more information
@@ -30,6 +36,7 @@ function getCommonDetails(
   const value = details.flags?.default;
   const example = details.examples?.[0];
   const isReadonly = getIsReadonly(details);
+  const disableJsDoc = getDisableDescription(details);
 
   let required;
   if (
@@ -42,7 +49,13 @@ function getCommonDetails(
   } else {
     required = settings.defaultToRequired;
   }
-  return { interfaceOrTypeName, jsDoc: { description, example }, required, value, isReadonly };
+  return {
+    interfaceOrTypeName,
+    jsDoc: { description, example, disable: disableJsDoc },
+    required,
+    value,
+    isReadonly
+  };
 }
 
 export function getAllCustomTypes(parsedSchema: TypeContent): string[] {

@@ -4,7 +4,7 @@
 import { writeFileSync } from 'fs';
 import Path from 'path';
 
-import { Settings, JsDoc } from './types';
+import { JsDoc, Settings } from './types';
 
 /**
  * Write index.ts file
@@ -23,9 +23,11 @@ export function writeIndexFile(settings: Settings, fileNamesToExport: string[]):
 }
 
 export function getTypeFileNameFromSchema(schemaFileName: string, settings: Settings): string {
-  return (schemaFileName.endsWith(`${settings.schemaFileSuffix}.ts`)
-    ? schemaFileName.substring(0, schemaFileName.length - `${settings.schemaFileSuffix}.ts`.length)
-    : schemaFileName.replace('.ts', '')) + settings.interfaceFileSuffix;
+  return (
+    (schemaFileName.endsWith(`${settings.schemaFileSuffix}.ts`)
+      ? schemaFileName.substring(0, schemaFileName.length - `${settings.schemaFileSuffix}.ts`.length)
+      : schemaFileName.replace('.ts', '')) + settings.interfaceFileSuffix
+  );
 }
 
 /**
@@ -41,6 +43,10 @@ export function getIndentStr(settings: Settings, indentLevel: number): string {
  * Get Interface jsDoc
  */
 export function getJsDocString(settings: Settings, name: string, jsDoc?: JsDoc, indentLevel = 0): string {
+  if (jsDoc?.disable == true) {
+    return '';
+  }
+
   if (!settings.commentEverything && !jsDoc?.description && !jsDoc?.example) {
     return '';
   }
