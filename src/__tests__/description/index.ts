@@ -51,9 +51,6 @@ export interface ExampleLong {
   another: string;
 }
 
-/**
- * IgnoreDescription
- */
 export interface IgnoreDescription {
   /**
    * thing
@@ -78,9 +75,6 @@ export interface IgnoreDescriptionObject {
    * withoutDescription
    */
   withoutDescription?: {
-    /**
-     * [x: string]
-     */
     [x: string]: Example;
   };
 }

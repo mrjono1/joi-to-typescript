@@ -304,4 +304,8 @@ export interface JsDoc {
    * @example example value
    */
   example?: string;
+  /**
+   * If true, completely disables printing JsDoc
+   */
+  disable?: boolean;
 }

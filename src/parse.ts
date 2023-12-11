@@ -1,5 +1,5 @@
 import { filterMap, isDescribe, toStringLiteral } from './utils';
-import { TypeContent, makeTypeContentRoot, makeTypeContentChild, Settings, JsDoc } from './types';
+import { JsDoc, makeTypeContentChild, makeTypeContentRoot, Settings, TypeContent } from './types';
 import {
   AlternativesDescribe,
   ArrayDescribe,
@@ -31,12 +31,12 @@ function getCommonDetails(
 ): { interfaceOrTypeName?: string; jsDoc: JsDoc; required: boolean; value?: unknown; isReadonly?: boolean } {
   const interfaceOrTypeName = getInterfaceOrTypeName(settings, details);
 
-  const ignoreDescription = getIgnoreDescription(details);
-  const description = ignoreDescription ? undefined : details.flags?.description;
+  const description = details.flags?.description;
   const presence = details.flags?.presence;
   const value = details.flags?.default;
   const example = details.examples?.[0];
   const isReadonly = getIsReadonly(details);
+  const disableJsDoc = getIgnoreDescription(details);
 
   let required;
   if (
@@ -49,7 +49,13 @@ function getCommonDetails(
   } else {
     required = settings.defaultToRequired;
   }
-  return { interfaceOrTypeName, jsDoc: { description, example }, required, value, isReadonly };
+  return {
+    interfaceOrTypeName,
+    jsDoc: { description, example, disable: disableJsDoc },
+    required,
+    value,
+    isReadonly
+  };
 }
 
 export function getAllCustomTypes(parsedSchema: TypeContent): string[] {
