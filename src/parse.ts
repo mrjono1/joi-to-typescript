@@ -35,6 +35,13 @@ function getCommonDetails(
   const presence = details.flags?.presence;
   const value = details.flags?.default;
   const example = details.examples?.[0];
+  const exampleStr =
+    example != undefined
+      ? // Joi accepts `any` as type for an example
+        typeof example == 'object'
+        ? JSON.stringify(example, null, 2)
+        : example.toString()
+      : undefined;
   const isReadonly = getIsReadonly(details);
   const disableJsDoc = getDisableDescription(details);
 
@@ -51,7 +58,7 @@ function getCommonDetails(
   }
   return {
     interfaceOrTypeName,
-    jsDoc: { description, example, disable: disableJsDoc },
+    jsDoc: { description, example: exampleStr, disable: disableJsDoc },
     required,
     value,
     isReadonly

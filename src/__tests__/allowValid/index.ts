@@ -106,6 +106,9 @@ export interface TestSchema {
  */
 
 export interface Child {
+  /**
+   * @example 0
+   */
   item: number;
 }
 

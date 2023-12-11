@@ -28,6 +28,31 @@ describe('description', () => {
  * Do not modify this file manually
  */
 
+/**
+ * A schema with an example
+ * @example
+ * {
+ *   "hello": "world"
+ * }
+ */
+export interface DescriptionAndExample {
+  /**
+   * more
+   */
+  more: string;
+}
+
+/**
+ * A schema with a short example
+ * @example One liner
+ */
+export interface DescriptionAndShortExample {
+  /**
+   * more
+   */
+  more: string;
+}
+
 export interface DisableDescription {
   /**
    * thing

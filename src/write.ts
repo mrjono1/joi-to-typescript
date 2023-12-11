@@ -62,7 +62,12 @@ export function getJsDocString(settings: Settings, name: string, jsDoc?: JsDoc, 
   }
 
   if (jsDoc?.example) {
-    lines.push(` * @example ${jsDoc.example}`);
+    if (jsDoc.example.includes('\n')) {
+      lines.push(` * @example`);
+      lines.push(...jsDoc.example.split('\n').map(line => ` * ${line}`.trimEnd()));
+    } else {
+      lines.push(` * @example ${jsDoc.example}`);
+    }
   }
 
   lines.push(' */');
