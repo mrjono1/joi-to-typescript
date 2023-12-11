@@ -11,7 +11,7 @@ import {
 } from './joiDescribeTypes';
 import {
   getAllowValues,
-  getIgnoreDescription,
+  getDisableDescription,
   getInterfaceOrTypeName,
   getIsReadonly,
   getMetadataFromDetails
@@ -36,7 +36,7 @@ function getCommonDetails(
   const value = details.flags?.default;
   const example = details.examples?.[0];
   const isReadonly = getIsReadonly(details);
-  const disableJsDoc = getIgnoreDescription(details);
+  const disableJsDoc = getDisableDescription(details);
 
   let required;
   if (

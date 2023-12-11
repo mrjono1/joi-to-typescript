@@ -29,11 +29,11 @@ export function getIsReadonly(details: Describe): boolean | undefined {
   return undefined;
 }
 
-export function getIgnoreDescription(details: Describe): boolean | undefined {
-  const ignoreDescriptionItems = getMetadataFromDetails('ignoreDescription', details);
-  if (ignoreDescriptionItems.length !== 0) {
-    const ignoreDescription = ignoreDescriptionItems.pop();
-    return Boolean(ignoreDescription);
+export function getDisableDescription(details: Describe): boolean | undefined {
+  const disableDescriptionItems = getMetadataFromDetails('disableDescription', details);
+  if (disableDescriptionItems.length !== 0) {
+    const disableDescription = disableDescriptionItems.pop();
+    return Boolean(disableDescription);
   }
 
   return undefined;
