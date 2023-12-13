@@ -42,7 +42,7 @@ export const descriptionAndExampleSchema = Joi.object({
 })
   .description(`A schema with an example`)
   .example({
-    hello: 'world'
+    more: 'world'
   })
   .meta({ className: 'DescriptionAndExample' });
 
@@ -62,9 +62,9 @@ export const descriptionAndExamplesSchema = Joi.object({
 })
   .description(`A schema with two examples`)
   .example({
-    hello: 'world'
+    more: 'world'
   })
   .example({
-    hello: 'coffee'
+    more: 'coffee'
   })
   .meta({ className: 'DescriptionAndExamples' });

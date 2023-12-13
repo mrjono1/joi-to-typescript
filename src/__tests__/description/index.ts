@@ -32,7 +32,7 @@ describe('description', () => {
  * A schema with an example
  * @example
  * {
- *   "hello": "world"
+ *   "more": "world"
  * }
  */
 export interface DescriptionAndExample {
@@ -46,11 +46,11 @@ export interface DescriptionAndExample {
  * A schema with two examples
  * @example
  * {
- *   "hello": "world"
+ *   "more": "world"
  * }
  * @example
  * {
- *   "hello": "coffee"
+ *   "more": "coffee"
  * }
  */
 export interface DescriptionAndExamples {
