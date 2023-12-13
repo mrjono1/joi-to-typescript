@@ -158,11 +158,13 @@ export interface Parent {
     expect(result?.content).toBe(`export interface TestSchema {
   /**
    * The password of the authenticating user
+   *
    * @example test-PASSWORD123
    */
   password: string;
   /**
    * Repeat the password to ensure no typos
+   *
    * @example test-PASSWORD123
    */
   repeatPassword: string;

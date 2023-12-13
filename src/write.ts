@@ -51,7 +51,7 @@ export function getJsDocString(settings: Settings, name: string, jsDoc?: JsDoc, 
     return '';
   }
 
-  const lines = ['/**'];
+  const lines = [];
 
   if (settings.commentEverything || (jsDoc && jsDoc.description)) {
     let description = name;
@@ -59,6 +59,11 @@ export function getJsDocString(settings: Settings, name: string, jsDoc?: JsDoc, 
       description = jsDoc.description.trim();
     }
     lines.push(...description.split('\n').map(line => ` * ${line}`.trimEnd()));
+  }
+
+  // Add a JsDoc divider if needed
+  if ((jsDoc?.examples?.length ?? 0) > 0 && lines.length > 0) {
+    lines.push(' *');
   }
 
   for (const example of jsDoc?.examples ?? []) {
@@ -72,6 +77,9 @@ export function getJsDocString(settings: Settings, name: string, jsDoc?: JsDoc, 
     }
   }
 
+  // Add JsDoc boundaries
+  lines.unshift('/**');
   lines.push(' */');
+
   return lines.map(line => `${getIndentStr(settings, indentLevel)}${line}`).join('\n') + '\n';
 }

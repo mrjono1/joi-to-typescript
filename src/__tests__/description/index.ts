@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, rmdirSync } from 'fs';
 
-import { convertFromDirectory } from '../../index';
+import { convertFromDirectory, convertSchema } from '../../index';
+import Joi from 'joi';
 
 describe('description', () => {
   const typeOutputDirectory = './src/__tests__/description/interfaces';
@@ -30,6 +31,7 @@ describe('description', () => {
 
 /**
  * A schema with an example
+ *
  * @example
  * {
  *   "more": "world"
@@ -44,6 +46,7 @@ export interface DescriptionAndExample {
 
 /**
  * A schema with two examples
+ *
  * @example
  * {
  *   "more": "world"
@@ -62,6 +65,7 @@ export interface DescriptionAndExamples {
 
 /**
  * A schema with a short example
+ *
  * @example One liner
  */
 export interface DescriptionAndShortExample {
@@ -124,6 +128,7 @@ export interface ExampleLong {
 
 /**
  * ExampleNewLine
+ *
  * @example
  * I have many
  * lines!
@@ -146,5 +151,55 @@ export interface NoComment {
 }
 `
     );
+  });
+
+  it('Test JsDoc example spacing', function () {
+    {
+      const converted = convertSchema(
+        {},
+        Joi.object({
+          hello: Joi.string()
+        }).example({
+          hello: 'world'
+        }),
+        'HelloTest'
+      );
+      expect(converted).toBeDefined();
+      expect(converted?.content).toEqual(`/**
+ * @example
+ * {
+ *   "hello": "world"
+ * }
+ */
+export interface HelloTest {
+  hello?: string;
+}`);
+    }
+
+    {
+      const converted = convertSchema(
+        {},
+        Joi.object({
+          hello: Joi.string()
+        })
+          .description('A simple description')
+          .example({
+            hello: 'world'
+          }),
+        'HelloTest'
+      );
+      expect(converted).toBeDefined();
+      expect(converted?.content).toEqual(`/**
+ * A simple description
+ *
+ * @example
+ * {
+ *   "hello": "world"
+ * }
+ */
+export interface HelloTest {
+  hello?: string;
+}`);
+    }
   });
 });
