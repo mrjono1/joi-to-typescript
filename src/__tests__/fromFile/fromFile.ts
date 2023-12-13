@@ -65,6 +65,7 @@ export interface TestSchema {
 export interface Bar {
   /**
    * Id
+   *
    * @example 1
    */
   id: number;
@@ -77,6 +78,7 @@ export interface Foo {
   bar: Bar;
   /**
    * Id
+   *
    * @example 1
    */
   id: number;
