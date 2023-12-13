@@ -32,10 +32,28 @@ describe('description', () => {
  * A schema with an example
  * @example
  * {
- *   "hello": "world"
+ *   "more": "world"
  * }
  */
 export interface DescriptionAndExample {
+  /**
+   * more
+   */
+  more: string;
+}
+
+/**
+ * A schema with two examples
+ * @example
+ * {
+ *   "more": "world"
+ * }
+ * @example
+ * {
+ *   "more": "coffee"
+ * }
+ */
+export interface DescriptionAndExamples {
   /**
    * more
    */
@@ -102,6 +120,19 @@ export interface ExampleLong {
    * another
    */
   another: string;
+}
+
+/**
+ * ExampleNewLine
+ * @example
+ * I have many
+ * lines!
+ */
+export interface ExampleNewLine {
+  /**
+   * more
+   */
+  more: string;
 }
 
 /**
