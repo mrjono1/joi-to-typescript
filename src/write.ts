@@ -47,7 +47,7 @@ export function getJsDocString(settings: Settings, name: string, jsDoc?: JsDoc, 
     return '';
   }
 
-  if (!settings.commentEverything && !jsDoc?.description && !jsDoc?.example) {
+  if (!settings.commentEverything && !jsDoc?.description && (jsDoc?.examples?.length ?? 0) == 0) {
     return '';
   }
 
@@ -61,12 +61,14 @@ export function getJsDocString(settings: Settings, name: string, jsDoc?: JsDoc, 
     lines.push(...description.split('\n').map(line => ` * ${line}`.trimEnd()));
   }
 
-  if (jsDoc?.example) {
-    if (jsDoc.example.includes('\n')) {
+  for (const example of jsDoc?.examples ?? []) {
+    const trimmed = example.trim();
+
+    if (trimmed.includes('\n')) {
       lines.push(` * @example`);
-      lines.push(...jsDoc.example.split('\n').map(line => ` * ${line}`.trimEnd()));
+      lines.push(...trimmed.split('\n').map(line => ` * ${line}`.trimEnd()));
     } else {
-      lines.push(` * @example ${jsDoc.example}`);
+      lines.push(` * @example ${trimmed}`);
     }
   }
 

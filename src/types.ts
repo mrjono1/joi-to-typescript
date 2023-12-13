@@ -301,9 +301,9 @@ export interface JsDoc {
    */
   description?: string;
   /**
-   * @example example value
+   * @example example values
    */
-  example?: string;
+  examples?: string[];
   /**
    * If true, completely disables printing JsDoc
    */

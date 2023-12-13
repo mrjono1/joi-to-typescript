@@ -43,6 +43,24 @@ export interface DescriptionAndExample {
 }
 
 /**
+ * A schema with two examples
+ * @example
+ * {
+ *   "hello": "world"
+ * }
+ * @example
+ * {
+ *   "hello": "coffee"
+ * }
+ */
+export interface DescriptionAndExamples {
+  /**
+   * more
+   */
+  more: string;
+}
+
+/**
  * A schema with a short example
  * @example One liner
  */
@@ -102,6 +120,19 @@ export interface ExampleLong {
    * another
    */
   another: string;
+}
+
+/**
+ * ExampleNewLine
+ * @example
+ * I have many
+ * lines!
+ */
+export interface ExampleNewLine {
+  /**
+   * more
+   */
+  more: string;
 }
 
 /**

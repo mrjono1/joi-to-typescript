@@ -45,3 +45,26 @@ export const descriptionAndExampleSchema = Joi.object({
     hello: 'world'
   })
   .meta({ className: 'DescriptionAndExample' });
+
+export const exampleNewLineSchema = Joi.object({
+  more: Joi.string().required()
+})
+  .example(
+    `
+I have many
+lines!
+`
+  )
+  .meta({ className: 'ExampleNewLine' });
+
+export const descriptionAndExamplesSchema = Joi.object({
+  more: Joi.string().required()
+})
+  .description(`A schema with two examples`)
+  .example({
+    hello: 'world'
+  })
+  .example({
+    hello: 'coffee'
+  })
+  .meta({ className: 'DescriptionAndExamples' });
