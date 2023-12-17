@@ -114,16 +114,30 @@ export interface Example {
 }
 
 /**
- * This is a long description.
+ * This is a long indented description.
  * There are many lines!
  *
  * And more here!
  */
 export interface ExampleLong {
   /**
-   * another
+   * Another description
    */
   another: string;
+  /**
+   * Not indented description
+   */
+  noIndent?: string;
+  /**
+   * Badly indented description
+   *     What a line
+   */
+  badIndent?: string;
+  /**
+   * Another badly indented description
+   *   What a line
+   */
+  badIndent2?: string;
 }
 
 /**

@@ -7,12 +7,25 @@ export const exampleSchema = Joi.object({
   .description('A simple description');
 
 export const exampleLongSchema = Joi.object({
-  another: Joi.string().required()
+  another: Joi.string().required().description(`
+  Another description
+  `),
+  noIndent: Joi.string().description(`
+Not indented description
+`),
+  badIndent: Joi.string().description(`
+Badly indented description
+    What a line
+`),
+  badIndent2: Joi.string().description(`
+    Another badly indented description
+  What a line
+`)
 }).meta({ className: 'ExampleLong' }).description(`
-This is a long description.
-There are many lines!
+  This is a long indented description.
+  There are many lines!
 
-And more here!
+  And more here!
 `);
 
 export const noCommentSchema = Joi.object({
@@ -51,9 +64,9 @@ export const exampleNewLineSchema = Joi.object({
 })
   .example(
     `
-I have many
-lines!
-`
+  I have many
+  lines!
+  `
   )
   .meta({ className: 'ExampleNewLine' });
 
