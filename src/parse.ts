@@ -1,5 +1,5 @@
 import { filterMap, isDescribe, toStringLiteral } from './utils';
-import { JsDoc, makeTypeContentChild, makeTypeContentRoot, Settings, TypeContent } from './types';
+import { JsDoc, makeTypeContentChild, makeTypeContentRoot, Settings, TypeContent, TypeContentRoot } from './types';
 import {
   AlternativesDescribe,
   ArrayDescribe,
@@ -172,9 +172,14 @@ function typeContentToTsHelper(
       }
       return { tsContent: finalStr, jsDoc: parsedSchema.jsDoc };
     }
+    case 'objectWithUndefinedKeys':
     case 'object': {
       if (!children.length && !doExport) {
-        return { tsContent: 'object', jsDoc: parsedSchema.jsDoc };
+        if (parsedSchema.joinOperation == 'objectWithUndefinedKeys') {
+          return { tsContent: 'object', jsDoc: parsedSchema.jsDoc };
+        } else {
+          return { tsContent: '{}', jsDoc: parsedSchema.jsDoc };
+        }
       }
 
       // interface can have no properties {} if the joi object has none defined
@@ -561,6 +566,12 @@ function parseUnknown(details: ObjectDescribe, settings: Settings): TypeContent 
 }
 
 function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent | undefined {
+  const joinOperation: TypeContentRoot['joinOperation'] =
+    details.keys === undefined
+      ? // When using Joi.object() without any argument, joi defaults to allowing ANY key/pair
+        // inside the object. This is reflected in the absence of the `keys` field in the `details` var.
+        'objectWithUndefinedKeys'
+      : 'object';
   let children = filterMap(Object.entries(details.keys || {}), ([key, value]) => {
     const parsedSchema = parseSchema(value, settings);
     // The only type that could return this is alternatives
@@ -600,10 +611,10 @@ function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent 
 
   // at least one value
   if (allowedValues.length !== 0) {
-    allowedValues.unshift(makeTypeContentRoot({ joinOperation: 'object', children, interfaceOrTypeName, jsDoc }));
+    allowedValues.unshift(makeTypeContentRoot({ joinOperation, children, interfaceOrTypeName, jsDoc }));
 
     return makeTypeContentRoot({ joinOperation: 'union', children: allowedValues, interfaceOrTypeName, jsDoc });
   }
 
-  return makeTypeContentRoot({ joinOperation: 'object', children, interfaceOrTypeName, jsDoc });
+  return makeTypeContentRoot({ joinOperation, children, interfaceOrTypeName, jsDoc });
 }
