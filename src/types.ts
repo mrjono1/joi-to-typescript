@@ -173,7 +173,7 @@ export interface TypeContentRoot extends BaseTypeContent {
   /**
    * How to join the children types together
    */
-  joinOperation: 'list' | 'tuple' | 'union' | 'intersection' | 'object';
+  joinOperation: 'list' | 'tuple' | 'union' | 'intersection' | 'object' | 'objectWithUndefinedKeys';
 
   /**
    * Children types
