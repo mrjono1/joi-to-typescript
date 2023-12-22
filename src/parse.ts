@@ -178,7 +178,7 @@ function typeContentToTsHelper(
         if (parsedSchema.joinOperation == 'objectWithUndefinedKeys') {
           return { tsContent: 'object', jsDoc: parsedSchema.jsDoc };
         } else {
-          return { tsContent: '{}', jsDoc: parsedSchema.jsDoc };
+          return { tsContent: 'Record<string, never>', jsDoc: parsedSchema.jsDoc };
         }
       }
 

@@ -139,9 +139,9 @@ export interface ArrayObject {
       expect(result).not.toBeUndefined;
       expect(result?.content).toBe(`export interface Test {
   field1?: string;
-  nothing1?: {};
+  nothing1?: Record<string, never>;
   nothing2?: object;
-  nothing3?: {};
+  nothing3?: Record<string, never>;
   nothingAppend?: {
     hello?: string;
   };
@@ -160,7 +160,7 @@ export interface ArrayObject {
   appended?: {
     field1?: string;
   };
-  nothingAlternative?: {} | object;
+  nothingAlternative?: Record<string, never> | object;
 }`);
     });
 
