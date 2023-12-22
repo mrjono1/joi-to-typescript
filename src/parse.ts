@@ -503,14 +503,26 @@ function parseArray(details: ArrayDescribe, settings: Settings): TypeContent | u
 function parseAlternatives(details: AlternativesDescribe, settings: Settings): TypeContent | undefined {
   const { interfaceOrTypeName, jsDoc } = getCommonDetails(details, settings);
   const ignoreLabels = interfaceOrTypeName ? [interfaceOrTypeName] : [];
-  const children = filterMap(details.matches, match => {
-    // ignore alternatives().conditional() and return 'any' since we don't handle is / then / otherwise for now
-    if (!match.schema) {
-      return parseSchema({ type: 'any' }, settings, true, ignoreLabels);
-    }
-    return parseSchema(match.schema, settings, true, ignoreLabels);
-  });
-  // This is an check that cannot be tested as Joi throws an error before this package
+
+  const children: TypeContent[] = [];
+
+  if (details.matches === undefined) {
+    // Edge case where the user does not pass ANY content to the `alternatives` function.
+    // In the official docs: If no schemas are added, the type will not match any value except for undefined.
+    children.push(makeTypeContentChild({ content: 'undefined' }));
+  } else {
+    children.push(
+      ...filterMap(details.matches, match => {
+        // ignore alternatives().conditional() and return 'any' since we don't handle is / then / otherwise for now
+        if (!match.schema) {
+          return parseSchema({ type: 'any' }, settings, true, ignoreLabels);
+        }
+        return parseSchema(match.schema, settings, true, ignoreLabels);
+      })
+    );
+  }
+
+  // This is a check that cannot be tested as Joi throws an error before this package
   // can be called, there is test for it in alternatives
   if (children.length === 0) {
     /* istanbul ignore next */
