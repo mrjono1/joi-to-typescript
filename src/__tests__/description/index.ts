@@ -114,6 +114,121 @@ export interface Example {
 }
 
 /**
+ * ExampleAlternatives
+ */
+export interface ExampleAlternatives {
+  /**
+   * alt1
+   */
+  alt1?:
+    /**
+     * A string
+     */
+    | string
+    /**
+     * A number
+     */
+    | number
+    /**
+     * An object
+     */
+    | {
+      /**
+       * A value
+       */
+      value?: string;
+    }
+    /**
+     * An array
+     */
+    | string[]
+    /**
+     * A tuple
+     */
+    | [number,
+      /**
+       * A string
+       */
+       string,
+      Item?
+    ] | null
+    /**
+     * Another tuple
+     */
+    | [
+      /**
+       * A tuple number
+       */
+      number,
+      string
+    ]
+    /**
+     * A tuple with one item
+     */
+    | [
+      /**
+       * A tuple number
+       */
+      number
+    ];
+}
+
+/**
+ * ExampleAlternativesRaw
+ */
+export type ExampleAlternativesRaw =
+  /**
+   * A string
+   */
+  | string
+  /**
+   * A number
+   */
+  | number
+  /**
+   * An object
+   */
+  | {
+    /**
+     * A value
+     */
+    value?: string;
+  }
+  /**
+   * An array
+   */
+  | string[]
+  /**
+   * A tuple
+   */
+  | [number,
+    /**
+     * A string
+     */
+     string,
+    Item?
+  ] | null
+  /**
+   * Another tuple
+   */
+  | [
+    /**
+     * A tuple number
+     */
+    number,
+    string
+  ]
+  /**
+   * A tuple with one item
+   */
+  | [
+    /**
+     * A tuple number
+     */
+    number
+  ];
+
+/**
  * This is a long indented description.
  * There are many lines!
  *
@@ -152,6 +267,16 @@ export interface ExampleNewLine {
    * more
    */
   more: string;
+}
+
+/**
+ * Item
+ */
+export interface Item {
+  /**
+   * name
+   */
+  name: string;
 }
 
 /**

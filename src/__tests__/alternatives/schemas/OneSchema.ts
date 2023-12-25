@@ -45,3 +45,12 @@ export const AlternativesWithFunctionSchema = Joi.alternatives([
     raw: Joi.string().required()
   })
 ]).meta({ className: 'AlternativesWithFunctionInterface' });
+
+export const alternativesRawNoDescSchema = Joi.alternatives([Joi.number(), Joi.string()]).meta({
+  className: 'AlternativesRawNoDesc',
+  disableDescription: true
+});
+
+export const alternativesObjectNoDescSchema = Joi.object({
+  myVal: Joi.alternatives([Joi.number(), Joi.string()])
+}).meta({ className: 'AlternativesObjectNoDesc', disableDescription: true });
