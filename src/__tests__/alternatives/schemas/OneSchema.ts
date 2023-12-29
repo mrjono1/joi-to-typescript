@@ -45,3 +45,9 @@ export const AlternativesWithFunctionSchema = Joi.alternatives([
     raw: Joi.string().required()
   })
 ]).meta({ className: 'AlternativesWithFunctionInterface' });
+
+export const AlternativesArrayOptional = Joi.object({
+  oneOrTheOtherMaybe: Joi.array()
+    .items(Joi.alternatives([Joi.number(), Joi.string(), Joi.alternatives()]))
+    .required()
+}).meta({ className: 'AlternativesArrayOptionalInterface' });

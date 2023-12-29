@@ -28,6 +28,10 @@ describe('alternative types', () => {
  * Do not modify this file manually
  */
 
+export interface AlternativesArrayOptionalInterface {
+  oneOrTheOtherMaybe: (number | string | undefined)[];
+}
+
 export type AlternativesWithFunctionInterface = ((...args: any[]) => any) | {
   json: any;
 } | {
