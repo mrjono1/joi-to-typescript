@@ -199,7 +199,10 @@ function typeContentToTsHelper(
           }
         }
         childContent += itemIdx < children.length - 1 ? itemSeparatorAfterItem : '';
-        if (descriptionStr != '' || (!isTuple && settings.unionNewLine) || (isTuple && settings.tupleNewLine)) {
+        if (
+          descriptionStr != '' ||
+          (children.length > 1 && ((!isTuple && settings.unionNewLine) || (isTuple && settings.tupleNewLine)))
+        ) {
           // If there is a description it means we also have a new line, which means
           // we need to properly indent the following line too.
           const prefix = descriptionStr != '' ? descriptionStr : first ? '' : skipNewline ? '' : '\n';

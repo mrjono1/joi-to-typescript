@@ -166,6 +166,28 @@ export interface Test {
 }`);
   });
 
+  test('union newlines one entry', () => {
+    const schema = Joi.object({
+      items: Joi.alternatives([Joi.string()])
+    })
+      .description('An object')
+      .meta({ className: 'Test' });
+
+    const result = convertSchema(
+      {
+        unionNewLine: true
+      },
+      schema
+    );
+    expect(result).not.toBeUndefined();
+    expect(result?.content).toBe(`/**
+ * An object
+ */
+export interface Test {
+  items?: string;
+}`);
+  });
+
   test.skip('blank alternative thrown by joi but extra test if joi changes it', () => {
     expect(() => {
       const invalidSchema = Joi.alternatives()
