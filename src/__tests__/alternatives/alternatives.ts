@@ -102,6 +102,45 @@ export interface Thing {
 export type Test = string | number | null;`);
   });
 
+  test('union newlines', () => {
+    const schema = Joi.object({
+      items: Joi.alternatives(Joi.string(), Joi.number().description('A number')).description(
+        'Test allowed values in alternatives'
+      ),
+      otherItems: Joi.alternatives(Joi.string(), Joi.number()).description('Test allowed values in alternatives')
+    })
+      .description('An object')
+      .meta({ className: 'Test' });
+
+    const result = convertSchema(
+      {
+        unionNewLine: true
+      },
+      schema
+    );
+    expect(result).not.toBeUndefined();
+    expect(result?.content).toBe(`/**
+ * An object
+ */
+export interface Test {
+  /**
+   * Test allowed values in alternatives
+   */
+  items?:
+    | string
+    /**
+     * A number
+     */
+    | number;
+  /**
+   * Test allowed values in alternatives
+   */
+  otherItems?:
+    | string
+    | number;
+}`);
+  });
+
   test.skip('blank alternative thrown by joi but extra test if joi changes it', () => {
     expect(() => {
       const invalidSchema = Joi.alternatives()

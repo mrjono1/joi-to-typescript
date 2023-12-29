@@ -70,4 +70,81 @@ export type TestTuple = [
  */
 export type TestList = any[];`);
   });
+
+  test('tuple newline', () => {
+    const schema = Joi.object({
+      name: Joi.string().optional(),
+      propertyName1: Joi.bool().required(),
+      items: Joi.array()
+        .ordered(Joi.number().required())
+        .ordered(Joi.string().required())
+        .ordered(
+          Joi.object({
+            another: Joi.string()
+          })
+        )
+        .allow(null),
+      simpleItems: Joi.array().ordered(Joi.number().required()).ordered(Joi.string().required())
+    })
+      .meta({ className: 'Test' })
+      .description('a test schema definition');
+
+    const result = convertSchema({ sortPropertiesByName: true, tupleNewLine: true }, schema);
+    expect(result).not.toBeUndefined;
+    expect(result?.content).toBe(`/**
+ * a test schema definition
+ */
+export interface Test {
+  items?: [
+      number,
+      string,
+      {
+        another?: string;
+      }?
+    ] | null;
+  name?: string;
+  propertyName1: boolean;
+  simpleItems?: [
+    number,
+    string
+  ];
+}`);
+  });
+
+  test('tuple and union newline', () => {
+    const schema = Joi.object({
+      name: Joi.string().optional(),
+      propertyName1: Joi.bool().required(),
+      items: Joi.array()
+        .ordered(Joi.number().required())
+        .ordered(Joi.string().required())
+        .ordered(
+          Joi.object({
+            another: Joi.string()
+          })
+        )
+        .allow(null)
+    })
+      .meta({ className: 'Test' })
+      .description('a test schema definition');
+
+    const result = convertSchema({ sortPropertiesByName: true, tupleNewLine: true, unionNewLine: true }, schema);
+    expect(result).not.toBeUndefined;
+    expect(result?.content).toBe(`/**
+ * a test schema definition
+ */
+export interface Test {
+  items?:
+    | [
+      number,
+      string,
+      {
+        another?: string;
+      }?
+    ]
+    | null;
+  name?: string;
+  propertyName1: boolean;
+}`);
+  });
 });
