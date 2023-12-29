@@ -46,6 +46,12 @@ export const AlternativesWithFunctionSchema = Joi.alternatives([
   })
 ]).meta({ className: 'AlternativesWithFunctionInterface' });
 
+export const AlternativesArrayOptional = Joi.object({
+  oneOrTheOtherMaybe: Joi.array()
+    .items(Joi.alternatives([Joi.number(), Joi.string(), Joi.alternatives()]))
+    .required()
+}).meta({ className: 'AlternativesArrayOptionalInterface' });
+
 export const alternativesRawNoDescSchema = Joi.alternatives([Joi.number(), Joi.string()]).meta({
   className: 'AlternativesRawNoDesc',
   disableDescription: true
