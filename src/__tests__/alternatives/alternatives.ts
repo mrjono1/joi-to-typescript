@@ -141,6 +141,31 @@ export interface Test {
 }`);
   });
 
+  test('union newlines 2', () => {
+    const schema = Joi.object({
+      items: Joi.alternatives([Joi.string(), Joi.string().allow(null)])
+    })
+      .description('An object')
+      .meta({ className: 'Test' });
+
+    const result = convertSchema(
+      {
+        unionNewLine: true
+      },
+      schema
+    );
+    expect(result).not.toBeUndefined();
+    expect(result?.content).toBe(`/**
+ * An object
+ */
+export interface Test {
+  items?:
+    | string
+    | string
+    | null;
+}`);
+  });
+
   test.skip('blank alternative thrown by joi but extra test if joi changes it', () => {
     expect(() => {
       const invalidSchema = Joi.alternatives()

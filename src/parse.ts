@@ -184,20 +184,28 @@ function typeContentToTsHelper(
           Compose the child code line. If there is a description, it must be above the entry.
            */
         let childContent = childInfo.tsContent;
+        let itemPrefixWithIndent = indentString + itemSeparatorAfterNewline;
+        let skipNewline = false;
         if (isTuple) {
           if (childContent.includes('|')) {
             childContent = `(${childContent})`;
           }
           childContent += child.required ? '' : '?';
+        } else {
+          // Make sure we don't repeat by accident multiple | when joining unions
+          if (settings.unionNewLine && childContent.trimStart().startsWith('|')) {
+            itemPrefixWithIndent = '';
+            skipNewline = true;
+          }
         }
         childContent += itemIdx < children.length - 1 ? itemSeparatorAfterItem : '';
         if (descriptionStr != '' || (!isTuple && settings.unionNewLine) || (isTuple && settings.tupleNewLine)) {
           // If there is a description it means we also have a new line, which means
           // we need to properly indent the following line too.
-          const prefix = descriptionStr != '' ? descriptionStr : first ? '' : '\n';
+          const prefix = descriptionStr != '' ? descriptionStr : first ? '' : skipNewline ? '' : '\n';
           childrenContent.push(
-            (first ? '\n' : '') +
-              `${prefix}${indentString}${itemSeparatorAfterNewline}${childInfoTsContentPrefix}${childContent}`
+            (first ? (skipNewline ? '' : '\n') : '') +
+              `${prefix}${itemPrefixWithIndent}${childInfoTsContentPrefix}${childContent}`
           );
           previousIsInline = false;
         } else {
@@ -205,8 +213,8 @@ function typeContentToTsHelper(
           childrenContent.push(
             (first
               ? ''
-              : (previousIsInline ? itemSeparatorBeforeItem : indentString + itemSeparatorAfterNewline) +
-                childInfoTsContentPrefix) + childContent
+              : (previousIsInline ? itemSeparatorBeforeItem : itemPrefixWithIndent) + childInfoTsContentPrefix) +
+              childContent
           );
           previousIsInline = true;
         }
