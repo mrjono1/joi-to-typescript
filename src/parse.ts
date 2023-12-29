@@ -78,6 +78,20 @@ export function getAllCustomTypes(parsedSchema: TypeContent): string[] {
   return customTypes;
 }
 
+function getDefaultTypeTsContent(
+  settings: Settings,
+  indentLevel: number,
+  parsedSchema: TypeContent,
+  tsContent: string
+) {
+  if (!settings.unionNewLine) {
+    return `${JSON.stringify(parsedSchema.value)} | ${tsContent}`;
+  }
+
+  const indent = getIndentStr(settings, indentLevel);
+  return '\n' + indent + '| ' + JSON.stringify(parsedSchema.value) + '\n' + indent + '| ' + tsContent;
+}
+
 function typeContentToTsHelper(
   settings: Settings,
   parsedSchema: TypeContent,
@@ -87,7 +101,7 @@ function typeContentToTsHelper(
   if (!parsedSchema.__isRoot) {
     const tsContent = settings.supplyDefaultsInType
       ? parsedSchema.value !== undefined
-        ? `${JSON.stringify(parsedSchema.value)} | ${parsedSchema.content}`
+        ? getDefaultTypeTsContent(settings, indentLevel, parsedSchema, parsedSchema.content)
         : parsedSchema.content
       : parsedSchema.content;
     if (doExport) {
@@ -123,7 +137,7 @@ function typeContentToTsHelper(
       }
       const arrayStr = settings.supplyDefaultsInType
         ? parsedSchema.value !== undefined
-          ? `${JSON.stringify(parsedSchema.value)} | ${content}[]`
+          ? getDefaultTypeTsContent(settings, indentLevel, parsedSchema, `${content}[]`)
           : `${content}[]`
         : `${content}[]`;
       if (doExport) {
@@ -150,8 +164,13 @@ function typeContentToTsHelper(
       let first = true;
       let previousIsInline = false;
       if (settings.supplyDefaultsInType && parsedSchema.value !== undefined) {
-        childrenContent.push(JSON.stringify(parsedSchema.value));
-        previousIsInline = true;
+        if (settings.unionNewLine) {
+          childrenContent.push('\n' + indentString + '| ' + JSON.stringify(parsedSchema.value));
+          previousIsInline = false;
+        } else {
+          childrenContent.push(JSON.stringify(parsedSchema.value));
+          previousIsInline = true;
+        }
         first = false;
       }
       for (let itemIdx = 0; itemIdx < children.length; itemIdx++) {
@@ -285,7 +304,7 @@ function typeContentToTsHelper(
         objectStr = `{\n${childrenContent.join('\n')}\n${getIndentStr(settings, indentLevel - 1)}}`;
 
         if (parsedSchema.value !== undefined && settings.supplyDefaultsInType) {
-          objectStr = `${JSON.stringify(parsedSchema.value)} | ${objectStr}`;
+          objectStr = getDefaultTypeTsContent(settings, indentLevel, parsedSchema, objectStr);
         }
       }
       if (doExport) {

@@ -188,6 +188,32 @@ export interface Test {
 }`);
   });
 
+  test('union newlines with defaults', () => {
+    const schema = Joi.object({
+      items: Joi.alternatives([Joi.string(), Joi.number()]).default('hello')
+    })
+      .description('An object')
+      .meta({ className: 'Test' });
+
+    const result = convertSchema(
+      {
+        unionNewLine: true,
+        supplyDefaultsInType: true
+      },
+      schema
+    );
+    expect(result).not.toBeUndefined();
+    expect(result?.content).toBe(`/**
+ * An object
+ */
+export interface Test {
+  items?:
+    | "hello"
+    | string
+    | number;
+}`);
+  });
+
   test.skip('blank alternative thrown by joi but extra test if joi changes it', () => {
     expect(() => {
       const invalidSchema = Joi.alternatives()
