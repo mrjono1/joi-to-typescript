@@ -1,3 +1,5 @@
+import Joi from 'joi';
+
 /**
  * Application settings
  */
@@ -132,6 +134,7 @@ export class InputFileFilter {
 }
 
 export interface ConvertedType {
+  schema: Joi.Schema;
   interfaceOrTypeName: string;
   content: string;
   customTypes: string[];
