@@ -114,6 +114,16 @@ export interface Settings {
    * generated interface/type code.
    */
   readonly tsContentFooter?: (type: ConvertedType) => string;
+
+  /**
+   * If defined, place every member of a union on a new line
+   */
+  readonly unionNewLine?: boolean;
+
+  /**
+   * If defined, place every member of a tuple on a new line
+   */
+  readonly tupleNewLine?: boolean;
 }
 
 export class InputFileFilter {

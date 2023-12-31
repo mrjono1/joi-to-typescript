@@ -78,6 +78,20 @@ export function getAllCustomTypes(parsedSchema: TypeContent): string[] {
   return customTypes;
 }
 
+function getDefaultTypeTsContent(
+  settings: Settings,
+  indentLevel: number,
+  parsedSchema: TypeContent,
+  tsContent: string
+) {
+  if (!settings.unionNewLine) {
+    return `${JSON.stringify(parsedSchema.value)} | ${tsContent}`;
+  }
+
+  const indent = getIndentStr(settings, indentLevel);
+  return '\n' + indent + '| ' + JSON.stringify(parsedSchema.value) + '\n' + indent + '| ' + tsContent;
+}
+
 function typeContentToTsHelper(
   settings: Settings,
   parsedSchema: TypeContent,
@@ -87,7 +101,7 @@ function typeContentToTsHelper(
   if (!parsedSchema.__isRoot) {
     const tsContent = settings.supplyDefaultsInType
       ? parsedSchema.value !== undefined
-        ? `${JSON.stringify(parsedSchema.value)} | ${parsedSchema.content}`
+        ? getDefaultTypeTsContent(settings, indentLevel, parsedSchema, parsedSchema.content)
         : parsedSchema.content
       : parsedSchema.content;
     if (doExport) {
@@ -123,7 +137,7 @@ function typeContentToTsHelper(
       }
       const arrayStr = settings.supplyDefaultsInType
         ? parsedSchema.value !== undefined
-          ? `${JSON.stringify(parsedSchema.value)} | ${content}[]`
+          ? getDefaultTypeTsContent(settings, indentLevel, parsedSchema, `${content}[]`)
           : `${content}[]`
         : `${content}[]`;
       if (doExport) {
@@ -150,8 +164,13 @@ function typeContentToTsHelper(
       let first = true;
       let previousIsInline = false;
       if (settings.supplyDefaultsInType && parsedSchema.value !== undefined) {
-        childrenContent.push(JSON.stringify(parsedSchema.value));
-        previousIsInline = true;
+        if (settings.unionNewLine) {
+          childrenContent.push('\n' + indentString + '| ' + JSON.stringify(parsedSchema.value));
+          previousIsInline = false;
+        } else {
+          childrenContent.push(JSON.stringify(parsedSchema.value));
+          previousIsInline = true;
+        }
         first = false;
       }
       for (let itemIdx = 0; itemIdx < children.length; itemIdx++) {
@@ -184,19 +203,31 @@ function typeContentToTsHelper(
           Compose the child code line. If there is a description, it must be above the entry.
            */
         let childContent = childInfo.tsContent;
+        let itemPrefixWithIndent = indentString + itemSeparatorAfterNewline;
+        let skipNewline = false;
         if (isTuple) {
           if (childContent.includes('|')) {
             childContent = `(${childContent})`;
           }
           childContent += child.required ? '' : '?';
+        } else {
+          // Make sure we don't repeat by accident multiple | when joining unions
+          if (settings.unionNewLine && childContent.trimStart().startsWith('|')) {
+            itemPrefixWithIndent = '';
+            skipNewline = true;
+          }
         }
         childContent += itemIdx < children.length - 1 ? itemSeparatorAfterItem : '';
-        if (descriptionStr != '') {
+        if (
+          descriptionStr != '' ||
+          (children.length > 1 && ((!isTuple && settings.unionNewLine) || (isTuple && settings.tupleNewLine)))
+        ) {
           // If there is a description it means we also have a new line, which means
           // we need to properly indent the following line too.
+          const prefix = descriptionStr != '' ? descriptionStr : first ? '' : skipNewline ? '' : '\n';
           childrenContent.push(
-            (first ? '\n' : '') +
-              `${descriptionStr}${indentString}${itemSeparatorAfterNewline}${childInfoTsContentPrefix}${childContent}`
+            (first ? (skipNewline ? '' : '\n') : '') +
+              `${prefix}${itemPrefixWithIndent}${childInfoTsContentPrefix}${childContent}`
           );
           previousIsInline = false;
         } else {
@@ -204,8 +235,8 @@ function typeContentToTsHelper(
           childrenContent.push(
             (first
               ? ''
-              : (previousIsInline ? itemSeparatorBeforeItem : indentString + itemSeparatorAfterNewline) +
-                childInfoTsContentPrefix) + childContent
+              : (previousIsInline ? itemSeparatorBeforeItem : itemPrefixWithIndent) + childInfoTsContentPrefix) +
+              childContent
           );
           previousIsInline = true;
         }
@@ -214,7 +245,9 @@ function typeContentToTsHelper(
       finalStr = childrenContent.join(hasOneDescription ? '\n' : '');
 
       if (isTuple) {
-        finalStr = `[${finalStr}${hasOneDescription ? '\n' + getIndentStr(settings, indentLevel - 1) : ''}]`;
+        finalStr = `[${finalStr}${hasOneDescription ? '\n' + getIndentStr(settings, indentLevel - 1) : ''}${
+          settings.tupleNewLine ? '\n' + getIndentStr(settings, indentLevel - 1) : ''
+        }]`;
       }
 
       if (doExport) {
@@ -271,7 +304,7 @@ function typeContentToTsHelper(
         objectStr = `{\n${childrenContent.join('\n')}\n${getIndentStr(settings, indentLevel - 1)}}`;
 
         if (parsedSchema.value !== undefined && settings.supplyDefaultsInType) {
-          objectStr = `${JSON.stringify(parsedSchema.value)} | ${objectStr}`;
+          objectStr = getDefaultTypeTsContent(settings, indentLevel, parsedSchema, objectStr);
         }
       }
       if (doExport) {
