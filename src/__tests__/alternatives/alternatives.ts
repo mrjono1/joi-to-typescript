@@ -32,11 +32,17 @@ export interface AlternativesArrayOptionalInterface {
   oneOrTheOtherMaybe: (number | string | undefined)[];
 }
 
+export interface AlternativesObjectNoDesc {
+  myVal?: number | string;
+}
+
+export type AlternativesRawNoDesc = number | string;
+
 export type AlternativesWithFunctionInterface = ((...args: any[]) => any) | {
-  json: any;
-} | {
-  raw: string;
-};
+    json: any;
+  } | {
+    raw: string;
+  };
 
 /**
  * a description for basic

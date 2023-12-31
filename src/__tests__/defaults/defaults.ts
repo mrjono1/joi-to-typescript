@@ -35,8 +35,8 @@ describe('Test behaviour for optional fields with supplied defaults', function (
     expect(converted?.content).toEqual(`export interface Test {
   alt?: string | number;
   alt2?: string | number | {
-    val?: boolean;
-  };
+      val?: boolean;
+    };
   arr?: number[];
   arr2?: string[];
   bool?: boolean;
@@ -64,8 +64,8 @@ describe('Test behaviour for optional fields with supplied defaults', function (
     expect(converted?.content).toEqual(`export interface Test {
   alt: string | number;
   alt2: string | number | {
-    val: boolean;
-  };
+      val: boolean;
+    };
   arr: number[];
   arr2: string[];
   bool: boolean;
@@ -90,8 +90,8 @@ describe('Test behaviour for optional fields with supplied defaults', function (
     expect(converted?.content).toEqual(`export interface Test {
   alt?: "Test" | string | number;
   alt2?: {"val":false} | string | number | {
-    val?: true | boolean;
-  };
+      val?: true | boolean;
+    };
   arr?: [1,2,3] | number[];
   arr2?: ["X","Y","Z"] | string[];
   bool?: true | boolean;
@@ -116,8 +116,8 @@ describe('Test behaviour for optional fields with supplied defaults', function (
     expect(converted?.content).toEqual(`export interface Test {
   alt: "Test" | string | number;
   alt2: {"val":false} | string | number | {
-    val: true | boolean;
-  };
+      val: true | boolean;
+    };
   arr: [1,2,3] | number[];
   arr2: ["X","Y","Z"] | string[];
   bool: true | boolean;

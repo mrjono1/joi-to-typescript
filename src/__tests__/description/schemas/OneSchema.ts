@@ -81,3 +81,49 @@ export const descriptionAndExamplesSchema = Joi.object({
     more: 'coffee'
   })
   .meta({ className: 'DescriptionAndExamples' });
+
+export const ItemSchema = Joi.object({
+  name: Joi.string().required()
+}).meta({ className: 'Item' });
+
+export const exampleAlternativesSchema = Joi.object({
+  alt1: Joi.alternatives([
+    Joi.string().description('A string'),
+    Joi.number().description('A number'),
+    Joi.object({
+      value: Joi.string().description(`A value`)
+    }).description('An object'),
+    Joi.array().items(Joi.string()).description(`An array`),
+    Joi.array()
+      .ordered(Joi.number().required())
+      .ordered(Joi.string().required().description(`A string`))
+      .ordered(ItemSchema)
+      .allow(null)
+      .description(`A tuple`),
+    Joi.array()
+      .ordered(Joi.number().required().description('A tuple number'))
+      .ordered(Joi.string().required())
+      .description(`Another tuple`),
+    Joi.array().ordered(Joi.number().required().description('A tuple number')).description(`A tuple with one item`)
+  ])
+}).meta({ className: 'ExampleAlternatives' });
+
+export const exampleAlternativesRawSchema = Joi.alternatives([
+  Joi.string().description('A string'),
+  Joi.number().description('A number'),
+  Joi.object({
+    value: Joi.string().description(`A value`)
+  }).description('An object'),
+  Joi.array().items(Joi.string()).description(`An array`),
+  Joi.array()
+    .ordered(Joi.number().required())
+    .ordered(Joi.string().required().description(`A string`))
+    .ordered(ItemSchema)
+    .allow(null)
+    .description(`A tuple`),
+  Joi.array()
+    .ordered(Joi.number().required().description('A tuple number'))
+    .ordered(Joi.string().required())
+    .description(`Another tuple`),
+  Joi.array().ordered(Joi.number().required().description('A tuple number')).description(`A tuple with one item`)
+]).meta({ className: 'ExampleAlternativesRaw' });

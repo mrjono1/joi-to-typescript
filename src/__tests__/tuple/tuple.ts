@@ -44,7 +44,13 @@ export interface Test {
 /**
  * A tuple of Test object
  */
-export type TestTuple = [Test, (number | string)?];
+export type TestTuple = [
+  /**
+   * a test schema definition
+   */
+  Test,
+  (number | string)?
+];
 `
     );
   });
@@ -56,8 +62,6 @@ export type TestTuple = [Test, (number | string)?];
       .required()
       .meta({ className: 'TestList' })
       .description('A list of Test object');
-
-
 
     const result = convertSchema({ sortPropertiesByName: true }, schema);
     expect(result).not.toBeUndefined;
