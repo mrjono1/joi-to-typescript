@@ -32,11 +32,17 @@ export interface AlternativesArrayOptionalInterface {
   oneOrTheOtherMaybe: (number | string | undefined)[];
 }
 
+export interface AlternativesObjectNoDesc {
+  myVal?: number | string;
+}
+
+export type AlternativesRawNoDesc = number | string;
+
 export type AlternativesWithFunctionInterface = ((...args: any[]) => any) | {
-  json: any;
-} | {
-  raw: string;
-};
+    json: any;
+  } | {
+    raw: string;
+  };
 
 /**
  * a description for basic
@@ -94,6 +100,118 @@ export interface Thing {
  * Test allowed values in alternatives
  */
 export type Test = string | number | null;`);
+  });
+
+  test('union newlines', () => {
+    const schema = Joi.object({
+      items: Joi.alternatives(Joi.string(), Joi.number().description('A number')).description(
+        'Test allowed values in alternatives'
+      ),
+      otherItems: Joi.alternatives(Joi.string(), Joi.number()).description('Test allowed values in alternatives')
+    })
+      .description('An object')
+      .meta({ className: 'Test' });
+
+    const result = convertSchema(
+      {
+        unionNewLine: true
+      },
+      schema
+    );
+    expect(result).not.toBeUndefined();
+    expect(result?.content).toBe(`/**
+ * An object
+ */
+export interface Test {
+  /**
+   * Test allowed values in alternatives
+   */
+  items?:
+    | string
+    /**
+     * A number
+     */
+    | number;
+  /**
+   * Test allowed values in alternatives
+   */
+  otherItems?:
+    | string
+    | number;
+}`);
+  });
+
+  test('union newlines 2', () => {
+    const schema = Joi.object({
+      items: Joi.alternatives([Joi.string(), Joi.string().allow(null)])
+    })
+      .description('An object')
+      .meta({ className: 'Test' });
+
+    const result = convertSchema(
+      {
+        unionNewLine: true
+      },
+      schema
+    );
+    expect(result).not.toBeUndefined();
+    expect(result?.content).toBe(`/**
+ * An object
+ */
+export interface Test {
+  items?:
+    | string
+    | string
+    | null;
+}`);
+  });
+
+  test('union newlines one entry', () => {
+    const schema = Joi.object({
+      items: Joi.alternatives([Joi.string()])
+    })
+      .description('An object')
+      .meta({ className: 'Test' });
+
+    const result = convertSchema(
+      {
+        unionNewLine: true
+      },
+      schema
+    );
+    expect(result).not.toBeUndefined();
+    expect(result?.content).toBe(`/**
+ * An object
+ */
+export interface Test {
+  items?: string;
+}`);
+  });
+
+  test('union newlines with defaults', () => {
+    const schema = Joi.object({
+      items: Joi.alternatives([Joi.string(), Joi.number()]).default('hello')
+    })
+      .description('An object')
+      .meta({ className: 'Test' });
+
+    const result = convertSchema(
+      {
+        unionNewLine: true,
+        supplyDefaultsInType: true
+      },
+      schema
+    );
+    expect(result).not.toBeUndefined();
+    expect(result?.content).toBe(`/**
+ * An object
+ */
+export interface Test {
+  items?:
+    | "hello"
+    | string
+    | number;
+}`);
   });
 
   test.skip('blank alternative thrown by joi but extra test if joi changes it', () => {

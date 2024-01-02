@@ -58,7 +58,9 @@ export function getJsDocString(settings: Settings, name: string, jsDoc?: JsDoc, 
     if (jsDoc?.description) {
       description = getStringIndentation(jsDoc.description).deIndentedString;
     }
-    lines.push(...description.split('\n').map(line => ` * ${line}`.trimEnd()));
+    if (description) {
+      lines.push(...description.split('\n').map(line => ` * ${line}`.trimEnd()));
+    }
   }
 
   // Add a JsDoc divider if needed
@@ -75,6 +77,10 @@ export function getJsDocString(settings: Settings, name: string, jsDoc?: JsDoc, 
     } else {
       lines.push(` * @example ${deIndented}`);
     }
+  }
+
+  if (lines.length == 0) {
+    return '';
   }
 
   // Add JsDoc boundaries

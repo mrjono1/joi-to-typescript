@@ -16,7 +16,7 @@ import {
   getIsReadonly,
   getMetadataFromDetails
 } from './joiUtils';
-import { getIndentStr, getJsDocString } from './write';
+import { getIndentStr, getJsDocString } from './write'; // see __tests__/joiTypes.ts for more information
 
 // see __tests__/joiTypes.ts for more information
 export const supportedJoiTypes = ['array', 'object', 'alternatives', 'any', 'boolean', 'date', 'number', 'string'];
@@ -78,6 +78,20 @@ export function getAllCustomTypes(parsedSchema: TypeContent): string[] {
   return customTypes;
 }
 
+function getDefaultTypeTsContent(
+  settings: Settings,
+  indentLevel: number,
+  parsedSchema: TypeContent,
+  tsContent: string
+) {
+  if (!settings.unionNewLine) {
+    return `${JSON.stringify(parsedSchema.value)} | ${tsContent}`;
+  }
+
+  const indent = getIndentStr(settings, indentLevel);
+  return '\n' + indent + '| ' + JSON.stringify(parsedSchema.value) + '\n' + indent + '| ' + tsContent;
+}
+
 function typeContentToTsHelper(
   settings: Settings,
   parsedSchema: TypeContent,
@@ -87,7 +101,7 @@ function typeContentToTsHelper(
   if (!parsedSchema.__isRoot) {
     const tsContent = settings.supplyDefaultsInType
       ? parsedSchema.value !== undefined
-        ? `${JSON.stringify(parsedSchema.value)} | ${parsedSchema.content}`
+        ? getDefaultTypeTsContent(settings, indentLevel, parsedSchema, parsedSchema.content)
         : parsedSchema.content
       : parsedSchema.content;
     if (doExport) {
@@ -123,7 +137,7 @@ function typeContentToTsHelper(
       }
       const arrayStr = settings.supplyDefaultsInType
         ? parsedSchema.value !== undefined
-          ? `${JSON.stringify(parsedSchema.value)} | ${content}[]`
+          ? getDefaultTypeTsContent(settings, indentLevel, parsedSchema, `${content}[]`)
           : `${content}[]`
         : `${content}[]`;
       if (doExport) {
@@ -134,39 +148,114 @@ function typeContentToTsHelper(
       }
       return { tsContent: arrayStr, jsDoc: parsedSchema.jsDoc };
     }
-    case 'tuple': {
-      const childrenContent = children.map(child => {
-        let { tsContent } = typeContentToTsHelper(settings, child, indentLevel);
+    case 'tuple':
+    case 'union': {
+      const isTuple = parsedSchema.joinOperation == 'tuple';
 
-        if (tsContent.includes('|')) {
-          tsContent = `(${tsContent})`;
+      const indentString = getIndentStr(settings, indentLevel);
+      const itemSeparatorBeforeItem = isTuple ? '' : ' |';
+      const itemSeparatorAfterItem = isTuple ? ',' : '';
+      const itemSeparatorAfterNewline = isTuple ? '' : '|';
+
+      let hasOneDescription = false;
+      let finalStr: string;
+
+      const childrenContent: string[] = [];
+      let first = true;
+      let previousIsInline = false;
+      if (settings.supplyDefaultsInType && parsedSchema.value !== undefined) {
+        if (settings.unionNewLine) {
+          childrenContent.push('\n' + indentString + '| ' + JSON.stringify(parsedSchema.value));
+          previousIsInline = false;
+        } else {
+          childrenContent.push(JSON.stringify(parsedSchema.value));
+          previousIsInline = true;
+        }
+        first = false;
+      }
+      for (let itemIdx = 0; itemIdx < children.length; itemIdx++) {
+        const child = children[itemIdx];
+        const childInfo = typeContentToTsHelper(
+          settings,
+          child,
+          // Special case for objects because their contents need to be indented once more
+          child.__isRoot && ['object', 'list', 'tuple'].includes(child.joinOperation) ? indentLevel + 1 : indentLevel
+        );
+        const descriptionStr = getJsDocString(
+          settings,
+          child.interfaceOrTypeName as string,
+          childInfo.jsDoc,
+          indentLevel
+        );
+        hasOneDescription ||= descriptionStr != '';
+
+        // Prevents test failures because of spaces at line endings
+        let childInfoTsContentPrefix = '';
+        if (isTuple) {
+          if (previousIsInline) {
+            childInfoTsContentPrefix = ' ';
+          }
+        } else {
+          childInfoTsContentPrefix = childInfo.tsContent.startsWith('\n') ? '' : ' ';
         }
 
-        return `${tsContent}${child.required ? '' : '?'}`;
-      });
+        /*
+          Compose the child code line. If there is a description, it must be above the entry.
+           */
+        let childContent = childInfo.tsContent;
+        let itemPrefixWithIndent = indentString + itemSeparatorAfterNewline;
+        let skipNewline = false;
+        if (isTuple) {
+          if (childContent.includes('|')) {
+            childContent = `(${childContent})`;
+          }
+          childContent += child.required ? '' : '?';
+        } else {
+          // Make sure we don't repeat by accident multiple | when joining unions
+          if (settings.unionNewLine && childContent.trimStart().startsWith('|')) {
+            itemPrefixWithIndent = '';
+            skipNewline = true;
+          }
+        }
+        childContent += itemIdx < children.length - 1 ? itemSeparatorAfterItem : '';
+        if (
+          descriptionStr != '' ||
+          (children.length > 1 && ((!isTuple && settings.unionNewLine) || (isTuple && settings.tupleNewLine)))
+        ) {
+          // If there is a description it means we also have a new line, which means
+          // we need to properly indent the following line too.
+          const prefix = descriptionStr != '' ? descriptionStr : first ? '' : skipNewline ? '' : '\n';
+          childrenContent.push(
+            (first ? (skipNewline ? '' : '\n') : '') +
+              `${prefix}${itemPrefixWithIndent}${childInfoTsContentPrefix}${childContent}`
+          );
+          previousIsInline = false;
+        } else {
+          // Normal inline content
+          childrenContent.push(
+            (first
+              ? ''
+              : (previousIsInline ? itemSeparatorBeforeItem : itemPrefixWithIndent) + childInfoTsContentPrefix) +
+              childContent
+          );
+          previousIsInline = true;
+        }
+        first = false;
+      }
+      finalStr = childrenContent.join(hasOneDescription ? '\n' : '');
 
-      const tupleStr = `[${childrenContent.join(', ')}]`;
-
-      if (doExport) {
-        return {
-          tsContent: `export type ${parsedSchema.interfaceOrTypeName} = ${tupleStr};`,
-          jsDoc: parsedSchema.jsDoc
-        };
+      if (isTuple) {
+        finalStr = `[${finalStr}${hasOneDescription ? '\n' + getIndentStr(settings, indentLevel - 1) : ''}${
+          settings.tupleNewLine ? '\n' + getIndentStr(settings, indentLevel - 1) : ''
+        }]`;
       }
 
-      return { tsContent: tupleStr, jsDoc: parsedSchema.jsDoc };
-    }
-    case 'union': {
-      const childrenContent = children.map(child => typeContentToTsHelper(settings, child, indentLevel).tsContent);
-      const unionStr = childrenContent.join(' | ');
-      const finalStr = settings.supplyDefaultsInType
-        ? parsedSchema.value !== undefined
-          ? `${JSON.stringify(parsedSchema.value)} | ${unionStr}`
-          : unionStr
-        : unionStr;
       if (doExport) {
         return {
-          tsContent: `export type ${parsedSchema.interfaceOrTypeName} = ${finalStr};`,
+          tsContent: `export type ${parsedSchema.interfaceOrTypeName} =${
+            // Prevents test failures because of spaces at line endings
+            finalStr.startsWith('\n') ? '' : ' '
+          }${finalStr};`,
           jsDoc: parsedSchema.jsDoc
         };
       }
@@ -199,12 +288,23 @@ function typeContentToTsHelper(
           const optionalStr = child.required ? '' : '?';
           const indentString = getIndentStr(settings, indentLevel);
           const modifier = child.isReadonly ? 'readonly ' : '';
-          return `${descriptionStr}${indentString}${modifier}${child.interfaceOrTypeName}${optionalStr}: ${childInfo.tsContent};`;
+          return [
+            descriptionStr,
+            indentString,
+            modifier,
+            child.interfaceOrTypeName,
+            optionalStr,
+            ':',
+            // Prevents test failures because of spaces at line endings
+            childInfo.tsContent.startsWith('\n') ? '' : ' ',
+            childInfo.tsContent,
+            ';'
+          ].join('');
         });
         objectStr = `{\n${childrenContent.join('\n')}\n${getIndentStr(settings, indentLevel - 1)}}`;
 
         if (parsedSchema.value !== undefined && settings.supplyDefaultsInType) {
-          objectStr = `${JSON.stringify(parsedSchema.value)} | ${objectStr}`;
+          objectStr = getDefaultTypeTsContent(settings, indentLevel, parsedSchema, objectStr);
         }
       }
       if (doExport) {
@@ -271,17 +371,18 @@ export function parseSchema(
   if (interfaceOrTypeName && useLabels && !ignoreLabels.includes(interfaceOrTypeName)) {
     // skip parsing and just reference the label since we assumed we parsed the schema that the label references
     // TODO: do we want to use the labels description if we reference it?
+    let allowedValues = createAllowTypes(details);
 
     const child = makeTypeContentChild({
       content: interfaceOrTypeName,
       customTypes: [interfaceOrTypeName],
-      jsDoc,
+      // If we have any allowed values, remove the jsDoc from the child as we will use it in the outer object
+      jsDoc: allowedValues.length > 0 ? undefined : jsDoc,
       required,
       isReadonly
     });
 
-    let allowedValues = createAllowTypes(details);
-    if (allowedValues.length !== 0) {
+    if (allowedValues.length > 0) {
       if (!details.flags?.only) {
         allowedValues.unshift(child);
       } else {
@@ -373,7 +474,7 @@ function parseBasicSchema(details: BasicDescribe, settings: Settings, rootSchema
   if (rootSchema) {
     return makeTypeContentRoot({
       joinOperation: 'union',
-      children: [makeTypeContentChild({ content, interfaceOrTypeName, jsDoc })],
+      children: [makeTypeContentChild({ content, interfaceOrTypeName })],
       interfaceOrTypeName,
       jsDoc
     });
@@ -426,7 +527,7 @@ function parseStringSchema(details: StringDescribe, settings: Settings, rootSche
   if (rootSchema) {
     return makeTypeContentRoot({
       joinOperation: 'union',
-      children: [makeTypeContentChild({ content: 'string', interfaceOrTypeName, jsDoc })],
+      children: [makeTypeContentChild({ content: 'string', interfaceOrTypeName })],
       interfaceOrTypeName,
       jsDoc
     });
@@ -444,13 +545,12 @@ function parseArray(details: ArrayDescribe, settings: Settings): TypeContent | u
     const allowedValues = createAllowTypes(details);
 
     // at least one value
-    if (allowedValues.length !== 0) {
+    if (allowedValues.length > 0) {
       allowedValues.unshift(
         makeTypeContentRoot({
           joinOperation: 'tuple',
           children: parsedChildren,
-          interfaceOrTypeName,
-          jsDoc
+          interfaceOrTypeName
         })
       );
 
