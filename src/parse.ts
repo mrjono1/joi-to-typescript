@@ -205,10 +205,10 @@ function typeContentToTsHelper(
         let childContent = childInfo.tsContent;
         let itemPrefixWithIndent = indentString + itemSeparatorAfterNewline;
         let skipNewline = false;
+        if (childContent.includes('|')) {
+          childContent = `(${childContent})`;
+        }
         if (isTuple) {
-          if (childContent.includes('|')) {
-            childContent = `(${childContent})`;
-          }
           childContent += child.required ? '' : '?';
         } else {
           // Make sure we don't repeat by accident multiple | when joining unions
@@ -224,10 +224,25 @@ function typeContentToTsHelper(
         ) {
           // If there is a description it means we also have a new line, which means
           // we need to properly indent the following line too.
-          const prefix = descriptionStr != '' ? descriptionStr : first ? '' : skipNewline ? '' : '\n';
+          let prefix = descriptionStr;
+          if (prefix == '') {
+            if (first) {
+              prefix = '';
+            } else {
+              prefix = skipNewline ? '' : '\n';
+            }
+          }
+          let tsContentPrefix = childInfoTsContentPrefix;
+          if (tsContentPrefix == '') {
+            // Handle the case where we are wrapping the child content, and we need
+            // to make some space between the union operator and the content
+            if (itemPrefixWithIndent.endsWith('|') && childContent.startsWith('(')) {
+              tsContentPrefix = ' ';
+            }
+          }
           childrenContent.push(
             (first ? (skipNewline ? '' : '\n') : '') +
-              `${prefix}${itemPrefixWithIndent}${childInfoTsContentPrefix}${childContent}`
+              `${prefix}${itemPrefixWithIndent}${tsContentPrefix}${childContent}`
           );
           previousIsInline = false;
         } else {
