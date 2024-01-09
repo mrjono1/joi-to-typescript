@@ -43,11 +43,11 @@ export function getIndentStr(settings: Settings, indentLevel: number): string {
  * Get Interface jsDoc
  */
 export function getJsDocString(settings: Settings, name: string, jsDoc?: JsDoc, indentLevel = 0): string {
-  if (jsDoc?.disable == true) {
+  if (jsDoc?.disable === true) {
     return '';
   }
 
-  if (!settings.commentEverything && !jsDoc?.description && (jsDoc?.examples?.length ?? 0) == 0) {
+  if (!settings.commentEverything && !jsDoc?.description && (jsDoc?.examples?.length ?? 0) === 0) {
     return '';
   }
 
@@ -79,7 +79,7 @@ export function getJsDocString(settings: Settings, name: string, jsDoc?: JsDoc, 
     }
   }
 
-  if (lines.length == 0) {
+  if (lines.length === 0) {
     return '';
   }
 
@@ -105,7 +105,7 @@ function getStringIndentation(value: string): GetStringIndentationResult {
   let indent = '';
   for (const line of lines) {
     // Skip initial newlines
-    if (line.trim() == '') {
+    if (line.trim() === '') {
       continue;
     }
     const match = /^(\s+)\b/.exec(line);

@@ -37,9 +37,9 @@ function getCommonDetails(
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const examples: string[] = ((details.examples || []) as any[])
-    .filter(e => e != undefined)
+    .filter(e => e !== undefined)
     .map(example => {
-      return typeof example == 'object'
+      return typeof example === 'object'
         ? // Joi accepts `any` as type for an example
           JSON.stringify(example, null, 2)
         : example.toString();
@@ -150,7 +150,7 @@ function typeContentToTsHelper(
     }
     case 'tuple':
     case 'union': {
-      const isTuple = parsedSchema.joinOperation == 'tuple';
+      const isTuple = parsedSchema.joinOperation === 'tuple';
 
       const indentString = getIndentStr(settings, indentLevel);
       const itemSeparatorBeforeItem = isTuple ? '' : ' |';
@@ -187,7 +187,7 @@ function typeContentToTsHelper(
           childInfo.jsDoc,
           indentLevel
         );
-        hasOneDescription ||= descriptionStr != '';
+        hasOneDescription ||= descriptionStr !== '';
 
         // Prevents test failures because of spaces at line endings
         let childInfoTsContentPrefix = '';
@@ -219,13 +219,13 @@ function typeContentToTsHelper(
         }
         childContent += itemIdx < children.length - 1 ? itemSeparatorAfterItem : '';
         if (
-          descriptionStr != '' ||
+          descriptionStr !== '' ||
           (children.length > 1 && ((!isTuple && settings.unionNewLine) || (isTuple && settings.tupleNewLine)))
         ) {
           // If there is a description it means we also have a new line, which means
           // we need to properly indent the following line too.
           let prefix = descriptionStr;
-          if (prefix == '') {
+          if (prefix === '') {
             if (first) {
               prefix = '';
             } else {
@@ -233,7 +233,7 @@ function typeContentToTsHelper(
             }
           }
           let tsContentPrefix = childInfoTsContentPrefix;
-          if (tsContentPrefix == '') {
+          if (tsContentPrefix === '') {
             // Handle the case where we are wrapping the child content, and we need
             // to make some space between the union operator and the content
             if (itemPrefixWithIndent.endsWith('|') && childContent.startsWith('(')) {
@@ -279,7 +279,7 @@ function typeContentToTsHelper(
     case 'objectWithUndefinedKeys':
     case 'object': {
       if (!children.length && !doExport) {
-        if (parsedSchema.joinOperation == 'objectWithUndefinedKeys') {
+        if (parsedSchema.joinOperation === 'objectWithUndefinedKeys') {
           return { tsContent: 'object', jsDoc: parsedSchema.jsDoc };
         } else {
           return { tsContent: 'Record<string, never>', jsDoc: parsedSchema.jsDoc };
@@ -532,7 +532,7 @@ function parseStringSchema(details: StringDescribe, settings: Settings, rootSche
           : makeTypeContentChild({ content: toStringLiteral(value) })
       );
 
-      if (values.filter(value => stringAllowValues.includes(value)).length == values.length) {
+      if (values.filter(value => stringAllowValues.includes(value)).length === values.length) {
         allowedValues.unshift(makeTypeContentChild({ content: 'string' }));
       }
       return makeTypeContentRoot({ joinOperation: 'union', children: allowedValues, interfaceOrTypeName, jsDoc });
