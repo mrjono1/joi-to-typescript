@@ -145,13 +145,13 @@ export interface ExampleAlternatives {
     /**
      * A tuple
      */
-    | [number,
+    | ([number,
       /**
        * A string
        */
        string,
       Item?
-    ] | null
+    ] | null)
     /**
      * Another tuple
      */
@@ -201,13 +201,13 @@ export type ExampleAlternativesRaw =
   /**
    * A tuple
    */
-  | [number,
+  | ([number,
     /**
      * A string
      */
      string,
     Item?
-  ] | null
+  ] | null)
   /**
    * Another tuple
    */
@@ -338,6 +338,65 @@ export interface HelloTest {
  */
 export interface HelloTest {
   hello?: string;
+}`);
+    }
+
+    {
+      const converted = convertSchema(
+        {},
+        Joi.object({
+          template: Joi.alternatives([
+            Joi.alternatives([
+              Joi.string().description(`Alternative 1`),
+              Joi.array().items(Joi.string()).description(`Alternative 2`)
+            ]).required().description(`
+              Some alternatives
+            `),
+            Joi.boolean().valid(true).description(`
+              A boolean
+            `)
+          ]).description(`
+            A multiline
+            description
+          `)
+        })
+          .description('A simple description')
+          .example({
+            hello: 'world'
+          }),
+        'HelloTest'
+      );
+      expect(converted).toBeDefined();
+      expect(converted?.content).toEqual(`/**
+ * A simple description
+ *
+ * @example
+ * {
+ *   "hello": "world"
+ * }
+ */
+export interface HelloTest {
+  /**
+   * A multiline
+   * description
+   */
+  template?:
+    /**
+     * Some alternatives
+     */
+    | (
+    /**
+     * Alternative 1
+     */
+    | string
+    /**
+     * Alternative 2
+     */
+    | string[])
+    /**
+     * A boolean
+     */
+    | true;
 }`);
     }
   });

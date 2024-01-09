@@ -161,8 +161,9 @@ export interface Test {
 export interface Test {
   items?:
     | string
+    | (
     | string
-    | null;
+    | null);
 }`);
   });
 
