@@ -115,3 +115,5 @@ shell.nix
 package-lock.json
 
 .idea/
+.yarn
+.yarnrc.yml
