@@ -415,36 +415,41 @@ export function parseSchema(
     }
     return child;
   }
-  if (!supportedJoiTypes.includes(details.type)) {
-    // See if we can find a base type for this type in the details.
-    let typeToUse;
-    const baseTypes: string[] = getMetadataFromDetails('baseType', details);
-    if (baseTypes.length > 0) {
-      // If there are multiple base types then the deepest one will be at the
-      // end of the list which is most likely the one to use.
-      typeToUse = baseTypes.pop() as string;
+
+  const baseTypes: string[] = getMetadataFromDetails('baseType', details);
+  if (baseTypes.length > 0) {
+    // If there is a baseType defined, then the user is overriding the
+    // type definition.
+
+    // If there are multiple base types then the deepest one will be at the
+    // end of the list which is most likely the one to use.
+    const typeToUse = baseTypes.pop() as string;
+
+    if (settings.debug) {
+      // eslint-disable-next-line no-console
+      console.debug(`Using user-defined '${typeToUse}' for type '${details.type}'`);
     }
+    return makeTypeContentChild({ content: typeToUse, interfaceOrTypeName, jsDoc, required, isReadonly });
+  } else if (!supportedJoiTypes.includes(details.type)) {
+    let typeToUse;
+    // Let's see if we can map the type to something sensible.
+    // If not, then set it to 'unknown'.
+    switch (details.type as string) {
+      case 'function':
+        typeToUse = '((...args: any[]) => any)';
+        break;
 
-    // If we could not get the base type from the metadata then see if we can
-    // map it to something sensible. If not, then set it to 'unknown'.
-    if (typeToUse === undefined) {
-      switch (details.type as string) {
-        case 'function':
-          typeToUse = '((...args: any[]) => any)';
-          break;
+      case 'symbol':
+        typeToUse = 'symbol';
+        break;
 
-        case 'symbol':
-          typeToUse = 'symbol';
-          break;
+      case 'binary':
+        typeToUse = 'Buffer';
+        break;
 
-        case 'binary':
-          typeToUse = 'Buffer';
-          break;
-
-        default:
-          typeToUse = 'unknown';
-          break;
-      }
+      default:
+        typeToUse = 'unknown';
+        break;
     }
 
     if (settings.debug) {

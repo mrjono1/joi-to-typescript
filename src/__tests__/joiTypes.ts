@@ -112,4 +112,23 @@ describe('`Joi.types()`', () => {
       ].join('\n')
     );
   });
+
+  test('Joi.any()', () => {
+    const schema = Joi.object({
+      one: Joi.any(),
+      // Force another type via meta
+      two: Joi.any().meta({ baseType: 'number | string' })
+    }).meta({ className: 'Test' });
+
+    const result = convertSchema({ debug: true }, schema);
+    expect(result).not.toBeUndefined;
+    expect(result?.content).toBe(
+      `
+export interface Test {
+  one?: any;
+  two?: number | string;
+}
+`.trim()
+    );
+  });
 });
