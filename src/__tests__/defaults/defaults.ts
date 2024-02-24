@@ -132,4 +132,21 @@ describe('Test behaviour for optional fields with supplied defaults', function (
   strWithSpecialChars: "Test\\\\World$Hello🚀Hey\\nYay" | string;
 }`);
   });
+  it('Test defaults when using the empty default constructor', function () {
+    const converted = convertSchema(
+      { supplyDefaultsInType: true, treatDefaultedOptionalAsRequired: true },
+      Joi.object({
+        str: Joi.string().default('Test'),
+        strWithSpecialChars: Joi.string().default('Test\\World$Hello🚀Hey\nYay'),
+        num: Joi.number().default(1)
+      }).default(),
+      'Test'
+    );
+    expect(converted).toBeDefined();
+    expect(converted?.content).toEqual(`export interface Test {
+  num: 1 | number;
+  str: "Test" | string;
+  strWithSpecialChars: "Test\\\\World$Hello🚀Hey\\nYay" | string;
+}`);
+  });
 });

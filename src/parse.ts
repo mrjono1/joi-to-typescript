@@ -33,7 +33,20 @@ function getCommonDetails(
 
   const description = details.flags?.description;
   const presence = details.flags?.presence;
-  const value = details.flags?.default;
+  let value = details.flags?.default;
+  if (
+    value &&
+    typeof value === 'object' &&
+    'special' in value &&
+    value.special === 'deep' &&
+    Object.keys(value).length === 1
+  ) {
+    // Special case. When using the empty `default()` function on
+    // a schema entry, Joi adds a special symbol to the entry, which
+    // is converted to {"special": "deep"} via describe.
+    // When this case comes up, we can ignore it.
+    value = undefined;
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const examples: string[] = ((details.examples || []) as any[])
