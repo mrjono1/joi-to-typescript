@@ -301,6 +301,7 @@ function typeContentToTsHelper(
 
       // interface can have no properties {} if the joi object has none defined
       let objectStr = '{}';
+      let hasDefault = false;
 
       if (children.length !== 0) {
         const childrenContent = children.map(child => {
@@ -333,9 +334,16 @@ function typeContentToTsHelper(
 
         if (parsedSchema.value !== undefined && settings.supplyDefaultsInType) {
           objectStr = getDefaultTypeTsContent(settings, indentLevel, parsedSchema, objectStr);
+          hasDefault = true;
         }
       }
       if (doExport) {
+        if (hasDefault) {
+          return {
+            tsContent: `export type ${parsedSchema.interfaceOrTypeName} = ${objectStr}`,
+            jsDoc: parsedSchema.jsDoc
+          };
+        }
         return {
           tsContent: `export interface ${parsedSchema.interfaceOrTypeName} ${objectStr}`,
           jsDoc: parsedSchema.jsDoc

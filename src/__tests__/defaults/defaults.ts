@@ -149,4 +149,30 @@ describe('Test behaviour for optional fields with supplied defaults', function (
   strWithSpecialChars: "Test\\\\World$Hello🚀Hey\\nYay" | string;
 }`);
   });
+  it('Test defaults when using the empty default constructor (user-provided value)', function () {
+    const converted = convertSchema(
+      { supplyDefaultsInType: true, treatDefaultedOptionalAsRequired: true },
+      Joi.object({
+        special: Joi.string()
+      }).default({ special: 'deep' }),
+      'Test'
+    );
+    expect(converted).toBeDefined();
+    expect(converted?.content).toEqual(`export interface Test {
+  special?: string;
+}`);
+  });
+  it('Test defaults when using an user-provided value', function () {
+    const converted = convertSchema(
+      { supplyDefaultsInType: true, treatDefaultedOptionalAsRequired: true },
+      Joi.object({
+        something: Joi.string()
+      }).default({ something: 'deep' }),
+      'Test'
+    );
+    expect(converted).toBeDefined();
+    expect(converted?.content).toEqual(`export type Test = {"something":"deep"} | {
+  something?: string;
+}`);
+  });
 });
