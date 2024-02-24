@@ -45,6 +45,7 @@ function getCommonDetails(
     // a schema entry, Joi adds a special symbol to the entry, which
     // is converted to {"special": "deep"} via describe.
     // When this case comes up, we can ignore it.
+    // Ref: https://github.com/hapijs/joi/blob/e7e9c5d18dafaa510a7ece02c225653db5fc998f/lib/manifest.js#L179
     value = undefined;
   }
 
