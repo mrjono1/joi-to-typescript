@@ -43,7 +43,7 @@ npm install joi
 ```
 
 - This has been built for `"joi": "^17"` and will not work for older versions
-- Minimum node version 12 as Joi requires node 12
+- Supported node versions 16, 18, 20
 
 ## Suggested Usage
 
