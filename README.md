@@ -249,6 +249,12 @@ export interface Settings {
    */
   supplyDefaultsInType: boolean;
   /**
+   * If a field has a default value, add its stringified representation
+   * to the JsDoc using the @default annotation
+   * @default false
+   */
+  supplyDefaultsInJsDoc: boolean;
+  /**
    * Filter files you wish to parse
    * The class `InputFileFilter` contains some default options
    * @default *.ts files

@@ -49,6 +49,11 @@ function getCommonDetails(
     value = undefined;
   }
 
+  const defaultJsDoc =
+    settings.supplyDefaultsInJsDoc && details.flags && 'default' in details.flags
+      ? JSON.stringify(details.flags.default)
+      : undefined;
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const examples: string[] = ((details.examples || []) as any[])
     .filter(e => e !== undefined)
@@ -75,7 +80,7 @@ function getCommonDetails(
   }
   return {
     interfaceOrTypeName,
-    jsDoc: { description, examples, disable: disableJsDoc },
+    jsDoc: { description, examples, default: defaultJsDoc, disable: disableJsDoc },
     required,
     value,
     isReadonly
