@@ -180,18 +180,22 @@ describe('Test behaviour for optional fields with supplied defaults', function (
       { supplyDefaultsInJsDoc: true },
       schema.append({
         fieldWithDoc: Joi.string().description('A field with a\nmultiline doc').default('My string!'),
-        fieldWithAnyNull: Joi.any().default(null)
+        fieldWithAnyNull: Joi.any().default(null),
+        fieldWithMultilineString: Joi.string().default(`A multiline\nstring with\nsome lines`),
+        fieldWithBigDefault: Joi.array()
+          .items(Joi.string())
+          .default(['i', 'have', 'more', 'than', '5', 'values', 'more', 'more', 'more'])
       }),
       'Test'
     );
     expect(converted).toBeDefined();
     expect(converted?.content).toEqual(`export interface Test {
   /**
-   * @default "Test"
+   * @default 'Test'
    */
   alt?: string | number;
   /**
-   * @default {"val":false}
+   * @default { val: false }
    */
   alt2?: string | number | {
       /**
@@ -200,11 +204,11 @@ describe('Test behaviour for optional fields with supplied defaults', function (
       val?: boolean;
     };
   /**
-   * @default [1,2,3]
+   * @default [ 1, 2, 3 ]
    */
   arr?: number[];
   /**
-   * @default ["X","Y","Z"]
+   * @default [ 'X', 'Y', 'Z' ]
    */
   arr2?: string[];
   /**
@@ -220,12 +224,27 @@ describe('Test behaviour for optional fields with supplied defaults', function (
    */
   fieldWithAnyNull?: any;
   /**
+   * @default
+   * [
+   *   'i',    'have',
+   *   'more', 'than',
+   *   '5',    'values',
+   *   'more', 'more',
+   *   'more'
+   * ]
+   */
+  fieldWithBigDefault?: string[];
+  /**
    * A field with a
    * multiline doc
    *
-   * @default "My string!"
+   * @default 'My string!'
    */
   fieldWithDoc?: string;
+  /**
+   * @default 'A multiline\\nstring with\\nsome lines'
+   */
+  fieldWithMultilineString?: string;
   /**
    * @default 1
    */
@@ -235,21 +254,21 @@ describe('Test behaviour for optional fields with supplied defaults', function (
    */
   numOptional?: number;
   /**
-   * @default {"val":"Test"}
+   * @default { val: 'Test' }
    */
   obj?: {
     val?: string;
   };
   /**
-   * @default "Test"
+   * @default 'Test'
    */
   str?: string;
   /**
-   * @default "Test"
+   * @default 'Test'
    */
   strOptional?: string;
   /**
-   * @default "Test\\\\World$Hello🚀Hey\\nYay"
+   * @default 'Test\\\\World$Hello🚀Hey\\nYay'
    */
   strWithSpecialChars?: string;
 }`);

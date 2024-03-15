@@ -16,7 +16,8 @@ import {
   getIsReadonly,
   getMetadataFromDetails
 } from './joiUtils';
-import { getIndentStr, getJsDocString } from './write'; // see __tests__/joiTypes.ts for more information
+import { getIndentStr, getJsDocString } from './write';
+import util from 'node:util'; // see __tests__/joiTypes.ts for more information
 
 // see __tests__/joiTypes.ts for more information
 export const supportedJoiTypes = ['array', 'object', 'alternatives', 'any', 'boolean', 'date', 'number', 'string'];
@@ -51,7 +52,7 @@ function getCommonDetails(
 
   const defaultJsDoc =
     settings.supplyDefaultsInJsDoc && details.flags && 'default' in details.flags
-      ? JSON.stringify(details.flags.default)
+      ? util.inspect(details.flags.default, { depth: null })
       : undefined;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
