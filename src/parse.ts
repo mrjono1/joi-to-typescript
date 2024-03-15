@@ -51,9 +51,7 @@ function getCommonDetails(
   }
 
   const defaultJsDoc =
-    settings.supplyDefaultsInJsDoc && details.flags && 'default' in details.flags
-      ? util.inspect(details.flags.default, { depth: null })
-      : undefined;
+    settings.supplyDefaultsInJsDoc && value !== undefined ? util.inspect(value, { depth: null }) : undefined;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const examples: string[] = ((details.examples || []) as any[])

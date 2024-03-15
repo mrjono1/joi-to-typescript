@@ -151,7 +151,7 @@ describe('Test behaviour for optional fields with supplied defaults', function (
   });
   it('Test defaults when using the empty default constructor (user-provided value)', function () {
     const converted = convertSchema(
-      { supplyDefaultsInType: true, treatDefaultedOptionalAsRequired: true },
+      { supplyDefaultsInType: true, supplyDefaultsInJsDoc: true, treatDefaultedOptionalAsRequired: true },
       Joi.object({
         special: Joi.string()
       }).default({ special: 'deep' }),
