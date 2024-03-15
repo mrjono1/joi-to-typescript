@@ -151,7 +151,7 @@ describe('Test behaviour for optional fields with supplied defaults', function (
   });
   it('Test defaults when using the empty default constructor (user-provided value)', function () {
     const converted = convertSchema(
-      { supplyDefaultsInType: true, treatDefaultedOptionalAsRequired: true },
+      { supplyDefaultsInType: true, supplyDefaultsInJsDoc: true, treatDefaultedOptionalAsRequired: true },
       Joi.object({
         special: Joi.string()
       }).default({ special: 'deep' }),
@@ -173,6 +173,104 @@ describe('Test behaviour for optional fields with supplied defaults', function (
     expect(converted).toBeDefined();
     expect(converted?.content).toEqual(`export type Test = {"something":"deep"} | {
   something?: string;
+}`);
+  });
+  it('Adds defaults to docs', function () {
+    const converted = convertSchema(
+      { supplyDefaultsInJsDoc: true },
+      schema.append({
+        fieldWithDoc: Joi.string().description('A field with a\nmultiline doc').default('My string!'),
+        fieldWithAnyNull: Joi.any().default(null),
+        fieldWithMultilineString: Joi.string().default(`A multiline\nstring with\nsome lines`),
+        fieldWithBigDefault: Joi.array()
+          .items(Joi.string())
+          .default(['i', 'have', 'more', 'than', '5', 'values', 'more', 'more', 'more'])
+      }),
+      'Test'
+    );
+    expect(converted).toBeDefined();
+    expect(converted?.content).toEqual(`export interface Test {
+  /**
+   * @default 'Test'
+   */
+  alt?: string | number;
+  /**
+   * @default { val: false }
+   */
+  alt2?: string | number | {
+      /**
+       * @default true
+       */
+      val?: boolean;
+    };
+  /**
+   * @default [ 1, 2, 3 ]
+   */
+  arr?: number[];
+  /**
+   * @default [ 'X', 'Y', 'Z' ]
+   */
+  arr2?: string[];
+  /**
+   * @default true
+   */
+  bool?: boolean;
+  /**
+   * @default true
+   */
+  boolOptional?: boolean;
+  /**
+   * @default null
+   */
+  fieldWithAnyNull?: any;
+  /**
+   * @default
+   * [
+   *   'i',    'have',
+   *   'more', 'than',
+   *   '5',    'values',
+   *   'more', 'more',
+   *   'more'
+   * ]
+   */
+  fieldWithBigDefault?: string[];
+  /**
+   * A field with a
+   * multiline doc
+   *
+   * @default 'My string!'
+   */
+  fieldWithDoc?: string;
+  /**
+   * @default 'A multiline\\nstring with\\nsome lines'
+   */
+  fieldWithMultilineString?: string;
+  /**
+   * @default 1
+   */
+  num?: number;
+  /**
+   * @default 1
+   */
+  numOptional?: number;
+  /**
+   * @default { val: 'Test' }
+   */
+  obj?: {
+    val?: string;
+  };
+  /**
+   * @default 'Test'
+   */
+  str?: string;
+  /**
+   * @default 'Test'
+   */
+  strOptional?: string;
+  /**
+   * @default 'Test\\\\World$Hello🚀Hey\\nYay'
+   */
+  strWithSpecialChars?: string;
 }`);
   });
 });

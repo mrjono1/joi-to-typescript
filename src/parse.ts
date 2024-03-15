@@ -16,7 +16,8 @@ import {
   getIsReadonly,
   getMetadataFromDetails
 } from './joiUtils';
-import { getIndentStr, getJsDocString } from './write'; // see __tests__/joiTypes.ts for more information
+import { getIndentStr, getJsDocString } from './write';
+import util from 'node:util'; // see __tests__/joiTypes.ts for more information
 
 // see __tests__/joiTypes.ts for more information
 export const supportedJoiTypes = ['array', 'object', 'alternatives', 'any', 'boolean', 'date', 'number', 'string'];
@@ -49,6 +50,9 @@ function getCommonDetails(
     value = undefined;
   }
 
+  const defaultJsDoc =
+    settings.supplyDefaultsInJsDoc && value !== undefined ? util.inspect(value, { depth: null }) : undefined;
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const examples: string[] = ((details.examples || []) as any[])
     .filter(e => e !== undefined)
@@ -75,7 +79,7 @@ function getCommonDetails(
   }
   return {
     interfaceOrTypeName,
-    jsDoc: { description, examples, disable: disableJsDoc },
+    jsDoc: { description, examples, default: defaultJsDoc, disable: disableJsDoc },
     required,
     value,
     isReadonly

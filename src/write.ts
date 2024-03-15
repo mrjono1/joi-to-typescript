@@ -47,7 +47,7 @@ export function getJsDocString(settings: Settings, name: string, jsDoc?: JsDoc, 
     return '';
   }
 
-  if (!settings.commentEverything && !jsDoc?.description && (jsDoc?.examples?.length ?? 0) === 0) {
+  if (!settings.commentEverything && !jsDoc?.description && !jsDoc?.default && (jsDoc?.examples?.length ?? 0) === 0) {
     return '';
   }
 
@@ -64,8 +64,19 @@ export function getJsDocString(settings: Settings, name: string, jsDoc?: JsDoc, 
   }
 
   // Add a JsDoc divider if needed
-  if ((jsDoc?.examples?.length ?? 0) > 0 && lines.length > 0) {
+  if (((jsDoc?.examples?.length ?? 0) > 0 || jsDoc?.default) && lines.length > 0) {
     lines.push(' *');
+  }
+
+  if (jsDoc?.default) {
+    const deIndented = getStringIndentation(jsDoc.default).deIndentedString;
+
+    if (deIndented.includes('\n')) {
+      lines.push(` * @default`);
+      lines.push(...deIndented.split('\n').map(line => ` * ${line}`.trimEnd()));
+    } else {
+      lines.push(` * @default ${deIndented}`);
+    }
   }
 
   for (const example of jsDoc?.examples ?? []) {
