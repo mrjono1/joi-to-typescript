@@ -723,6 +723,19 @@ function parseUnknown(details: ObjectDescribe, settings: Settings): TypeContent 
   return buildUnknownTypeContent();
 }
 
+function parsePatterns(details: ObjectDescribe, settings: Settings): TypeContent {
+  const parsedSchema = details.patterns ? parseSchema(details.patterns[0].rule, settings) : null;
+
+  if (!parsedSchema) {
+    return parseUnknown(details, settings);
+  }
+
+  parsedSchema.required = true;
+  parsedSchema.interfaceOrTypeName = '[pattern: string]';
+
+  return parsedSchema;
+}
+
 function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent | undefined {
   const joinOperation: TypeContentRoot['joinOperation'] =
     details.keys === undefined
@@ -740,8 +753,12 @@ function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent 
     parsedSchema.interfaceOrTypeName = /^[$A-Z_][0-9A-Z_$]*$/i.test(key || '') ? key : `'${key}'`;
     return parsedSchema;
   });
-  const isMap = details.patterns?.length === 1 && details.patterns[0].schema.type === 'string';
-  if (details?.flags?.unknown === true || isMap) {
+
+  if (details.patterns?.length === 1 && (details.patterns[0].schema?.type === 'string' || details.patterns[0].regex)) {
+    children.push(parsePatterns(details, settings));
+  }
+
+  if (details?.flags?.unknown === true) {
     children.push(parseUnknown(details, settings));
   }
 
