@@ -167,7 +167,7 @@ export interface ArrayObject {
     describe('empty object matching', () => {
       const tests: {
         schema: Joi.Schema;
-        value: any;
+        value: unknown;
         error?: boolean;
       }[] = [
         {
