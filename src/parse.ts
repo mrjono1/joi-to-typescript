@@ -412,7 +412,7 @@ export function parseSchema(
   if (interfaceOrTypeName && useLabels && !ignoreLabels.includes(interfaceOrTypeName)) {
     // skip parsing and just reference the label since we assumed we parsed the schema that the label references
     // TODO: do we want to use the labels description if we reference it?
-    let allowedValues = createAllowTypes(details);
+    let allowedValues = createAllowTypes(details, settings);
 
     const child = makeTypeContentChild({
       content: interfaceOrTypeName,
@@ -509,7 +509,7 @@ function parseBasicSchema(details: BasicDescribe, settings: Settings, rootSchema
 
   // at least one value
   if (values.length !== 0) {
-    const allowedValues = createAllowTypes(details);
+    const allowedValues = createAllowTypes(details, settings);
 
     if (values[0] === null && !details.flags?.only) {
       allowedValues.unshift(makeTypeContentChild({ content }));
@@ -529,13 +529,13 @@ function parseBasicSchema(details: BasicDescribe, settings: Settings, rootSchema
   }
 }
 
-function createAllowTypes(details: BaseDescribe): TypeContent[] {
+function createAllowTypes(details: BaseDescribe, settings: Settings): TypeContent[] {
   const values = getAllowValues(details.allow);
 
   // at least one value
   if (values.length !== 0) {
     const allowedValues = values.map((value: unknown) =>
-      makeTypeContentChild({ content: typeof value === 'string' ? toStringLiteral(value) : `${value}` })
+      makeTypeContentChild({ content: typeof value === 'string' ? toStringLiteral(value, settings.doublequoteEscape) : `${value}` })
     );
     return allowedValues;
   }
@@ -560,7 +560,7 @@ function parseStringSchema(details: StringDescribe, settings: Settings, rootSche
       const allowedValues = values.map(value =>
         stringAllowValues.includes(value) && value !== ''
           ? makeTypeContentChild({ content: `${value}` })
-          : makeTypeContentChild({ content: toStringLiteral(value) })
+          : makeTypeContentChild({ content: toStringLiteral(value, settings.doublequoteEscape) })
       );
 
       if (values.filter(value => stringAllowValues.includes(value)).length === values.length) {
@@ -588,7 +588,7 @@ function parseArray(details: ArrayDescribe, settings: Settings): TypeContent | u
 
   if (details.ordered && !details.items) {
     const parsedChildren = details.ordered.map(item => parseSchema(item, settings)).filter(Boolean) as TypeContent[];
-    const allowedValues = createAllowTypes(details);
+    const allowedValues = createAllowTypes(details, settings);
 
     // at least one value
     if (allowedValues.length > 0) {
@@ -618,7 +618,7 @@ function parseArray(details: ArrayDescribe, settings: Settings): TypeContent | u
     return undefined;
   }
 
-  const allowedValues = createAllowTypes(details);
+  const allowedValues = createAllowTypes(details, settings);
   // at least one value
   if (allowedValues.length !== 0) {
     allowedValues.unshift(
@@ -675,7 +675,7 @@ function parseAlternatives(details: AlternativesDescribe, settings: Settings): T
     return undefined;
   }
 
-  const allowedValues = createAllowTypes(details);
+  const allowedValues = createAllowTypes(details, settings);
 
   return makeTypeContentRoot({
     joinOperation: 'union',
@@ -765,7 +765,7 @@ function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent 
 
   const { interfaceOrTypeName, jsDoc } = getCommonDetails(details, settings);
 
-  const allowedValues = createAllowTypes(details);
+  const allowedValues = createAllowTypes(details, settings);
 
   // at least one value
   if (allowedValues.length !== 0) {

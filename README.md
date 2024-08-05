@@ -236,6 +236,11 @@ export interface Settings {
    */
   indentationChacters: string;
   /**
+   * If set to true, will use double quotes for strings
+   * @default false
+   */
+  doublequoteEscape: boolean;
+  /**
    * If a field has a default and is optional, consider it as required
    * @default false
    */
