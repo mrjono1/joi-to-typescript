@@ -239,7 +239,7 @@ export interface Settings {
    * If set to true, will use double quotes for strings
    * @default false
    */
-  readonly doublequoteEscape: boolean;
+  doublequoteEscape: boolean;
   /**
    * If a field has a default and is optional, consider it as required
    * @default false
