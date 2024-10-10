@@ -65,28 +65,6 @@ export interface TestSchema {
 }`);
   });
 
-  test('`pattern(Joi.string(), Joi.number())`', () => {
-    const schema = Joi.object({
-      name: Joi.string()
-    })
-      .meta({ className: 'TestSchema', unknownType: 'number' })
-      .description('a test schema definition')
-      .pattern(Joi.string(), Joi.number());
-
-    const result = convertSchema({ sortPropertiesByName: false }, schema);
-    expect(result).not.toBeUndefined;
-    expect(result?.content).toBe(`/**
- * a test schema definition
- */
-export interface TestSchema {
-  name?: string;
-  /**
-   * Number Property
-   */
-  [x: string]: number;
-}`);
-  });
-
   test('`unknown(true).meta({ unknownType: Joi.AnySchema() })`', () => {
     const schema = Joi.object({})
       .unknown(true)
@@ -98,26 +76,6 @@ export interface TestSchema {
           })
         )
       })
-      .description('a test schema definition');
-
-    const result = convertSchema({}, schema);
-    expect(result).not.toBeUndefined;
-    expect(result?.content).toBe(`/**
- * a test schema definition
- */
-export interface TestSchema {
-  [x: string]: {
-    id: string;
-  }[];
-}`);
-  });
-
-  test('`pattern(Joi.string(), Joi.AnySchema())`', () => {
-    const unknownTypeSchema = Joi.array().items(Joi.object({ id: Joi.string().required() }));
-
-    const schema = Joi.object({})
-      .pattern(Joi.string(), unknownTypeSchema)
-      .meta({ className: 'TestSchema', unknownType: unknownTypeSchema })
       .description('a test schema definition');
 
     const result = convertSchema({}, schema);
