@@ -5,7 +5,7 @@ describe('override tests', () => {
   test("figure out what joi's doing", () => {
     const val = Joi.override;
     expect(val).toBe(Joi.override);
-    if (val != Joi.override) throw 'not equal'; // double checking
+    if (val !== Joi.override) throw 'not equal'; // double checking
   });
 
   test('control: valid without Joi.override', () => {

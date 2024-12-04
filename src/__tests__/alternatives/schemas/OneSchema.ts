@@ -35,3 +35,28 @@ export const AlternativesConditionalSchema = Joi.object({
     otherwise: Joi.forbidden()
   })
 }).meta({ className: 'SomeSchema' });
+
+export const AlternativesWithFunctionSchema = Joi.alternatives([
+  Joi.function().minArity(2),
+  Joi.object({
+    json: Joi.any().required()
+  }),
+  Joi.object({
+    raw: Joi.string().required()
+  })
+]).meta({ className: 'AlternativesWithFunctionInterface' });
+
+export const AlternativesArrayOptional = Joi.object({
+  oneOrTheOtherMaybe: Joi.array()
+    .items(Joi.alternatives([Joi.number(), Joi.string(), Joi.alternatives()]))
+    .required()
+}).meta({ className: 'AlternativesArrayOptionalInterface' });
+
+export const alternativesRawNoDescSchema = Joi.alternatives([Joi.number(), Joi.string()]).meta({
+  className: 'AlternativesRawNoDesc',
+  disableDescription: true
+});
+
+export const alternativesObjectNoDescSchema = Joi.object({
+  myVal: Joi.alternatives([Joi.number(), Joi.string()])
+}).meta({ className: 'AlternativesObjectNoDesc', disableDescription: true });

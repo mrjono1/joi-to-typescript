@@ -52,6 +52,7 @@ export function convertSchemaInternal(
     const customTypes = getAllCustomTypes(parsedSchema);
     const content = typeContentToTs(settings, parsedSchema, true);
     return {
+      schema: joi,
       interfaceOrTypeName,
       customTypes,
       content
@@ -115,7 +116,14 @@ export async function analyseSchemaFile(
   );
 
   // Write types
-  const typeContent = typesToBeWritten.map(typeToBeWritten => typeToBeWritten.content);
+  const typeContent = typesToBeWritten.map(typeToBeWritten => {
+    const content = typeToBeWritten.content;
+    return [
+      ...(settings.tsContentHeader ? [settings.tsContentHeader(typeToBeWritten)] : []),
+      content,
+      ...(settings.tsContentFooter ? [settings.tsContentFooter(typeToBeWritten)] : [])
+    ].join('\n');
+  });
 
   // Get imports for the current file
   const allExternalTypes: ConvertedType[] = [];

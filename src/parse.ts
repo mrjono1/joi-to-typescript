@@ -1,5 +1,5 @@
 import { filterMap, isDescribe, toStringLiteral } from './utils';
-import { TypeContent, makeTypeContentRoot, makeTypeContentChild, Settings, JsDoc } from './types';
+import { JsDoc, makeTypeContentChild, makeTypeContentRoot, Settings, TypeContent, TypeContentRoot } from './types';
 import {
   AlternativesDescribe,
   ArrayDescribe,
@@ -9,8 +9,15 @@ import {
   ObjectDescribe,
   StringDescribe
 } from './joiDescribeTypes';
-import { getAllowValues, getInterfaceOrTypeName, getIsReadonly, getMetadataFromDetails } from './joiUtils';
+import {
+  getAllowValues,
+  getDisableDescription,
+  getInterfaceOrTypeName,
+  getIsReadonly,
+  getMetadataFromDetails
+} from './joiUtils';
 import { getIndentStr, getJsDocString } from './write';
+import util from 'node:util'; // see __tests__/joiTypes.ts for more information
 
 // see __tests__/joiTypes.ts for more information
 export const supportedJoiTypes = ['array', 'object', 'alternatives', 'any', 'boolean', 'date', 'number', 'string'];
@@ -27,19 +34,56 @@ function getCommonDetails(
 
   const description = details.flags?.description;
   const presence = details.flags?.presence;
-  const value = details.flags?.default;
-  const example = details.examples?.[0];
+  let value = details.flags?.default;
+  if (
+    value &&
+    typeof value === 'object' &&
+    'special' in value &&
+    value.special === 'deep' &&
+    Object.keys(value).length === 1
+  ) {
+    // Special case. When using the empty `default()` function on
+    // a schema entry, Joi adds a special symbol to the entry, which
+    // is converted to {"special": "deep"} via describe.
+    // When this case comes up, we can ignore it.
+    // Ref: https://github.com/hapijs/joi/blob/e7e9c5d18dafaa510a7ece02c225653db5fc998f/lib/manifest.js#L179
+    value = undefined;
+  }
+
+  const defaultJsDoc =
+    settings.supplyDefaultsInJsDoc && value !== undefined ? util.inspect(value, { depth: null }) : undefined;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const examples: string[] = ((details.examples || []) as any[])
+    .filter(e => e !== undefined)
+    .map(example => {
+      return typeof example === 'object'
+        ? // Joi accepts `any` as type for an example
+          JSON.stringify(example, null, 2)
+        : example.toString();
+    });
+
   const isReadonly = getIsReadonly(details);
+  const disableJsDoc = getDisableDescription(details);
 
   let required;
-  if (presence === 'required' || (settings.treatDefaultedOptionalAsRequired && value !== undefined)) {
+  if (
+    presence === 'required' ||
+    (settings.treatDefaultedOptionalAsRequired && presence !== 'optional' && value !== undefined)
+  ) {
     required = true;
   } else if (presence === 'optional') {
     required = false;
   } else {
     required = settings.defaultToRequired;
   }
-  return { interfaceOrTypeName, jsDoc: { description, example }, required, value, isReadonly };
+  return {
+    interfaceOrTypeName,
+    jsDoc: { description, examples, default: defaultJsDoc, disable: disableJsDoc },
+    required,
+    value,
+    isReadonly
+  };
 }
 
 export function getAllCustomTypes(parsedSchema: TypeContent): string[] {
@@ -52,17 +96,19 @@ export function getAllCustomTypes(parsedSchema: TypeContent): string[] {
   return customTypes;
 }
 
-const wrapValue = (value: unknown): string | object | boolean | number => {
-  if (typeof value === 'string') {
-    return `"${value}"`;
-  } else if (Array.isArray(value)) {
-    return `[${value.map(av => wrapValue(av))}]`;
-  } else if (typeof value === 'object') {
-    return JSON.stringify(value);
-  } else {
-    return `${value}`;
+function getDefaultTypeTsContent(
+  settings: Settings,
+  indentLevel: number,
+  parsedSchema: TypeContent,
+  tsContent: string
+) {
+  if (!settings.unionNewLine) {
+    return `${JSON.stringify(parsedSchema.value)} | ${tsContent}`;
   }
-};
+
+  const indent = getIndentStr(settings, indentLevel);
+  return '\n' + indent + '| ' + JSON.stringify(parsedSchema.value) + '\n' + indent + '| ' + tsContent;
+}
 
 function typeContentToTsHelper(
   settings: Settings,
@@ -71,12 +117,20 @@ function typeContentToTsHelper(
   doExport = false
 ): { tsContent: string; jsDoc?: JsDoc } {
   if (!parsedSchema.__isRoot) {
+    const tsContent = settings.supplyDefaultsInType
+      ? parsedSchema.value !== undefined
+        ? getDefaultTypeTsContent(settings, indentLevel, parsedSchema, parsedSchema.content)
+        : parsedSchema.content
+      : parsedSchema.content;
+    if (doExport) {
+      return {
+        tsContent: `export type ${parsedSchema.interfaceOrTypeName} = ${tsContent};`,
+        jsDoc: parsedSchema.jsDoc
+      };
+    }
+
     return {
-      tsContent: settings.supplyDefaultsInType
-        ? parsedSchema.value !== undefined
-          ? `${wrapValue(parsedSchema.value)} | ${parsedSchema.content}`
-          : parsedSchema.content
-        : parsedSchema.content,
+      tsContent,
       jsDoc: parsedSchema.jsDoc
     };
   }
@@ -101,7 +155,7 @@ function typeContentToTsHelper(
       }
       const arrayStr = settings.supplyDefaultsInType
         ? parsedSchema.value !== undefined
-          ? `${wrapValue(parsedSchema.value)} | ${content}`
+          ? getDefaultTypeTsContent(settings, indentLevel, parsedSchema, `${content}[]`)
           : `${content}[]`
         : `${content}[]`;
       if (doExport) {
@@ -112,51 +166,147 @@ function typeContentToTsHelper(
       }
       return { tsContent: arrayStr, jsDoc: parsedSchema.jsDoc };
     }
-    case 'tuple': {
-      const childrenContent = children.map(child => {
-        let { tsContent } = typeContentToTsHelper(settings, child, indentLevel);
+    case 'tuple':
+    case 'union': {
+      const isTuple = parsedSchema.joinOperation === 'tuple';
 
-        if (tsContent.includes('|')) {
-          tsContent = `(${tsContent})`;
+      const indentString = getIndentStr(settings, indentLevel);
+      const itemSeparatorBeforeItem = isTuple ? '' : ' |';
+      const itemSeparatorAfterItem = isTuple ? ',' : '';
+      const itemSeparatorAfterNewline = isTuple ? '' : '|';
+
+      let hasOneDescription = false;
+      let finalStr: string;
+
+      const childrenContent: string[] = [];
+      let first = true;
+      let previousIsInline = false;
+      if (settings.supplyDefaultsInType && parsedSchema.value !== undefined) {
+        if (settings.unionNewLine) {
+          childrenContent.push('\n' + indentString + '| ' + JSON.stringify(parsedSchema.value));
+          previousIsInline = false;
+        } else {
+          childrenContent.push(JSON.stringify(parsedSchema.value));
+          previousIsInline = true;
+        }
+        first = false;
+      }
+      for (let itemIdx = 0; itemIdx < children.length; itemIdx++) {
+        const child = children[itemIdx];
+        const childInfo = typeContentToTsHelper(
+          settings,
+          child,
+          // Special case for objects because their contents need to be indented once more
+          child.__isRoot && ['object', 'list', 'tuple'].includes(child.joinOperation) ? indentLevel + 1 : indentLevel
+        );
+        const descriptionStr = getJsDocString(
+          settings,
+          child.interfaceOrTypeName as string,
+          childInfo.jsDoc,
+          indentLevel
+        );
+        hasOneDescription ||= descriptionStr !== '';
+
+        // Prevents test failures because of spaces at line endings
+        let childInfoTsContentPrefix = '';
+        if (isTuple) {
+          if (previousIsInline) {
+            childInfoTsContentPrefix = ' ';
+          }
+        } else {
+          childInfoTsContentPrefix = childInfo.tsContent.startsWith('\n') ? '' : ' ';
         }
 
-        return `${tsContent}${child.required ? '' : '?'}`;
-      });
+        /*
+          Compose the child code line. If there is a description, it must be above the entry.
+           */
+        let childContent = childInfo.tsContent;
+        let itemPrefixWithIndent = indentString + itemSeparatorAfterNewline;
+        let skipNewline = false;
+        if (childContent.includes('|')) {
+          childContent = `(${childContent})`;
+        }
+        if (isTuple) {
+          childContent += child.required ? '' : '?';
+        } else {
+          // Make sure we don't repeat by accident multiple | when joining unions
+          if (settings.unionNewLine && childContent.trimStart().startsWith('|')) {
+            itemPrefixWithIndent = '';
+            skipNewline = true;
+          }
+        }
+        childContent += itemIdx < children.length - 1 ? itemSeparatorAfterItem : '';
+        if (
+          descriptionStr !== '' ||
+          (children.length > 1 && ((!isTuple && settings.unionNewLine) || (isTuple && settings.tupleNewLine)))
+        ) {
+          // If there is a description it means we also have a new line, which means
+          // we need to properly indent the following line too.
+          let prefix = descriptionStr;
+          if (prefix === '') {
+            if (first) {
+              prefix = '';
+            } else {
+              prefix = skipNewline ? '' : '\n';
+            }
+          }
+          let tsContentPrefix = childInfoTsContentPrefix;
+          if (tsContentPrefix === '') {
+            // Handle the case where we are wrapping the child content, and we need
+            // to make some space between the union operator and the content
+            if (itemPrefixWithIndent.endsWith('|') && childContent.startsWith('(')) {
+              tsContentPrefix = ' ';
+            }
+          }
+          childrenContent.push(
+            (first ? (skipNewline ? '' : '\n') : '') +
+              `${prefix}${itemPrefixWithIndent}${tsContentPrefix}${childContent}`
+          );
+          previousIsInline = false;
+        } else {
+          // Normal inline content
+          childrenContent.push(
+            (first
+              ? ''
+              : (previousIsInline ? itemSeparatorBeforeItem : itemPrefixWithIndent) + childInfoTsContentPrefix) +
+              childContent
+          );
+          previousIsInline = true;
+        }
+        first = false;
+      }
+      finalStr = childrenContent.join(hasOneDescription ? '\n' : '');
 
-      const tupleStr = `[${childrenContent.join(', ')}]`;
-
-      if (doExport) {
-        return {
-          tsContent: `export type ${parsedSchema.interfaceOrTypeName} = ${tupleStr};`,
-          jsDoc: parsedSchema.jsDoc
-        };
+      if (isTuple) {
+        finalStr = `[${finalStr}${hasOneDescription ? '\n' + getIndentStr(settings, indentLevel - 1) : ''}${
+          settings.tupleNewLine ? '\n' + getIndentStr(settings, indentLevel - 1) : ''
+        }]`;
       }
 
-      return { tsContent: tupleStr, jsDoc: parsedSchema.jsDoc };
-    }
-    case 'union': {
-      const childrenContent = children.map(child => typeContentToTsHelper(settings, child, indentLevel).tsContent);
-      const unionStr = childrenContent.join(' | ');
-      const finalStr = settings.supplyDefaultsInType
-        ? parsedSchema.value !== undefined
-          ? `${wrapValue(parsedSchema.value)} | ${unionStr}`
-          : unionStr
-        : unionStr;
       if (doExport) {
         return {
-          tsContent: `export type ${parsedSchema.interfaceOrTypeName} = ${finalStr};`,
+          tsContent: `export type ${parsedSchema.interfaceOrTypeName} =${
+            // Prevents test failures because of spaces at line endings
+            finalStr.startsWith('\n') ? '' : ' '
+          }${finalStr};`,
           jsDoc: parsedSchema.jsDoc
         };
       }
       return { tsContent: finalStr, jsDoc: parsedSchema.jsDoc };
     }
+    case 'objectWithUndefinedKeys':
     case 'object': {
       if (!children.length && !doExport) {
-        return { tsContent: 'object', jsDoc: parsedSchema.jsDoc };
+        if (parsedSchema.joinOperation === 'objectWithUndefinedKeys') {
+          return { tsContent: 'object', jsDoc: parsedSchema.jsDoc };
+        } else {
+          return { tsContent: 'Record<string, never>', jsDoc: parsedSchema.jsDoc };
+        }
       }
 
       // interface can have no properties {} if the joi object has none defined
       let objectStr = '{}';
+      let hasDefault = false;
 
       if (children.length !== 0) {
         const childrenContent = children.map(child => {
@@ -172,15 +322,33 @@ function typeContentToTsHelper(
           const optionalStr = child.required ? '' : '?';
           const indentString = getIndentStr(settings, indentLevel);
           const modifier = child.isReadonly ? 'readonly ' : '';
-          return `${descriptionStr}${indentString}${modifier}${child.interfaceOrTypeName}${optionalStr}: ${childInfo.tsContent};`;
+          return [
+            descriptionStr,
+            indentString,
+            modifier,
+            child.interfaceOrTypeName,
+            optionalStr,
+            ':',
+            // Prevents test failures because of spaces at line endings
+            childInfo.tsContent.startsWith('\n') ? '' : ' ',
+            childInfo.tsContent,
+            ';'
+          ].join('');
         });
         objectStr = `{\n${childrenContent.join('\n')}\n${getIndentStr(settings, indentLevel - 1)}}`;
 
         if (parsedSchema.value !== undefined && settings.supplyDefaultsInType) {
-          objectStr = `${wrapValue(parsedSchema.value)} | ${objectStr}`;
+          objectStr = getDefaultTypeTsContent(settings, indentLevel, parsedSchema, objectStr);
+          hasDefault = true;
         }
       }
       if (doExport) {
+        if (hasDefault) {
+          return {
+            tsContent: `export type ${parsedSchema.interfaceOrTypeName} = ${objectStr}`,
+            jsDoc: parsedSchema.jsDoc
+          };
+        }
         return {
           tsContent: `export interface ${parsedSchema.interfaceOrTypeName} ${objectStr}`,
           jsDoc: parsedSchema.jsDoc
@@ -244,17 +412,18 @@ export function parseSchema(
   if (interfaceOrTypeName && useLabels && !ignoreLabels.includes(interfaceOrTypeName)) {
     // skip parsing and just reference the label since we assumed we parsed the schema that the label references
     // TODO: do we want to use the labels description if we reference it?
+    let allowedValues = createAllowTypes(details, settings);
 
     const child = makeTypeContentChild({
       content: interfaceOrTypeName,
       customTypes: [interfaceOrTypeName],
-      jsDoc,
+      // If we have any allowed values, remove the jsDoc from the child as we will use it in the outer object
+      jsDoc: allowedValues.length > 0 ? undefined : jsDoc,
       required,
       isReadonly
     });
 
-    let allowedValues = createAllowTypes(details);
-    if (allowedValues.length !== 0) {
+    if (allowedValues.length > 0) {
       if (!details.flags?.only) {
         allowedValues.unshift(child);
       } else {
@@ -272,36 +441,41 @@ export function parseSchema(
     }
     return child;
   }
-  if (!supportedJoiTypes.includes(details.type)) {
-    // See if we can find a base type for this type in the details.
-    let typeToUse;
-    const baseTypes: string[] = getMetadataFromDetails('baseType', details);
-    if (baseTypes.length > 0) {
-      // If there are multiple base types then the deepest one will be at the
-      // end of the list which is most likely the one to use.
-      typeToUse = baseTypes.pop() as string;
+
+  const baseTypes: string[] = getMetadataFromDetails('baseType', details);
+  if (baseTypes.length > 0) {
+    // If there is a baseType defined, then the user is overriding the
+    // type definition.
+
+    // If there are multiple base types then the deepest one will be at the
+    // end of the list which is most likely the one to use.
+    const typeToUse = baseTypes.pop() as string;
+
+    if (settings.debug) {
+      // eslint-disable-next-line no-console
+      console.debug(`Using user-defined '${typeToUse}' for type '${details.type}'`);
     }
+    return makeTypeContentChild({ content: typeToUse, interfaceOrTypeName, jsDoc, required, isReadonly });
+  } else if (!supportedJoiTypes.includes(details.type)) {
+    let typeToUse;
+    // Let's see if we can map the type to something sensible.
+    // If not, then set it to 'unknown'.
+    switch (details.type as string) {
+      case 'function':
+        typeToUse = '((...args: any[]) => any)';
+        break;
 
-    // If we could not get the base type from the metadata then see if we can
-    // map it to something sensible. If not, then set it to 'unknown'.
-    if (typeToUse === undefined) {
-      switch (details.type as string) {
-        case 'function':
-          typeToUse = '(...args: any[]) => any';
-          break;
+      case 'symbol':
+        typeToUse = 'symbol';
+        break;
 
-        case 'symbol':
-          typeToUse = 'symbol';
-          break;
+      case 'binary':
+        typeToUse = 'Buffer';
+        break;
 
-        case 'binary':
-          typeToUse = 'Buffer';
-          break;
-
-        default:
-          typeToUse = 'unknown';
-          break;
-      }
+      default:
+        typeToUse = 'unknown';
+        break;
     }
 
     if (settings.debug) {
@@ -335,7 +509,7 @@ function parseBasicSchema(details: BasicDescribe, settings: Settings, rootSchema
 
   // at least one value
   if (values.length !== 0) {
-    const allowedValues = createAllowTypes(details);
+    const allowedValues = createAllowTypes(details, settings);
 
     if (values[0] === null && !details.flags?.only) {
       allowedValues.unshift(makeTypeContentChild({ content }));
@@ -346,7 +520,7 @@ function parseBasicSchema(details: BasicDescribe, settings: Settings, rootSchema
   if (rootSchema) {
     return makeTypeContentRoot({
       joinOperation: 'union',
-      children: [makeTypeContentChild({ content, interfaceOrTypeName, jsDoc })],
+      children: [makeTypeContentChild({ content, interfaceOrTypeName })],
       interfaceOrTypeName,
       jsDoc
     });
@@ -355,13 +529,13 @@ function parseBasicSchema(details: BasicDescribe, settings: Settings, rootSchema
   }
 }
 
-function createAllowTypes(details: BaseDescribe): TypeContent[] {
+function createAllowTypes(details: BaseDescribe, settings: Settings): TypeContent[] {
   const values = getAllowValues(details.allow);
 
   // at least one value
   if (values.length !== 0) {
     const allowedValues = values.map((value: unknown) =>
-      makeTypeContentChild({ content: typeof value === 'string' ? toStringLiteral(value) : `${value}` })
+      makeTypeContentChild({ content: typeof value === 'string' ? toStringLiteral(value, settings.doublequoteEscape) : `${value}` })
     );
     return allowedValues;
   }
@@ -386,10 +560,10 @@ function parseStringSchema(details: StringDescribe, settings: Settings, rootSche
       const allowedValues = values.map(value =>
         stringAllowValues.includes(value) && value !== ''
           ? makeTypeContentChild({ content: `${value}` })
-          : makeTypeContentChild({ content: toStringLiteral(value) })
+          : makeTypeContentChild({ content: toStringLiteral(value, settings.doublequoteEscape) })
       );
 
-      if (values.filter(value => stringAllowValues.includes(value)).length == values.length) {
+      if (values.filter(value => stringAllowValues.includes(value)).length === values.length) {
         allowedValues.unshift(makeTypeContentChild({ content: 'string' }));
       }
       return makeTypeContentRoot({ joinOperation: 'union', children: allowedValues, interfaceOrTypeName, jsDoc });
@@ -399,7 +573,7 @@ function parseStringSchema(details: StringDescribe, settings: Settings, rootSche
   if (rootSchema) {
     return makeTypeContentRoot({
       joinOperation: 'union',
-      children: [makeTypeContentChild({ content: 'string', interfaceOrTypeName, jsDoc })],
+      children: [makeTypeContentChild({ content: 'string', interfaceOrTypeName })],
       interfaceOrTypeName,
       jsDoc
     });
@@ -410,19 +584,19 @@ function parseStringSchema(details: StringDescribe, settings: Settings, rootSche
 
 function parseArray(details: ArrayDescribe, settings: Settings): TypeContent | undefined {
   const { interfaceOrTypeName, jsDoc } = getCommonDetails(details, settings);
+  const isSparse = details.flags?.sparse;
 
   if (details.ordered && !details.items) {
     const parsedChildren = details.ordered.map(item => parseSchema(item, settings)).filter(Boolean) as TypeContent[];
-    const allowedValues = createAllowTypes(details);
+    const allowedValues = createAllowTypes(details, settings);
 
     // at least one value
-    if (allowedValues.length !== 0) {
+    if (allowedValues.length > 0) {
       allowedValues.unshift(
         makeTypeContentRoot({
           joinOperation: 'tuple',
           children: parsedChildren,
-          interfaceOrTypeName,
-          jsDoc
+          interfaceOrTypeName
         })
       );
 
@@ -439,13 +613,12 @@ function parseArray(details: ArrayDescribe, settings: Settings): TypeContent | u
 
   // TODO: handle multiple things in the items arr
   const item = details.items && !details.ordered ? details.items[0] : ({ type: 'any' } as Describe);
-
   const child = parseSchema(item, settings);
   if (!child) {
     return undefined;
   }
 
-  const allowedValues = createAllowTypes(details);
+  const allowedValues = createAllowTypes(details, settings);
   // at least one value
   if (allowedValues.length !== 0) {
     allowedValues.unshift(
@@ -454,6 +627,21 @@ function parseArray(details: ArrayDescribe, settings: Settings): TypeContent | u
 
     return makeTypeContentRoot({ joinOperation: 'union', children: allowedValues, interfaceOrTypeName, jsDoc });
   }
+  if (isSparse) {
+    return makeTypeContentRoot({
+      joinOperation: 'list',
+      children: [
+        makeTypeContentRoot({
+          joinOperation: 'union',
+          children: [child, makeTypeContentChild({ content: 'undefined' })],
+          interfaceOrTypeName,
+          jsDoc
+        })
+      ],
+      interfaceOrTypeName,
+      jsDoc
+    });
+  }
 
   return makeTypeContentRoot({ joinOperation: 'list', children: [child], interfaceOrTypeName, jsDoc });
 }
@@ -461,27 +649,39 @@ function parseArray(details: ArrayDescribe, settings: Settings): TypeContent | u
 function parseAlternatives(details: AlternativesDescribe, settings: Settings): TypeContent | undefined {
   const { interfaceOrTypeName, jsDoc } = getCommonDetails(details, settings);
   const ignoreLabels = interfaceOrTypeName ? [interfaceOrTypeName] : [];
-  const children = filterMap(details.matches, match => {
-    // ignore alternatives().conditional() and return 'any' since we don't handle is / then / otherwise for now
-    if (!match.schema) {
-      return parseSchema({ type: 'any' }, settings, true, ignoreLabels);
-    }
-    return parseSchema(match.schema, settings, true, ignoreLabels);
-  });
-  // This is an check that cannot be tested as Joi throws an error before this package
+
+  const children: TypeContent[] = [];
+
+  if (details.matches === undefined) {
+    // Edge case where the user does not pass ANY content to the `alternatives` function.
+    // In the official docs: If no schemas are added, the type will not match any value except for undefined.
+    children.push(makeTypeContentChild({ content: 'undefined' }));
+  } else {
+    children.push(
+      ...filterMap(details.matches, match => {
+        // ignore alternatives().conditional() and return 'any' since we don't handle is / then / otherwise for now
+        if (!match.schema) {
+          return parseSchema({ type: 'any' }, settings, true, ignoreLabels);
+        }
+        return parseSchema(match.schema, settings, true, ignoreLabels);
+      })
+    );
+  }
+
+  // This is a check that cannot be tested as Joi throws an error before this package
   // can be called, there is test for it in alternatives
   if (children.length === 0) {
     /* istanbul ignore next */
     return undefined;
   }
 
-  const allowedValues = createAllowTypes(details);
+  const allowedValues = createAllowTypes(details, settings);
 
   return makeTypeContentRoot({
     joinOperation: 'union',
     children: [...children, ...allowedValues],
     interfaceOrTypeName,
-    jsDoc,
+    jsDoc
   });
 }
 
@@ -537,6 +737,12 @@ function parsePatterns(details: ObjectDescribe, settings: Settings): TypeContent
 }
 
 function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent | undefined {
+  const joinOperation: TypeContentRoot['joinOperation'] =
+    details.keys === undefined
+      ? // When using Joi.object() without any argument, joi defaults to allowing ANY key/pair
+        // inside the object. This is reflected in the absence of the `keys` field in the `details` var.
+        'objectWithUndefinedKeys'
+      : 'object';
   let children = filterMap(Object.entries(details.keys || {}), ([key, value]) => {
     const parsedSchema = parseSchema(value, settings);
     // The only type that could return this is alternatives
@@ -576,14 +782,14 @@ function parseObjects(details: ObjectDescribe, settings: Settings): TypeContent 
 
   const { interfaceOrTypeName, jsDoc } = getCommonDetails(details, settings);
 
-  const allowedValues = createAllowTypes(details);
+  const allowedValues = createAllowTypes(details, settings);
 
   // at least one value
   if (allowedValues.length !== 0) {
-    allowedValues.unshift(makeTypeContentRoot({ joinOperation: 'object', children, interfaceOrTypeName, jsDoc }));
+    allowedValues.unshift(makeTypeContentRoot({ joinOperation, children, interfaceOrTypeName, jsDoc }));
 
     return makeTypeContentRoot({ joinOperation: 'union', children: allowedValues, interfaceOrTypeName, jsDoc });
   }
 
-  return makeTypeContentRoot({ joinOperation: 'object', children, interfaceOrTypeName, jsDoc });
+  return makeTypeContentRoot({ joinOperation, children, interfaceOrTypeName, jsDoc });
 }

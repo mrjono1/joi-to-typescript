@@ -1,3 +1,5 @@
+import Joi from 'joi';
+
 /**
  * Application settings
  */
@@ -16,6 +18,12 @@ export interface Settings {
    * Use .label('InterfaceName') instead of .meta({className:'InterfaceName'}) for interface names
    */
   readonly useLabelAsInterfaceName: boolean;
+  /**
+   * If defined, when a schema name ends with "schema", replaces the ending in the generated type by default
+   * with this string.
+   * E.g. when this setting is "Interface", a `TestSchema` object generates a `TestInterface` type
+   */
+  readonly defaultInterfaceSuffix?: string;
   /**
    * Should interface properties be defaulted to optional or required
    * @default false
@@ -75,6 +83,11 @@ export interface Settings {
    */
   readonly indentationChacters: string;
   /**
+   * If set to true, will use double quotes for strings
+   * @default false
+   */
+  readonly doublequoteEscape: boolean;
+  /**
    * If a field has a default and is optional, consider it as required
    * @default false
    */
@@ -82,9 +95,15 @@ export interface Settings {
   /**
    * If a field has a default, modify the resulting field to equal
    * `field: <default> | type` rather than `field: type`
-   * @defatult false
+   * @default false
    */
   readonly supplyDefaultsInType: boolean;
+  /**
+   * If a field has a default value, add its stringified representation
+   * to the JsDoc using the @default annotation
+   * @default false
+   */
+  readonly supplyDefaultsInJsDoc: boolean;
   /**
    * Filter files you wish to parse
    * The class `InputFileFilter` contains some default options
@@ -96,6 +115,28 @@ export interface Settings {
    * @default false
    */
   readonly omitIndexFiles: boolean;
+
+  /**
+   * If provided, prepends the content returned by the function to the
+   * generated interface/type code (including and JSDoc).
+   */
+  readonly tsContentHeader?: (type: ConvertedType) => string;
+
+  /**
+   * If provided, appends the content returned by the function to the
+   * generated interface/type code.
+   */
+  readonly tsContentFooter?: (type: ConvertedType) => string;
+
+  /**
+   * If defined, place every member of a union on a new line
+   */
+  readonly unionNewLine?: boolean;
+
+  /**
+   * If defined, place every member of a tuple on a new line
+   */
+  readonly tupleNewLine?: boolean;
 }
 
 export class InputFileFilter {
@@ -114,6 +155,7 @@ export class InputFileFilter {
 }
 
 export interface ConvertedType {
+  schema: Joi.Schema;
   interfaceOrTypeName: string;
   content: string;
   customTypes: string[];
@@ -155,7 +197,7 @@ export interface TypeContentRoot extends BaseTypeContent {
   /**
    * How to join the children types together
    */
-  joinOperation: 'list' | 'tuple' | 'union' | 'intersection' | 'object';
+  joinOperation: 'list' | 'tuple' | 'union' | 'intersection' | 'object' | 'objectWithUndefinedKeys';
 
   /**
    * Children types
@@ -283,7 +325,15 @@ export interface JsDoc {
    */
   description?: string;
   /**
-   * @example example value
+   * @example example values
    */
-  example?: string;
+  examples?: string[];
+  /**
+   * @default default value
+   */
+  default?: string;
+  /**
+   * If true, completely disables printing JsDoc
+   */
+  disable?: boolean;
 }

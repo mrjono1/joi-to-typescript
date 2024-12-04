@@ -11,8 +11,6 @@
 
 Convert [Joi](https://github.com/sideway/joi) Schemas to TypeScript interfaces
 
-Now supporting ESM and CJS Modules
-
 This will allow you to use generate TypeScript interfaces from Joi Schemas giving you confidence the schema and interface match. You no longer have to manually create the same structure again, saving you time and reducing errors.
 
 Works with any TypeScript project and also perfectly with [Hapi](https://github.com/hapijs/hapi) API requests/responses.
@@ -43,7 +41,7 @@ npm install joi
 ```
 
 - This has been built for `"joi": "^17"` and will not work for older versions
-- Minimum node version 12 as Joi requires node 12
+- Supported node versions 18, 20
 
 ## Suggested Usage
 
@@ -174,6 +172,12 @@ export interface Settings {
    */
   useLabelAsInterfaceName: boolean;
   /**
+   * If defined, when a schema name ends with "schema", replaces the ending in the generated type by default
+   * with this string.
+   * E.g. when this setting is "Interface", a `TestSchema` object generates a `TestInterface` type
+   */
+  defaultInterfaceSuffix?: string;
+  /**
    * Should interface properties be defaulted to optional or required
    * @default false
    */
@@ -232,6 +236,11 @@ export interface Settings {
    */
   indentationChacters: string;
   /**
+   * If set to true, will use double quotes for strings
+   * @default false
+   */
+  doublequoteEscape: boolean;
+  /**
    * If a field has a default and is optional, consider it as required
    * @default false
    */
@@ -243,6 +252,12 @@ export interface Settings {
    */
   supplyDefaultsInType: boolean;
   /**
+   * If a field has a default value, add its stringified representation
+   * to the JsDoc using the @default annotation
+   * @default false
+   */
+  supplyDefaultsInJsDoc: boolean;
+  /**
    * Filter files you wish to parse
    * The class `InputFileFilter` contains some default options
    * @default *.ts files
@@ -253,6 +268,24 @@ export interface Settings {
    * @default false
    */
   omitIndexFiles: boolean
+  /**
+   * If provided, prepends the content returned by the function to the
+   * generated interface/type code (including and JSDoc).
+   */
+  tsContentHeader?: (type: ConvertedType) => string;
+  /**
+   * If provided, appends the content returned by the function to the
+   * generated interface/type code.
+   */
+  tsContentFooter?: (type: ConvertedType) => string;
+  /**
+   * If defined, place every member of a union on a new line
+   */
+  unionNewLine?: boolean;
+  /**
+   * If defined, place every member of a tuple on a new line
+   */
+  tupleNewLine?: boolean;
 }
 ```
 
@@ -293,7 +326,6 @@ export interface Settings {
 Recommended Editor is VS Code, this project is setup with VSCode settings in the `./.vscode` directory to keep development consistent.
 
 Best developed on macOS, Linux, or on Windows via WSL.
-Node 14, 16 or 18
 
 Install [nodejs](https://nodejs.org/) via [nvm](https://github.com/nvm-sh/nvm) so you can have multiple versions installed
 

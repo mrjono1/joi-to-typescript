@@ -4,7 +4,7 @@
 import { writeFileSync } from 'fs';
 import Path from 'path';
 
-import { Settings, JsDoc } from './types';
+import { JsDoc, Settings } from './types';
 
 /**
  * Write index.ts file
@@ -23,9 +23,11 @@ export function writeIndexFile(settings: Settings, fileNamesToExport: string[]):
 }
 
 export function getTypeFileNameFromSchema(schemaFileName: string, settings: Settings): string {
-  return (schemaFileName.endsWith(`${settings.schemaFileSuffix}.ts`)
-    ? schemaFileName.substring(0, schemaFileName.length - `${settings.schemaFileSuffix}.ts`.length)
-    : schemaFileName.replace('.ts', '')) + settings.interfaceFileSuffix;
+  return (
+    (schemaFileName.endsWith(`${settings.schemaFileSuffix}.ts`)
+      ? schemaFileName.substring(0, schemaFileName.length - `${settings.schemaFileSuffix}.ts`.length)
+      : schemaFileName.replace('.ts', '')) + settings.interfaceFileSuffix
+  );
 }
 
 /**
@@ -41,20 +43,96 @@ export function getIndentStr(settings: Settings, indentLevel: number): string {
  * Get Interface jsDoc
  */
 export function getJsDocString(settings: Settings, name: string, jsDoc?: JsDoc, indentLevel = 0): string {
-  if (!settings.commentEverything && !jsDoc?.description && !jsDoc?.example) {
+  if (jsDoc?.disable === true) {
     return '';
   }
 
-  const lines = ['/**'];
+  if (!settings.commentEverything && !jsDoc?.description && !jsDoc?.default && (jsDoc?.examples?.length ?? 0) === 0) {
+    return '';
+  }
+
+  const lines = [];
 
   if (settings.commentEverything || (jsDoc && jsDoc.description)) {
-    lines.push(` * ${jsDoc?.description ?? name}`);
+    let description = name;
+    if (jsDoc?.description) {
+      description = getStringIndentation(jsDoc.description).deIndentedString;
+    }
+    if (description) {
+      lines.push(...description.split('\n').map(line => ` * ${line}`.trimEnd()));
+    }
   }
 
-  if (jsDoc?.example) {
-    lines.push(` * @example ${jsDoc.example}`);
+  // Add a JsDoc divider if needed
+  if (((jsDoc?.examples?.length ?? 0) > 0 || jsDoc?.default) && lines.length > 0) {
+    lines.push(' *');
   }
 
+  if (jsDoc?.default) {
+    const deIndented = getStringIndentation(jsDoc.default).deIndentedString;
+
+    if (deIndented.includes('\n')) {
+      lines.push(` * @default`);
+      lines.push(...deIndented.split('\n').map(line => ` * ${line}`.trimEnd()));
+    } else {
+      lines.push(` * @default ${deIndented}`);
+    }
+  }
+
+  for (const example of jsDoc?.examples ?? []) {
+    const deIndented = getStringIndentation(example).deIndentedString;
+
+    if (deIndented.includes('\n')) {
+      lines.push(` * @example`);
+      lines.push(...deIndented.split('\n').map(line => ` * ${line}`.trimEnd()));
+    } else {
+      lines.push(` * @example ${deIndented}`);
+    }
+  }
+
+  if (lines.length === 0) {
+    return '';
+  }
+
+  // Add JsDoc boundaries
+  lines.unshift('/**');
   lines.push(' */');
+
   return lines.map(line => `${getIndentStr(settings, indentLevel)}${line}`).join('\n') + '\n';
+}
+
+interface GetStringIndentationResult {
+  deIndentedString: string;
+  indent: string;
+}
+
+/**
+ * Given an indented string, uses the first line's indentation as base to de-indent
+ * the rest of the string, and returns both the de-indented string and the
+ * indentation found as prefix.
+ */
+function getStringIndentation(value: string): GetStringIndentationResult {
+  const lines = value.split('\n');
+  let indent = '';
+  for (const line of lines) {
+    // Skip initial newlines
+    if (line.trim() === '') {
+      continue;
+    }
+    const match = /^(\s+)\b/.exec(line);
+    if (match) {
+      indent = match[1];
+    }
+    break;
+  }
+
+  const deIndentedString = lines
+    .map(line => (line.startsWith(indent) ? line.substring(indent.length) : line))
+    .join('\n')
+    .trim();
+
+  return {
+    deIndentedString,
+    indent
+  };
 }
