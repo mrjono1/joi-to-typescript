@@ -50,7 +50,8 @@ export interface BaseDescribe extends Joi.Description {
    * https://joi.dev/api/#objectpatternpattern-schema-options
    */
   patterns?: {
-    schema: Describe;
+    schema?: Describe;
+    regex?: string;
     rule: Describe;
   }[];
   metas?: Meta[];

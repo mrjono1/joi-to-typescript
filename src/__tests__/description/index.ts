@@ -93,13 +93,16 @@ export interface DisableDescriptionObject {
     /**
      * A simple description
      */
-    [x: string]: Example;
+    [pattern: string]: Example;
   };
   /**
    * withoutDescription
    */
   withoutDescription?: {
-    [x: string]: Example;
+    /**
+     * A simple description
+     */
+    [pattern: string]: Example;
   };
 }
 
