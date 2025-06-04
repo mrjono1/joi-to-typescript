@@ -48,7 +48,7 @@
     "jest": "29.7.0",
     "joi": "17.13.3",
     "prettier": "3.5.3",
-    "ts-jest": "29.3.2",
+    "ts-jest": "29.3.4",
     "typescript": "5.8.3"
   },
   "peerDependencies": {
