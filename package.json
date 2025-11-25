@@ -1,7 +1,7 @@
 {
   "name": "joi-to-typescript",
   "description": "Convert Joi Schemas to TypeScript interfaces",
-  "version": "4.15.0",
+  "version": "5.0.0",
   "author": "Jono Clarnette",
   "keywords": [
     "joi",
@@ -58,3 +58,4 @@
     "node": ">=14.0.0"
   }
 }
+

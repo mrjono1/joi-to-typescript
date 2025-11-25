@@ -41,7 +41,7 @@ npm install joi
 ```
 
 - This has been built for `"joi": "^17"` and will not work for older versions
-- Supported node versions 18, 20
+- Supported node versions 20, 22, 24
 
 ## Suggested Usage
 
