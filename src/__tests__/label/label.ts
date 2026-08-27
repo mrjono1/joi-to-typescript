@@ -13,7 +13,7 @@ describe('test the use of .label()', () => {
   });
 
   test('generate label interfaces', async () => {
-    const consoleSpy = jest.spyOn(console, 'debug');
+    const consoleSpy = vi.spyOn(console, 'debug');
     const result = await convertFromDirectory({
       schemaDirectory,
       typeOutputDirectory,

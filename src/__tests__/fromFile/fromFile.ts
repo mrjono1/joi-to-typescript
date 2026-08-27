@@ -115,7 +115,7 @@ describe('Create interfaces from schema files edge cases', () => {
   });
 
   test('debugging on', async () => {
-    const consoleSpy = jest.spyOn(console, 'debug');
+    const consoleSpy = vi.spyOn(console, 'debug');
     const result = await convertFromDirectory({
       schemaDirectory: './src/__tests__/fromFile/schemas',
       typeOutputDirectory,
