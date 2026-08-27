@@ -1,0 +1,7 @@
+[tools]
+node = "26"
+pnpm = "10"
+
+[settings]
+# mise.toml is the source of truth; do not read .nvmrc or .node-version
+idiomatic_version_file_enable_tools = []

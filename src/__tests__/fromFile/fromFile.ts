@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, rmdirSync } from 'fs';
+import { existsSync, readFileSync, rmSync } from 'fs';
 
 import { convertFromDirectory } from '../../index';
 
@@ -7,7 +7,7 @@ const typeOutputDirectory = './src/__tests__/fromFile/interfaces';
 describe('Create interfaces from schema files', () => {
   beforeAll(() => {
     if (existsSync(typeOutputDirectory)) {
-      rmdirSync(typeOutputDirectory, { recursive: true });
+      rmSync(typeOutputDirectory, { recursive: true });
     }
   });
 
@@ -90,7 +90,7 @@ export interface Foo {
 describe('Create interfaces from schema files edge cases', () => {
   beforeEach(() => {
     if (existsSync(typeOutputDirectory)) {
-      rmdirSync(typeOutputDirectory, { recursive: true });
+      rmSync(typeOutputDirectory, { recursive: true });
     }
   });
 

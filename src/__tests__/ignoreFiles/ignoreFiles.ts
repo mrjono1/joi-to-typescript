@@ -1,4 +1,4 @@
-import { rmdirSync, existsSync } from 'fs';
+import { rmSync, existsSync } from 'fs';
 
 import { convertFromDirectory } from '../../index';
 
@@ -8,7 +8,7 @@ describe('ignore Files', () => {
 
   beforeEach(() => {
     if (existsSync(typeOutputDirectory)) {
-      rmdirSync(typeOutputDirectory, { recursive: true });
+      rmSync(typeOutputDirectory, { recursive: true });
     }
   });
 

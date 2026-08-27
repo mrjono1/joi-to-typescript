@@ -7,7 +7,7 @@ src
 .eslintignore
 .eslintrc.cjs
 .gitignore
-.nvmrc
+mise.toml
 .prettierrc.cjs
 vitest.config.mts
 tsconfig.json

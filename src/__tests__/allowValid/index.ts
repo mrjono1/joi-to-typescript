@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, rmdirSync } from 'fs';
+import { existsSync, readFileSync, rmSync } from 'fs';
 
 import { convertFromDirectory, convertSchema } from '../../index';
 import Joi from 'joi';
@@ -8,7 +8,7 @@ const typeOutputDirectory = './src/__tests__/allowValid/interfaces';
 describe('union types using allow()', () => {
   beforeAll(() => {
     if (existsSync(typeOutputDirectory)) {
-      rmdirSync(typeOutputDirectory, { recursive: true });
+      rmSync(typeOutputDirectory, { recursive: true });
     }
   });
 
@@ -189,7 +189,7 @@ export interface Parent {
 describe('Allow/Valid Enums', () => {
   beforeAll(async () => {
     if (existsSync(typeOutputDirectory)) {
-      rmdirSync(typeOutputDirectory, { recursive: true });
+      rmSync(typeOutputDirectory, { recursive: true });
     }
 
     await convertFromDirectory({

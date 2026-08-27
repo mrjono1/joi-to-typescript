@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, rmdirSync } from 'fs';
+import { existsSync, readFileSync, rmSync } from 'fs';
 
 import { convertFromDirectory } from '../../index';
 
@@ -7,7 +7,7 @@ describe('Use double quotes for string escapes', () => {
 
   test('default behavior / single quotes', async () => {
     if (existsSync(typeOutputDirectory)) {
-      rmdirSync(typeOutputDirectory, { recursive: true });
+      rmSync(typeOutputDirectory, { recursive: true });
     }
     const result = await convertFromDirectory({
       schemaDirectory: './src/__tests__/doublequotesEscape/schemas',
@@ -54,12 +54,12 @@ export type Numbers = 1 | 2 | 3 | 4 | 5;
 
   test('doublequoteEscape: false / single quotes', async () => {
     if (existsSync(typeOutputDirectory)) {
-      rmdirSync(typeOutputDirectory, { recursive: true });
+      rmSync(typeOutputDirectory, { recursive: true });
     }
     const result = await convertFromDirectory({
       schemaDirectory: './src/__tests__/doublequotesEscape/schemas',
       typeOutputDirectory,
-      doublequoteEscape: false,
+      doublequoteEscape: false
     });
 
     expect(result).toBe(true);
@@ -102,12 +102,12 @@ export type Numbers = 1 | 2 | 3 | 4 | 5;
 
   test('doublequoteEscape: true / double quotes', async () => {
     if (existsSync(typeOutputDirectory)) {
-      rmdirSync(typeOutputDirectory, { recursive: true });
+      rmSync(typeOutputDirectory, { recursive: true });
     }
     const result = await convertFromDirectory({
       schemaDirectory: './src/__tests__/doublequotesEscape/schemas',
       typeOutputDirectory,
-      doublequoteEscape: true,
+      doublequoteEscape: true
     });
 
     expect(result).toBe(true);
@@ -147,5 +147,4 @@ export type NullNumber = number | null;
 export type Numbers = 1 | 2 | 3 | 4 | 5;
 `);
   });
-
 });
