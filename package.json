@@ -30,15 +30,15 @@
     "build:esm": "tsc --module es2020 --outDir ./dist/module",
     "build:cjs": "tsc --module commonjs --outDir ./dist/main",
     "build:dts": "tsc --declaration --emitDeclarationOnly --outDir ./dist/types",
-    "build": "yarn build:esm && yarn build:cjs && yarn build:dts",
+    "build": "pnpm run build:esm && pnpm run build:cjs && pnpm run build:dts",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint 'src/**'",
     "test": "vitest run",
-    "coverage": "yarn test --coverage --silent",
-    "pub": "yarn build && yarn publish"
+    "coverage": "vitest run --coverage --silent",
+    "pub": "pnpm run build && pnpm publish"
   },
   "devDependencies": {
-    "@types/node": "20.12.2",
+    "@types/node": "22.20.1",
     "@typescript-eslint/eslint-plugin": "7.18.0",
     "@typescript-eslint/parser": "7.18.0",
     "@vitest/coverage-v8": "4.1.10",
@@ -54,7 +54,12 @@
   "peerDependencies": {
     "joi": "17.x"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=22.0.0"
   }
 }

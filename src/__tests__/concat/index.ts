@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, rmdirSync } from 'fs';
+import { existsSync, readFileSync, rmSync } from 'fs';
 import { convertFromDirectory } from '../..';
 
 describe('test the use of joi.concat()', () => {
@@ -7,7 +7,7 @@ describe('test the use of joi.concat()', () => {
 
   beforeAll(() => {
     if (existsSync(typeOutputDirectory)) {
-      rmdirSync(typeOutputDirectory, { recursive: true });
+      rmSync(typeOutputDirectory, { recursive: true });
     }
   });
 

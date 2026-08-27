@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, rmdirSync } from 'fs';
+import { existsSync, readFileSync, rmSync } from 'fs';
 
 import { convertFromDirectory } from '../../index';
 import { AssertionCriteria } from './AssertionCriteria';
@@ -9,7 +9,7 @@ describe('subDirectories', () => {
 
   beforeEach(() => {
     if (existsSync(typeOutputDirectory)) {
-      rmdirSync(typeOutputDirectory, { recursive: true });
+      rmSync(typeOutputDirectory, { recursive: true });
     }
   });
 
@@ -40,7 +40,7 @@ describe('subDirectories', () => {
 
   test('Sub-Directory - Flatten', async () => {
     if (existsSync(typeOutputDirectory)) {
-      rmdirSync(typeOutputDirectory, { recursive: true });
+      rmSync(typeOutputDirectory, { recursive: true });
     }
     const result = await convertFromDirectory({
       schemaDirectory,

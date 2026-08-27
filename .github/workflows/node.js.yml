@@ -15,19 +15,22 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [20.x, 22.x, 24.x]
+        node-version: [22, 24, 26]
+
+    env:
+      MISE_NODE_VERSION: ${{ matrix.node-version }}
 
     steps:
       - uses: actions/checkout@v7
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v7
+      - name: Setup mise (Node.js ${{ matrix.node-version }})
+        uses: jdx/mise-action@v4
         with:
-          node-version: ${{ matrix.node-version }}
-      - run: yarn
-      - run: yarn lint
-      - run: yarn build
+          install_args: node@${{ matrix.node-version }}
+          cache_key: mise-node-${{ matrix.node-version }}-{{file_hash}}
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm build
       - name: Run tests and Code coverage
-        run: yarn coverage
+        run: pnpm coverage
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v7.0.0
-

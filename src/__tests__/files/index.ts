@@ -1,4 +1,4 @@
-import { existsSync, rmdirSync } from 'fs';
+import { existsSync, rmSync } from 'fs';
 import { convertFromDirectory } from '../..';
 import { InputFileFilter } from '../../types';
 
@@ -7,7 +7,7 @@ describe('empty schema directory', () => {
 
   beforeAll(() => {
     if (existsSync(typeOutputDirectory)) {
-      rmdirSync(typeOutputDirectory, { recursive: true });
+      rmSync(typeOutputDirectory, { recursive: true });
     }
   });
 

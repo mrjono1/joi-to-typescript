@@ -1,4 +1,4 @@
-import { existsSync, rmdirSync } from 'fs';
+import { existsSync, rmSync } from 'fs';
 import { convertFromDirectory } from '../../index';
 
 describe('no schemas in directory', () => {
@@ -6,7 +6,7 @@ describe('no schemas in directory', () => {
 
   beforeEach(() => {
     if (existsSync(typeOutputDirectory)) {
-      rmdirSync(typeOutputDirectory, { recursive: true });
+      rmSync(typeOutputDirectory, { recursive: true });
     }
   });
 

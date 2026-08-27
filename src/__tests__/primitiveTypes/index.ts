@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, rmdirSync } from 'fs';
+import { existsSync, readFileSync, rmSync } from 'fs';
 
 import { convertFromDirectory } from '../../index';
 
@@ -6,7 +6,7 @@ describe('Primitive Types', () => {
   const typeOutputDirectory = './src/__tests__/primitiveTypes/interfaces';
   beforeAll(async () => {
     if (existsSync(typeOutputDirectory)) {
-      rmdirSync(typeOutputDirectory, { recursive: true });
+      rmSync(typeOutputDirectory, { recursive: true });
     }
     const result = await convertFromDirectory({
       schemaDirectory: './src/__tests__/primitiveTypes/schemas',
