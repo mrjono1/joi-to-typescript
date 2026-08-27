@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
         node-version: [22, 24, 26]
 
@@ -25,7 +26,6 @@ jobs:
       - name: Setup mise (Node.js ${{ matrix.node-version }})
         uses: jdx/mise-action@v4
         with:
-          install_args: node@${{ matrix.node-version }}
           cache_key: mise-node-${{ matrix.node-version }}-{{file_hash}}
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
