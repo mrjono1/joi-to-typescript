@@ -15,7 +15,7 @@ describe('test the use of .meta({className: ""})', () => {
   });
 
   test('generate className interfaces', async () => {
-    const consoleSpy = jest.spyOn(console, 'debug');
+    const consoleSpy = vi.spyOn(console, 'debug');
     const result = await convertFromDirectory({
       schemaDirectory,
       typeOutputDirectory,

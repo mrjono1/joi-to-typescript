@@ -51,7 +51,7 @@ describe('ignore Files', () => {
   });
 
   test('Ignores a file and folder in an ignore list', async () => {
-    const consoleSpy = jest.spyOn(console, 'debug');
+    const consoleSpy = vi.spyOn(console, 'debug');
     const ignoreFiles = ['subDir2/', 'OneSchema.ts'];
     const result = await convertFromDirectory({
       schemaDirectory,

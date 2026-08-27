@@ -9,5 +9,5 @@ src
 .gitignore
 .nvmrc
 .prettierrc.cjs
-jest.config.cjs
+vitest.config.ts
 tsconfig.json

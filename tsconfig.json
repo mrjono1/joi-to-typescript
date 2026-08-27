@@ -11,7 +11,8 @@
     "esModuleInterop": true,
     "strict": true,
     "baseUrl": "src",
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "types": ["node", "vitest/globals"]
   },
   "include": ["src"],
   "exclude": ["node_modules", "**/__tests__/*", "examples"]
