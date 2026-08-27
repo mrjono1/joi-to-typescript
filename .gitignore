@@ -2,6 +2,10 @@
 logs
 *.log
 npm-debug.log*
+# pnpm
+pnpm-debug.log*
+
+# yarn
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
@@ -113,13 +117,6 @@ dist
 shell.nix
 
 package-lock.json
+yarn.lock
 
 .idea/
-
-# https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions

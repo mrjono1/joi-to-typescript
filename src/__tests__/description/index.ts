@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, rmdirSync } from 'fs';
+import { existsSync, readFileSync, rmSync } from 'fs';
 
 import { convertFromDirectory, convertSchema } from '../../index';
 import Joi from 'joi';
@@ -8,7 +8,7 @@ describe('description', () => {
 
   beforeAll(() => {
     if (existsSync(typeOutputDirectory)) {
-      rmdirSync(typeOutputDirectory, { recursive: true });
+      rmSync(typeOutputDirectory, { recursive: true });
     }
   });
 

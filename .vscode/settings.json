@@ -1,6 +1,6 @@
 {
-  "npm.packageManager": "yarn",
-  "eslint.packageManager": "yarn",
+  "npm.packageManager": "pnpm",
+  "eslint.packageManager": "pnpm",
   "editor.formatOnSave": true,
   "eslint.workingDirectories": ["./src"],
   "[javascript]": {

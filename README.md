@@ -27,21 +27,25 @@ The use of `.meta({className:'')` is preferred over `.label('')`, because `Joi.l
 This package is intended as a development time tool, so it should be installed in the `devDependencies`
 
 ```bash
-yarn add joi-to-typescript --dev
+pnpm add -D joi-to-typescript
 # or
 npm install joi-to-typescript --save-dev
+# or
+yarn add joi-to-typescript --dev
 ```
 
 You will also need to install `joi` in the `dependencies`
 
 ```bash
-yarn add joi
+pnpm add joi
 # or
 npm install joi
+# or
+yarn add joi
 ```
 
 - This has been built for `"joi": "^17"` and will not work for older versions
-- Supported node versions 20, 22, 24
+- Supported node versions 22, 24, 26
 
 ## Suggested Usage
 
@@ -54,7 +58,7 @@ npm install joi
 
 #### Example Project
 
-Explore the [Example Projects](https://github.com/mrjono1/joi-to-typescript/tree/master/examples) for recommended setup, execute `yarn types` to run each one.
+Explore the [Example Projects](https://github.com/mrjono1/joi-to-typescript/tree/master/examples) for recommended setup, execute `pnpm types` to run each one.
 
 #### Example Schema
 
@@ -327,15 +331,15 @@ Recommended Editor is VS Code, this project is setup with VSCode settings in the
 
 Best developed on macOS, Linux, or on Windows via WSL.
 
-Install [nodejs](https://nodejs.org/) via [nvm](https://github.com/nvm-sh/nvm) so you can have multiple versions installed
+Install [mise](https://mise.jdx.dev/) to manage Node.js and pnpm versions.
 
 ```bash
-nvm use # using NVM to select node version
-yarn install # using yarn
-yarn test # run local tests
+mise install # install Node.js and pnpm from mise.toml
+pnpm install
+pnpm test # run local tests
 
-yarn coverage # test coverage report
-yarn lint # lint the code
+pnpm coverage # test coverage report
+pnpm lint # lint the code
 ```
 
 ### Change Log

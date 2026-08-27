@@ -1,11 +1,11 @@
-import { existsSync, readFileSync, rmdirSync } from 'fs';
+import { existsSync, readFileSync, rmSync } from 'fs';
 import { convertFromDirectory } from '../..';
 
 describe('indentation', () => {
   const typeOutputDirectory = './src/__tests__/indentation/interfaces';
   beforeEach(() => {
     if (existsSync(typeOutputDirectory)) {
-      rmdirSync(typeOutputDirectory, { recursive: true });
+      rmSync(typeOutputDirectory, { recursive: true });
     }
   });
 

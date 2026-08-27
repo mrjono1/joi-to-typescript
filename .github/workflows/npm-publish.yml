@@ -12,24 +12,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: "24.x"
-      - run: yarn
-      - run: yarn lint
-      - run: yarn build
-      - run: yarn test
+      - uses: jdx/mise-action@v4
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm build
+      - run: pnpm test
 
   publish-npm:
     needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: "24.x"
-          registry-url: https://registry.npmjs.org/
-      - run: yarn
-      - run: yarn pub
+      - uses: jdx/mise-action@v4
+      - run: echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" >> .npmrc
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm pub
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
