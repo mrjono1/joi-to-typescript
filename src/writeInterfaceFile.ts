@@ -11,9 +11,10 @@ import { Settings, GenerateTypeFile } from './types';
 export async function writeInterfaceFile(
   settings: Settings,
   typeFileName: string,
-  generatedTypes: GenerateTypeFile[]
+  generatedTypes: GenerateTypeFile[],
+  fullPath: string
 ): Promise<undefined | string> {
-  const generatedFile = generatedTypes.find(x => x.typeFileName === typeFileName);
+  const generatedFile = generatedTypes.find(x => `${x.typeFileLocation}/${x.typeFileName}` === fullPath);
   if (generatedFile && generatedFile.fileContent && generatedFile.typeFileName) {
     let typeImports = '';
     if (settings.flattenTree) {

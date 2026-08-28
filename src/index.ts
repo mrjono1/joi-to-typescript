@@ -70,7 +70,7 @@ export async function convertFromDirectory(settings: Partial<Settings>): Promise
   // TODO: remove fields from derived interfaces here
 
   for (const exportType of filesInDirectory.types) {
-    writeInterfaceFile(appSettings, exportType.typeFileName, filesInDirectory.types);
+    writeInterfaceFile(appSettings, exportType.typeFileName, filesInDirectory.types, `${exportType.typeFileLocation}/${exportType.typeFileName}`);
   }
 
   if (appSettings.indexAllToRoot || appSettings.flattenTree) {
