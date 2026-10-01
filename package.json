@@ -48,7 +48,7 @@
     "joi": "18.2.5",
     "prettier": "3.8.3",
     "typescript": "5.8.3",
-    "vite": "8.2.2",
+    "vite": "8.3.1",
     "vitest": "4.1.11"
   },
   "peerDependencies": {
