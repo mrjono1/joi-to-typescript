@@ -53,7 +53,7 @@ function getCommonDetails(
   const defaultJsDoc =
     settings.supplyDefaultsInJsDoc && value !== undefined ? util.inspect(value, { depth: null }) : undefined;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   const examples: string[] = ((details.examples || []) as any[])
     .filter(e => e !== undefined)
     .map(example => {
@@ -452,7 +452,7 @@ export function parseSchema(
     const typeToUse = baseTypes.pop() as string;
 
     if (settings.debug) {
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.debug(`Using user-defined '${typeToUse}' for type '${details.type}'`);
     }
     return makeTypeContentChild({ content: typeToUse, interfaceOrTypeName, jsDoc, required, isReadonly });
@@ -479,7 +479,7 @@ export function parseSchema(
     }
 
     if (settings.debug) {
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.debug(`Using '${typeToUse}' for unsupported type '${details.type}'`);
     }
     return makeTypeContentChild({ content: typeToUse, interfaceOrTypeName, jsDoc, required, isReadonly });

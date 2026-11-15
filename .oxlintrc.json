@@ -1,0 +1,35 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [
+    "typescript",
+    "oxc"
+  ],
+  "categories": {
+    "correctness": "error"
+  },
+  "rules": {
+    "typescript/no-use-before-define": [
+      "error",
+      {
+        "functions": false
+      }
+    ],
+    "no-console": "error",
+    "eqeqeq": "error",
+    "typescript/no-explicit-any": "error",
+    "typescript/no-unused-vars": "error"
+  },
+  "env": {
+    "builtin": true
+  },
+  "ignorePatterns": [
+    "dist",
+    "coverage",
+    ".github",
+    "node_modules",
+    "*.js",
+    "src/**/tsconfig.json",
+    "interfaces",
+    "*.md"
+  ]
+}

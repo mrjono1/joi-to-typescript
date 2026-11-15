@@ -339,7 +339,7 @@ pnpm install
 pnpm test # run local tests
 
 pnpm coverage # test coverage report
-pnpm lint # lint the code
+pnpm lint # lint the code with Oxlint
 ```
 
 ### Change Log

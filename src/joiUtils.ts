@@ -10,9 +10,9 @@ import { Describe } from './joiDescribeTypes';
  * @param details - the schema details
  * @returns the values for the given field
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export function getMetadataFromDetails(field: string, details: Describe): any[] {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   const metas: any[] = details?.metas ?? [];
   return metas.filter(entry => entry[field]).map(entry => entry[field]);
 }
@@ -98,7 +98,7 @@ export function ensureInterfaceorTypeName(settings: Settings, details: Describe,
 /**
  * Ensure values is an array and remove any junk
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export function getAllowValues(allow: unknown[] | undefined): any[] {
   if (!allow || allow.length === 0) {
     return [];

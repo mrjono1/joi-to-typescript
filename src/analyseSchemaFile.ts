@@ -27,7 +27,7 @@ export function convertSchemaInternal(
 
   if (settings.debug && interfaceOrTypeName.toLowerCase().endsWith('schema')) {
     if (settings.useLabelAsInterfaceName) {
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.debug(
         `It is recommended you update the Joi Schema '${interfaceOrTypeName}' similar to: ${interfaceOrTypeName} = Joi.object().label('${interfaceOrTypeName.replace(
           'Schema',
@@ -35,7 +35,7 @@ export function convertSchemaInternal(
         )}')`
       );
     } else {
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.debug(
         `It is recommended you update the Joi Schema '${interfaceOrTypeName}' similar to: ${interfaceOrTypeName} = Joi.object().meta({className:'${interfaceOrTypeName.replace(
           'Schema',
@@ -98,14 +98,14 @@ export async function analyseSchemaFile(
 
   if (allConvertedTypes.length === 0) {
     if (settings.debug) {
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.debug(`${schemaFileName} - Skipped - no Joi Schemas found`);
     }
     return;
   }
 
   if (settings.debug) {
-    // eslint-disable-next-line no-console
+    // oxlint-disable-next-line no-console
     console.debug(`${schemaFileName} - Processing`);
   }
 

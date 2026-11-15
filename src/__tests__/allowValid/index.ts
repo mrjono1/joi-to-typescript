@@ -65,7 +65,7 @@ export interface TestSchema {
         .description('a test schema definition');
 
       const invalidResult = convertSchema({}, invalidSchema);
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.log(invalidResult);
     }).toThrow();
   });
