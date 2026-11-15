@@ -39,7 +39,7 @@ describe('`Joi.types()`', () => {
     }).meta({ className: 'Test' });
 
     const result = convertSchema({ debug: true }, schema);
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(
       [
         'export interface Test {',
@@ -55,7 +55,7 @@ describe('`Joi.types()`', () => {
     const schema = Joi.function().meta({ className: 'Test' });
 
     const result = convertSchema({ debug: true }, schema);
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(['export type Test = ((...args: any[]) => any);'].join('\n'));
   });
 
@@ -67,7 +67,7 @@ describe('`Joi.types()`', () => {
     }).meta({ className: 'Test' });
 
     const result = convertSchema({ debug: true }, schema);
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     // prettier-ignore
     expect(result?.content).toBe(
       [
@@ -84,7 +84,7 @@ describe('`Joi.types()`', () => {
     }).meta({ className: 'Test' });
 
     const result = convertSchema({ debug: true }, schema);
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     // prettier-ignore
     expect(result?.content).toBe(
       [
@@ -102,7 +102,7 @@ describe('`Joi.types()`', () => {
     }).meta({ className: 'Test' });
 
     const result = convertSchema({ debug: true }, schema);
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     // prettier-ignore
     expect(result?.content).toBe(
       [
@@ -121,7 +121,7 @@ describe('`Joi.types()`', () => {
     }).meta({ className: 'Test' });
 
     const result = convertSchema({ debug: true }, schema);
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(
       `
 export interface Test {

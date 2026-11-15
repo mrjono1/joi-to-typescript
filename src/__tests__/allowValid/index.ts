@@ -29,7 +29,7 @@ describe('union types using allow()', () => {
       .description('a test schema definition');
 
     const result = convertSchema({ sortPropertiesByName: false }, schema);
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`/**
  * a test schema definition
  */
@@ -80,7 +80,7 @@ export interface TestSchema {
     }).meta({ className: 'TestSchema' });
 
     const result = convertSchema({ sortPropertiesByName: false }, schema);
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`export interface TestSchema {
   obj?: object | null;
   arr?: string[] | null;
@@ -131,7 +131,7 @@ export interface Parent {
     }).meta({ className: 'TestSchema' });
 
     const result = convertSchema({ sortPropertiesByName: false }, schema);
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`export interface TestSchema {
   enumeration?: 'Option1' | 'Option2' | 'Option3' | 0 | 1 | 2;
 }`);
@@ -154,7 +154,7 @@ export interface Parent {
       .meta({ className: 'TestSchema' });
 
     const result = convertSchema({}, schema);
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`export interface TestSchema {
   /**
    * The password of the authenticating user
@@ -177,7 +177,7 @@ export interface Parent {
     }).meta({ className: 'TestSchema' });
 
     const result = convertSchema({}, schema);
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`export interface TestSchema {
   value?: null;
 }`);
@@ -270,7 +270,7 @@ describe('enums tests', () => {
       .description('a test schema definition');
 
     const result = convertSchema({ sortPropertiesByName: false }, schema);
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`/**
  * a test schema definition
  */
@@ -289,7 +289,7 @@ export interface TestSchema {
       .description('a test schema definition');
 
     const result = convertSchema({ defaultToRequired: true }, schema);
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`/**
  * a test schema definition
  */

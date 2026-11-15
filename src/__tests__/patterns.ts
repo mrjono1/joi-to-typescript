@@ -12,7 +12,7 @@ describe('test `Joi.object().pattern()`', () => {
       .description('a test pattern schema definition');
 
     const result = convertSchema({}, schema, 'TestSchema');
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`/**
  * a test pattern schema definition
  */
@@ -30,7 +30,7 @@ export interface TestSchema {
       .pattern(Joi.string(), Joi.number().description('Number Property'));
 
     const result = convertSchema({}, schema, 'TestSchema');
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`/**
  * a test deep pattern schema definition
  */
@@ -55,7 +55,7 @@ export interface TestSchema {
       });
 
     const result = convertSchema({ sortPropertiesByName: false }, schema, 'TestSchema');
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`/**
  * a test regex pattern schema definition
  */

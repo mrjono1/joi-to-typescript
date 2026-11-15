@@ -3,5 +3,6 @@ coverage
 .github
 node_modules
 *.js
+src/**/tsconfig.json
 interfaces
 *.md

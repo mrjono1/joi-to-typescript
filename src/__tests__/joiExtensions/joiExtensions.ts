@@ -24,7 +24,7 @@ describe('Joi Extensions', () => {
     }).meta({ className: 'Test' });
 
     const result = convertSchema({ debug: true }, schema);
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     // prettier-ignore
     expect(result?.content).toBe(
        [
@@ -41,7 +41,7 @@ describe('Joi Extensions', () => {
     }).meta({ className: 'Test' });
 
     const result = convertSchema({ debug: true }, schema);
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     // prettier-ignore
     expect(result?.content).toBe(
        [

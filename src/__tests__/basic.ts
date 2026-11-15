@@ -16,7 +16,7 @@ describe('some basic tests', () => {
       .description('a test schema definition');
 
     const result = convertSchema({}, schema);
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`/**
  * a test schema definition
  */
@@ -45,7 +45,7 @@ export interface Test {
       .description('an Array test schema definition');
 
     const arrayResult = convertSchema({ sortPropertiesByName: true }, schemaArray);
-    expect(arrayResult).not.toBeUndefined;
+    expect(arrayResult).not.toBeUndefined();
 
     expect(arrayResult?.content).toBe(`/**
  * an Array test schema definition
@@ -70,7 +70,7 @@ export interface ArrayObject {
     }).meta({ className: 'Test' });
 
     const result = convertSchema({ sortPropertiesByName: false }, schema);
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`export interface Test {
   nested?: {
     a?: {
@@ -102,7 +102,7 @@ export interface ArrayObject {
     }).meta({ className: 'Test' });
 
     const result = convertSchema({ sortPropertiesByName: false }, schema);
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`export interface Test {
   a?: string;
   A?: string;
@@ -113,7 +113,7 @@ export interface ArrayObject {
     const schema = Joi.object({}).meta({ className: 'Test' });
 
     const result = convertSchema({}, schema);
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`export interface Test {}`);
   });
 
@@ -136,7 +136,7 @@ export interface ArrayObject {
       }).meta({ className: 'Test' });
 
       const result = convertSchema({ sortPropertiesByName: false }, schema);
-      expect(result).not.toBeUndefined;
+      expect(result).not.toBeUndefined();
       expect(result?.content).toBe(`export interface Test {
   field1?: string;
   nothing1?: Record<string, never>;

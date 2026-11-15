@@ -15,7 +15,7 @@ describe('test the `commentEverything` setting', () => {
       .description('a test schema definition');
 
     const result = convertSchema({ commentEverything: true, sortPropertiesByName: false }, schema);
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`/**
  * a test schema definition
  */
@@ -51,7 +51,7 @@ export interface TestSchema {
       .description('an Array test schema definition');
 
     const arrayResult = convertSchema({ commentEverything: true, sortPropertiesByName: false }, schemaArray);
-    expect(arrayResult).not.toBeUndefined;
+    expect(arrayResult).not.toBeUndefined();
 
     expect(arrayResult?.content).toBe(`/**
  * an Array test schema definition

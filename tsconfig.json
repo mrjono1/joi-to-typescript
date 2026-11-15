@@ -4,14 +4,17 @@
     "module": "commonjs",
     "declaration": true,
     "outDir": "./dist",
+    "rootDir": "./src",
     "declarationMap": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "esModuleInterop": true,
     "strict": true,
+    "ignoreDeprecations": "6.0",
     "baseUrl": "src",
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "types": ["node"]
   },
   "include": ["src"],
   "exclude": ["node_modules", "**/__tests__/**", "examples"]
