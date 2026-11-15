@@ -141,7 +141,7 @@ export interface spacedLabel {
       convertSchema({ debug: true, useLabelAsInterfaceName: true }, schema);
       expect(true).toBe(false);
     } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line typescript/no-explicit-any
       expect(error && (error as any).message).toBe(
         'At least one "object" does not have .label(\'\'). Details: {"type":"object","flags":{"id":"Test"},"keys":{"name":{"type":"string"}}}'
       );

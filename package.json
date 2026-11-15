@@ -33,19 +33,17 @@
     "build": "pnpm run build:esm && pnpm run build:cjs && pnpm run build:dts",
     "format": "oxfmt --write \"src/**/*.ts\"",
     "format:check": "oxfmt --check \"src/**/*.ts\"",
-    "lint": "eslint 'src/**'",
+    "lint": "oxlint src",
     "test": "vitest run",
     "coverage": "vitest run --coverage --silent",
     "pub": "pnpm run build && pnpm publish"
   },
   "devDependencies": {
     "@types/node": "22.20.1",
-    "@typescript-eslint/eslint-plugin": "8.72.2",
-    "@typescript-eslint/parser": "8.72.2",
     "@vitest/coverage-v8": "4.1.10",
-    "eslint": "8.57.0",
     "joi": "18.2.5",
     "oxfmt": "0.78.0",
+    "oxlint": "1.93.0",
     "typescript": "6.0.3",
     "vite": "8.3.1",
     "vitest": "4.1.11"

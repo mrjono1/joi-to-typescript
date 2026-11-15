@@ -7,7 +7,7 @@ describe('test the utils', () => {
       d: undefined
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // oxlint-disable-next-line typescript/no-unused-vars
     const children = filterMap(Object.entries(object || {}), ([key, value]) => {
       return value;
     });
@@ -22,7 +22,7 @@ describe('test the utils', () => {
       e: 'purple'
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // oxlint-disable-next-line typescript/no-unused-vars
     const children = filterMap(Object.entries(object || {}), ([key, value]) => {
       return value;
     });
