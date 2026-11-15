@@ -11,7 +11,7 @@
     "esModuleInterop": true,
     "strict": true,
     "baseUrl": "src",
-    "moduleResolution": "node"
+    "moduleResolution": "bundler"
   },
   "include": ["src"],
   "exclude": ["node_modules", "**/__tests__/**", "examples"]

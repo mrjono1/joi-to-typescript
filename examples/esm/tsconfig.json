@@ -2,7 +2,7 @@
   "compilerOptions": {
     "module": "ESNext",
     "esModuleInterop": true,
-    "moduleResolution": "node"
+    "moduleResolution": "bundler"
   },
   "include": ["src"]
 }
