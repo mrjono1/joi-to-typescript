@@ -8,6 +8,6 @@ src
 .eslintrc.cjs
 .gitignore
 mise.toml
-.prettierrc.cjs
+.oxfmtrc.json
 vitest.config.mts
 tsconfig.json

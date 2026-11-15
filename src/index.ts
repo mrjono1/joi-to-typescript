@@ -35,7 +35,7 @@ function defaultSettings(settings: Partial<Settings>): Settings {
       treatDefaultedOptionalAsRequired: false,
       supplyDefaultsInType: false,
       inputFileFilter: InputFileFilter.Default,
-      omitIndexFiles: false,
+      omitIndexFiles: false
     },
     settings
   ) as Settings;
