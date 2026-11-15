@@ -36,7 +36,7 @@
     "lint": "oxlint src",
     "test": "vitest run",
     "coverage": "vitest run --coverage --silent",
-    "pub": "pnpm run build && pnpm publish"
+    "pub": "pnpm run build && pnpm publish --no-git-checks"
   },
   "devDependencies": {
     "@types/node": "22.20.1",
