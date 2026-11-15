@@ -40,13 +40,13 @@
   },
   "devDependencies": {
     "@types/node": "22.20.1",
-    "@vitest/coverage-v8": "4.1.10",
+    "@vitest/coverage-v8": "5.0.2",
     "joi": "18.2.5",
     "oxfmt": "0.78.0",
     "oxlint": "1.93.0",
     "typescript": "6.0.3",
     "vite": "8.3.1",
-    "vitest": "4.1.11"
+    "vitest": "5.0.2"
   },
   "peerDependencies": {
     "joi": "17.x"

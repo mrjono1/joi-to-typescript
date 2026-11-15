@@ -11,12 +11,12 @@ describe('empty schema directory', () => {
   });
 
   test('Throw and no index file', async () => {
-    expect(async () => {
-      await convertFromDirectory({
+    await expect(
+      convertFromDirectory({
         schemaDirectory: './src/__tests__/empty/schemas',
         typeOutputDirectory
-      });
-    }).rejects.toThrowError();
+      })
+    ).rejects.toThrowError();
 
     expect(existsSync(`${typeOutputDirectory}/index.ts`)).toBeFalsy();
   });
