@@ -16,7 +16,7 @@ describe('override tests', () => {
       .description('a test schema definition');
 
     const result = convertSchema({ defaultToRequired: true }, schema);
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
 
     expect(result?.content).toBe(`/**
  * a test schema definition
@@ -36,7 +36,7 @@ export interface OverrideSchema {
     // shouldn't throw anything
     const result = convertSchema({ defaultToRequired: true }, schema);
 
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`/**
  * a test schema definition
  */
@@ -54,7 +54,7 @@ export interface OverrideSchema {
 
     const result = convertSchema({ defaultToRequired: true }, schema);
 
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`/**
  * a test schema definition
  */
@@ -72,7 +72,7 @@ export interface OverrideSchema {
 
     const result = convertSchema({ defaultToRequired: true }, schema);
 
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`/**
  * a test schema definition
  */
@@ -96,7 +96,7 @@ export interface OverrideSchema {
 
     const result = convertSchema({ defaultToRequired: true }, schema);
 
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`/**
  * a test schema definition
  */
@@ -114,7 +114,7 @@ export interface OverrideSchema {
 
     const result = convertSchema({ defaultToRequired: true }, schema);
 
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`/**
  * a test schema definition
  */
@@ -133,7 +133,7 @@ export interface OverrideSchema {
 
     const result = convertSchema({ defaultToRequired: true }, schema);
 
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`/**
  * a test schema definition
  */
@@ -151,7 +151,7 @@ export interface OverrideSchema {
 
     const result = convertSchema({ defaultToRequired: true }, schema);
 
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`/**
  * a test schema definition
  */

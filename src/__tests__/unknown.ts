@@ -12,7 +12,7 @@ describe('test `Joi.unknown()`', () => {
       .unknown(true);
 
     const result = convertSchema({ sortPropertiesByName: false }, schema);
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`/**
  * a test schema definition
  */
@@ -34,7 +34,7 @@ export interface TestSchema {
       .unknown(true);
 
     const result = convertSchema({ sortPropertiesByName: false }, schema);
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`/**
  * a test schema definition
  */
@@ -56,7 +56,7 @@ export interface TestSchema {
       .unknown(false);
 
     const result2 = convertSchema({}, schema2);
-    expect(result2).not.toBeUndefined;
+    expect(result2).not.toBeUndefined();
     expect(result2?.content).toBe(`/**
  * a test schema definition
  */
@@ -79,7 +79,7 @@ export interface TestSchema {
       .description('a test schema definition');
 
     const result = convertSchema({}, schema);
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`/**
  * a test schema definition
  */

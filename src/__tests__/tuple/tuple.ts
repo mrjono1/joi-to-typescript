@@ -64,7 +64,7 @@ export type TestTuple = [
       .description('A list of Test object');
 
     const result = convertSchema({ sortPropertiesByName: true }, schema);
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`/**
  * A list of Test object
  */
@@ -90,7 +90,7 @@ export type TestList = any[];`);
       .description('a test schema definition');
 
     const result = convertSchema({ sortPropertiesByName: true, tupleNewLine: true }, schema);
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`/**
  * a test schema definition
  */
@@ -129,7 +129,7 @@ export interface Test {
       .description('a test schema definition');
 
     const result = convertSchema({ sortPropertiesByName: true, tupleNewLine: true, unionNewLine: true }, schema);
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`/**
  * a test schema definition
  */

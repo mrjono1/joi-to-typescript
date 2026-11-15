@@ -65,7 +65,7 @@ export type TestList = Test[];
       .description('A list of Test object');
 
     const result = convertSchema({ sortPropertiesByName: true }, schema);
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`/**
  * A list of Test object
  */
@@ -74,7 +74,7 @@ export type TestList = string[];`);
 
   test('test to ensure sparse arrays have undefined as a possible type', () => {
     const result = convertSchema({ sortPropertiesByName: true }, SparseTestListSchema);
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`/**
  * A sparse list of Item object
  */

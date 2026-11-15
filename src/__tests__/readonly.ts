@@ -11,7 +11,7 @@ describe('readonly tests', () => {
     }).meta({ className: 'TestSchema', readonly: true });
 
     const result = convertSchema({ defaultToRequired: true }, schema);
-    expect(result).not.toBeUndefined;
+    expect(result).not.toBeUndefined();
     expect(result?.content).toBe(`export interface TestSchema {
   readonly bit: boolean;
   readonly customObject: CustomObject;
