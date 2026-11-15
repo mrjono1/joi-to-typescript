@@ -5,10 +5,15 @@ import { convertSchema } from '../index';
 describe('test `Joi.object().pattern()`', () => {
   test('`pattern(Joi.string(), Joi.AnySchema())`', () => {
     const schema = Joi.object()
-      .pattern(Joi.string(), Joi.array().items(Joi.object({
-        id: Joi.string().required(),
-        propertyName1: Joi.boolean().required()
-      })))
+      .pattern(
+        Joi.string(),
+        Joi.array().items(
+          Joi.object({
+            id: Joi.string().required(),
+            propertyName1: Joi.boolean().required()
+          })
+        )
+      )
       .description('a test pattern schema definition');
 
     const result = convertSchema({}, schema, 'TestSchema');
@@ -44,14 +49,19 @@ export interface TestSchema {
 
   test('`pattern(/^test$/, Joi.AnySchema())`', () => {
     const schema = Joi.object({
-      name: Joi.string(),
+      name: Joi.string()
     })
       .description('a test regex pattern schema definition')
       .pattern(Joi.string(), {
         name: Joi.string().optional(),
-        propertyName1: Joi.object().pattern(/^test$/, Joi.object({
-          propertyName2: Joi.boolean()
-        })).required()
+        propertyName1: Joi.object()
+          .pattern(
+            /^test$/,
+            Joi.object({
+              propertyName2: Joi.boolean()
+            })
+          )
+          .required()
       });
 
     const result = convertSchema({ sortPropertiesByName: false }, schema, 'TestSchema');

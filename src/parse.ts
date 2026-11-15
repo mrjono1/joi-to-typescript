@@ -535,7 +535,9 @@ function createAllowTypes(details: BaseDescribe, settings: Settings): TypeConten
   // at least one value
   if (values.length !== 0) {
     const allowedValues = values.map((value: unknown) =>
-      makeTypeContentChild({ content: typeof value === 'string' ? toStringLiteral(value, settings.doublequoteEscape) : `${value}` })
+      makeTypeContentChild({
+        content: typeof value === 'string' ? toStringLiteral(value, settings.doublequoteEscape) : `${value}`
+      })
     );
     return allowedValues;
   }

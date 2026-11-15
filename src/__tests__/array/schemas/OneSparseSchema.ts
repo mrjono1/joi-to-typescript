@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import {ItemSchema} from './OneSchema'
+import { ItemSchema } from './OneSchema';
 
 export const SparseTestListSchema = Joi.array()
   .items(ItemSchema)
